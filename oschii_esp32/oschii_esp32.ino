@@ -553,7 +553,7 @@ void scanPulsers() {
   Pulser newPulsers[INPUTS_LIMIT];
   for ( i=0; i<pulserCount; i++ ) {
     Pulser pulser = pulsers[i];
-    if ( millis() - pulser.startedAt >= pulser.duration ) {
+    if ( millis() - pulser.startedAt >= pulser.duration ) {w
         if ( pulser.i2cPort == -1 ) {
           digitalWrite(pulser.pin, pulser.targetState);
         } else {
