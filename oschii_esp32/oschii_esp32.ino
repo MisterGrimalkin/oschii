@@ -536,14 +536,6 @@ void printReceiver(Receiver receiver) {
   }
 }
 
-//////////////////
-//              //
-//    ACTION    //
-//   CREATION   //
-//              //
-//////////////////
-
-
 String getDeviceIp(String name) {
   int i;
   for ( i = 0; i < deviceCount; i++ ) {
