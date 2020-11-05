@@ -203,7 +203,7 @@ PWM outputs send a modulated square wave from a pin.
     "type": "pwm"              
     "i2cPort": 0,               
     "pin": 0,
-    "valueTransform":           # default="none" | "percentage" | "binary"
+    "valueTransform": "none",   # default="none" | "percentage" | "binary"
     "initialValue": 0,          # default=(none) 
     "invert": false             # default=false
 }
