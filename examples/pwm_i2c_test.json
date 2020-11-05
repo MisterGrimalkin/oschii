@@ -1,0 +1,51 @@
+{
+  "inputs": [
+    {
+      "type": "gpio",
+      "i2cPort": 1,
+      "pin": 2,
+      "resistor": "up",
+      "onValue": 100,
+      "offValue": 10,
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 10,
+          "invert": true,
+          "valueTransform": "percentage"
+
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "i2cPort": 0,
+      "pin": 2,
+      "resistor": "up",
+      "onValue": 100,
+      "offValue": 10,
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 6,
+          "valueTransform": "percentage"
+
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "oscAddress": "/green",
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 26,
+          "valueTransform": "percentage"
+        }
+      ]
+    }
+  ]
+}

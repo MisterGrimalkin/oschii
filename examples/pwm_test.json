@@ -1,0 +1,42 @@
+{
+  "inputs": [
+    {
+      "type": "gpio",
+      "pin": 15,
+      "resistor": "down",
+      "onValue": 255,
+      "offValue": 128,
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 12
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "pin": 2,
+      "resistor": "down",
+      "onValue": 255,
+      "offValue": 128,
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 14
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "oscAddress": "/green",
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 26,
+          "valueTransform": "percentage"
+        }
+      ]
+    }
+  ]
+}

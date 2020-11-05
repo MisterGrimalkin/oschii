@@ -1,0 +1,208 @@
+{
+  "devices": [
+    {
+      "name": "SnootBox",
+      "ip": "192.168.1.101"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "A +RED/-RED",
+      "type": "gpio",
+      "pin": 15,
+      "resistor": "down",
+      "onValue": 60,
+      "offValue": 0,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 12,
+          "valueThreshold": 60,
+          "initialState": false
+        }
+      ],
+      "receivers": [
+        {
+          "device": "SnootBox",
+          "oscAddress": "/boom"
+        }
+      ]
+    },
+    {
+      "name": "B ^ORANGE +YELLOW",
+      "type": "gpio",
+      "pin": 2,
+      "resistor": "down",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 14,
+          "initialState": true,
+          "toggle": true
+        },
+        {
+          "type": "gpio",
+          "pin": 27,
+          "initialState": false
+        }
+      ]
+    },
+    {
+      "name": "C ~GREEN -YELLOW",
+      "type": "gpio",
+      "pin": 16,
+      "resistor": "up",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 26,
+          "initialState": false,
+          "pulseLength": 2000
+        },
+        {
+          "type": "gpio",
+          "pin": 27,
+          "onState": false
+        }
+      ]
+    },
+    {
+      "name": "-D ^BLUE",
+      "type": "gpio",
+      "pin": 21,
+      "resistor": "up",
+      "invert": true,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 25,
+          "initialState": false,
+          "toggle": true
+        }
+      ]
+    },
+    {
+      "name": "E +INDIGO/-INDIGO (bounce 1s)",
+      "type": "gpio",
+      "pin": 22,
+      "resistor": "down",
+      "bounceFilter": 1000,
+      "offValue": 0,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 19,
+          "initialState": false
+        }
+      ]
+    },
+    {
+      "name": "F***ing Surprise!",
+      "type": "gpio",
+      "pin": 23,
+      "resistor": "down",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 12,
+          "pulseLength": 1700
+        },
+        {
+          "type": "gpio",
+          "pin": 14,
+          "pulseLength": 1600
+        },
+        {
+          "type": "gpio",
+          "pin": 27,
+          "pulseLength": 1500
+        },
+        {
+          "type": "gpio",
+          "pin": 26,
+          "pulseLength": 1400
+        },
+        {
+          "type": "gpio",
+          "pin": 25,
+          "pulseLength": 1300
+        },
+        {
+          "type": "gpio",
+          "pin": 19,
+          "pulseLength": 1200
+        },
+        {
+          "type": "gpio",
+          "pin": 18,
+          "pulseLength": 1100
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "oscAddress": "/red",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 12
+        }
+      ]
+    },
+    {
+      "oscAddress": "/orange",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 14
+        }
+      ]
+    },
+    {
+      "oscAddress": "/yellow",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 27
+        }
+      ]
+    },
+    {
+      "oscAddress": "/green",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 26
+        }
+      ]
+    },
+    {
+      "oscAddress": "/blue",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 25
+        }
+      ]
+    },
+    {
+      "oscAddress": "/indigo",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 19
+        }
+      ]
+    },
+    {
+      "oscAddress": "/violet",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 18
+        }
+      ]
+    }
+  ]
+}

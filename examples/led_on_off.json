@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "type": "gpio",
+      "i2cPort": 1,
+      "pin": 2,
+      "resistor": "up",
+      "controllers": [
+        {
+          "type": "gpio",
+          "i2cPort": 0,
+          "pin": 6
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "i2cPort": 0,
+      "pin": 2,
+      "resistor": "up",
+      "controllers": [
+        {
+          "type": "gpio",
+          "i2cPort": 0,
+          "pin": 6,
+          "onState": false,
+          "initialState": false
+        }
+      ]
+    }
+  ]
+}
