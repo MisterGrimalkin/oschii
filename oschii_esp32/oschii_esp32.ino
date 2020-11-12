@@ -3,6 +3,8 @@
 #include <ArduinoJson.h>
 #include <ArduinoOSC.h>
 #include <ESPAsyncWebServer.h>
+
+#include <ETH.h>
 #include <HTTPClient.h>
 #include <Preferences.h>
 #include <WiFi.h>
@@ -553,7 +555,7 @@ void scanPulsers() {
   Pulser newPulsers[INPUTS_LIMIT];
   for ( i=0; i<pulserCount; i++ ) {
     Pulser pulser = pulsers[i];
-    if ( millis() - pulser.startedAt >= pulser.duration ) {w
+    if ( millis() - pulser.startedAt >= pulser.duration ) {
         if ( pulser.i2cPort == -1 ) {
           digitalWrite(pulser.pin, pulser.targetState);
         } else {
@@ -1399,6 +1401,6 @@ int requestI2C(int deviceAddress, int registerAddress) {
 void startI2CPwm() {
   pwm.begin();
   pwm.setOscillatorFrequency(23000000);
-  pwm.setPWMFreq(1600);
+  pwm.setPWMFreq(1000);
   Wire.setClock(400000);
 }

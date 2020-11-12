@@ -42,7 +42,20 @@
       "controllers": [
         {
           "type": "pwm",
-          "pin": 26,
+          "i2cPort": 0,
+          "pin": 10,
+          "invert": true,
+          "valueTransform": "percentage"
+        }
+      ]
+    },
+    {
+      "oscAddress": "/red",
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 6,
           "valueTransform": "percentage"
         }
       ]
