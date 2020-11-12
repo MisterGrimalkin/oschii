@@ -170,6 +170,8 @@ int pulserCount = 0;
 
 static String configToLoad = "";
 
+static bool enableEthernet = false;
+
 void setup() {
   name = readFromStorage("name");
   if ( name == "" ) {
@@ -179,7 +181,13 @@ void setup() {
   password = readFromStorage("password");
 
   startSerial();
-  startWiFi();
+
+  String enableEthernetStr = readFromStorage("enableEthernet");
+  if ( enableEthernetStr == "yes" ) {
+    enableEthernet = true;
+  }
+
+  startNetwork();
   startI2CGpio();
   startI2CPwm();
 
@@ -225,6 +233,8 @@ void loop() {
 String errorMessage = "";
 
 int buildGpioSensor(int index, JsonObject inputJson) {
+  pullI2CGpio();
+
   errorMessage = "";
 
   int value = -1;
@@ -622,6 +632,15 @@ void scanSensors() {
             } else {
               value = (value / 100.0) * max;
             }
+
+          } else if ( pwmController->valueTransform == "8bit" ) {
+            if ( value >= 255 ) {
+              value = max;
+            } else if ( value <= 0 ) {
+              value = 0;
+            } else {
+              value = (value / 255.0) * max;
+            }
           }
 
           if ( pwmController->i2cPort < 0 ) {
@@ -805,7 +824,7 @@ String parseJson(String input) {
 
   ///////// INPUTS //////////
 
-  pullI2CGpio();
+//  pullI2CGpio();
 
   if (doc.containsKey("inputs")) {
     if ( verbose ) Serial.println("\n-- Parsing INPUTS");
@@ -1177,11 +1196,25 @@ void processSerialInput(String input) {
     Serial.println(parseJson(config));;
 
   } else if ( input == "start wifi" ) {
+    enableEthernet = false;
+    writeToStorage("enableEthernet", "no");
     ssid = promptSerial("Ready for ssid");
     writeToStorage("ssid", ssid);
     password = promptSerial("Ready for password");
     writeToStorage("password", password);
     startWiFi();
+
+  } else if ( input == "start ethernet" ) {
+    stopWiFi();
+    startEthernet();
+    enableEthernet = true;
+    writeToStorage("enableEthernet", "yes");
+
+  } else if ( input == "stop ethernet" ) {
+    stopWiFi();
+    enableEthernet = false;
+    writeToStorage("enableEthernet", "no");
+    Serial.println("Restart ESP now");
 
   } else if ( input == "ip" ) {
     if ( connected ) {
@@ -1217,16 +1250,81 @@ String readSerial() {
 // WiFi //
 //////////
 
+const int WIFI_TIMEOUT = 5000;
+const int ETHERNET_TIMEOUT = 120000;
+
+void startNetwork() {
+  if ( enableEthernet ) {
+    startEthernet();
+  } else {
+    startWiFi();
+  }
+}
+
+void WiFiEvent(WiFiEvent_t event)
+{
+  switch (event) {
+    case SYSTEM_EVENT_ETH_START:
+      Serial.println("ETH Started");
+      ETH.setHostname(name.c_str());
+      break;
+    case SYSTEM_EVENT_ETH_CONNECTED:
+      Serial.println("ETH Connected");
+      break;
+    case SYSTEM_EVENT_ETH_GOT_IP:
+      Serial.print("ETH MAC: ");
+      Serial.print(ETH.macAddress());
+      Serial.print(", IPv4: ");
+      Serial.print(ETH.localIP());
+      if (ETH.fullDuplex()) {
+        Serial.print(", FULL_DUPLEX");
+      }
+      Serial.print(", ");
+      Serial.print(ETH.linkSpeed());
+      Serial.println("Mbps");
+      connected = true;
+      break;
+    case SYSTEM_EVENT_ETH_DISCONNECTED:
+      Serial.println("ETH Disconnected");
+      connected = false;
+      break;
+    case SYSTEM_EVENT_ETH_STOP:
+      Serial.println("ETH Stopped");
+      connected = false;
+      break;
+    default:
+      break;
+  }
+}
+
+void startEthernet() {
+  WiFi.onEvent(WiFiEvent);
+  ETH.begin();
+  Serial.print("Connecting to Ethernet");
+  int started = millis();
+  while (!connected) {
+    Serial.print(".");
+    delay(500);
+    if ( (millis() - started) > ETHERNET_TIMEOUT ) {
+      Serial.println("Cannot connect to Ethernet");
+      connected = false;
+      return;
+    }
+  }
+  createApi();
+  server.begin();
+  Serial.println("OK");
+}
+
 void startWiFi() {
   WiFi.disconnect(true);
   if ( ssid != "" && password != "" ) {
     Serial.println("Accessing WiFi: " + String(ssid));
     WiFi.begin(ssid.c_str(), password.c_str());
-    int waits = 0;
+    int started = millis();
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
-      waits++;
-      if ( waits > 10 ) {
+      if ( (millis() - started) > WIFI_TIMEOUT ) {
         Serial.println("Cannot connect to WiFi");
         connected = false;
         return;
