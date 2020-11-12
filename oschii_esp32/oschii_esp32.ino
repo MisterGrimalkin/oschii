@@ -41,7 +41,6 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(I2C_PWM_ADDR, Wire);
 String configPayload = "";
 
 const int JSON_SIZE_LIMIT = 8192;
-const int ACTION_COUNT = 100;
 
 StaticJsonDocument<JSON_SIZE_LIMIT> doc;
 
@@ -81,7 +80,6 @@ int pwmChannelCount = 0;
 
 const int DEVICES_LIMIT = 64;
 const int INPUTS_LIMIT = 128;
-const int OUTPUTS_LIMIT = 128;
 const int CONTROLLERS_LIMIT = 128;
 const int RECEIVERS_LIMIT = 128;
 
@@ -165,18 +163,6 @@ struct Pulser {
 Pulser pulsers[CONTROLLERS_LIMIT];
 int pulserCount = 0;
 
-struct Output {
-  String oscAddress;
-  int oscPort;
-  String httpPath;
-  String httpMethod;
-  int controllerStartIndex;
-  int controllerCount;
-  int receiverStartIndex;
-  int receiverCount;
-};
-Output outputs[OUTPUTS_LIMIT];
-int outputCount = 0;
 
 //////////
 // Main //
@@ -565,10 +551,15 @@ void scanPulsers() {
       pulsers[j++] = pulser;
     }
   }
+
+  flushI2CGpioCache();
+
   pulserCount = j;
 }
 
 void scanSensors() {
+  pullI2CGpio();
+
   int i;
   for ( i=0; i<sensorCount; i++ ) {
     Sensor * sensor = readSensor(i);
@@ -644,6 +635,8 @@ void scanSensors() {
           }
         }
       }
+
+      flushI2CGpioCache();
 
       int r;
       for ( r = sensor->receiverStartIndex; r < (sensor->receiverStartIndex + sensor->receiverCount); r++ ) {
@@ -734,6 +727,9 @@ int buildControllers(JsonArray controllersJson) {
       count++;
     }
   }
+
+  flushI2CGpioCache();
+
   return count;
 }
 
@@ -809,6 +805,8 @@ String parseJson(String input) {
 
   ///////// INPUTS //////////
 
+  pullI2CGpio();
+
   if (doc.containsKey("inputs")) {
     if ( verbose ) Serial.println("\n-- Parsing INPUTS");
 
@@ -882,7 +880,7 @@ String parseJson(String input) {
 
     JsonArray outputsJson = doc["outputs"];
 
-    for ( i=0; i<OUTPUTS_LIMIT; i++ ) {
+    for ( i=0; i<(INPUTS_LIMIT - sensorCount); i++ ) {
       JsonObject outputJson = outputsJson[i];
 
       if ( outputJson.containsKey("oscAddress") ) {
@@ -1347,7 +1345,11 @@ void writeI2CGpio(int port, int pin, bool state) {
   } else {
     BIT_CLEAR(i2COut[port], pin);
   }
-  sendI2C(I2C_ADDR, I2C_DATA_ADDR[port], i2COut[port]);
+}
+
+void flushI2CGpioCache() {
+  sendI2C(I2C_ADDR, I2C_DATA_ADDR[0], i2COut[0]);
+  sendI2C(I2C_ADDR, I2C_DATA_ADDR[1], i2COut[1]);
 }
 
 void setI2CGpioDirection(int port, int pin, bool output) {
@@ -1369,13 +1371,12 @@ void setI2CGpioResistance(int port, int pin, bool up) {
 }
 
 bool readI2CGpio(int port, int pin) {
-  readI2CGpioPort(port);
   return BIT_CHECK(i2CIn[port], pin);
 }
 
-int readI2CGpioPort(int port) {
-  i2CIn[port] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[port]);
-  return i2CIn[port];
+void pullI2CGpio() {
+  i2CIn[0] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[0]);
+  i2CIn[1] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[1]);
 }
 
 void sendI2C(int deviceAddress, int registerAddress, int data) {
