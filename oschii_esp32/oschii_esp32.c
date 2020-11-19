@@ -66,8 +66,11 @@ const bool DIR_IN = false;
 const bool PULL_UP = true;
 const bool PULL_DOWN = false;
 
+static bool enableEthernet = false;
+
 AsyncWebServer server(80);
 bool connected = false;
+static String connectionType = "";
 
 bool oschiiGO = false;
 
@@ -163,14 +166,11 @@ struct Pulser {
 Pulser pulsers[CONTROLLERS_LIMIT];
 int pulserCount = 0;
 
-
 //////////
 // Main //
 //////////
 
 static String configToLoad = "";
-
-static bool enableEthernet = false;
 
 void setup() {
   name = readFromStorage("name");
@@ -216,7 +216,7 @@ void loop() {
     loopOsc();
     scanPulsers();
     scanSensors();
-    delay(10);
+//    delay(10);
     if ( reboot ) {
       Serial.println("\n!!!!! R E B O O T I N G !!!!!\n");
       delay(1000);
@@ -519,14 +519,18 @@ void printReceiver(Receiver receiver) {
   Serial.print("     + Receiver:");
   if ( receiver.oscPort > 0 ) {
     Serial.println("OSC");
-    Serial.print("       [port:");
+    Serial.print("       [ip:");
+    Serial.print(receiver.ip);
+    Serial.print(" port:");
     Serial.print(receiver.oscPort);
     Serial.print(" address:");
     Serial.print(receiver.oscAddress);
     Serial.println("]");
   } else {
     Serial.println("HTTP");
-    Serial.print("       [method:");
+    Serial.print("       [ip:");
+    Serial.print(receiver.ip);
+    Serial.print(" method:");
     Serial.print(receiver.httpMethod);
     Serial.print(" path:");
     Serial.print(receiver.httpPath);
@@ -1218,7 +1222,14 @@ void processSerialInput(String input) {
 
   } else if ( input == "ip" ) {
     if ( connected ) {
-      Serial.println(WiFi.localIP());
+      String ip = WiFi.localIP().toString();
+      if ( connectionType == "Ethernet" ) {
+        ip = ETH.localIP().toString();
+      }
+      Serial.print(ip);
+      Serial.print(" (");
+      Serial.print(connectionType);
+      Serial.println(")");
     } else {
       Serial.println("DISCONNECTED");
     }
@@ -1265,31 +1276,34 @@ void WiFiEvent(WiFiEvent_t event)
 {
   switch (event) {
     case SYSTEM_EVENT_ETH_START:
-      Serial.println("ETH Started");
+      Serial.print("<ETH Started>");
       ETH.setHostname(name.c_str());
+      stopWiFi();
       break;
     case SYSTEM_EVENT_ETH_CONNECTED:
-      Serial.println("ETH Connected");
+      Serial.print("<ETH Connected>");
       break;
     case SYSTEM_EVENT_ETH_GOT_IP:
-      Serial.print("ETH MAC: ");
+      Serial.print("\nConnected to Ethernet on ");
+      Serial.println(ETH.localIP());
+      Serial.print("  MAC: ");
       Serial.print(ETH.macAddress());
-      Serial.print(", IPv4: ");
-      Serial.print(ETH.localIP());
       if (ETH.fullDuplex()) {
-        Serial.print(", FULL_DUPLEX");
+        Serial.print(" FULL_DUPLEX");
       }
-      Serial.print(", ");
+      Serial.print(" ");
       Serial.print(ETH.linkSpeed());
       Serial.println("Mbps");
       connected = true;
+      connectionType = "Ethernet";
       break;
     case SYSTEM_EVENT_ETH_DISCONNECTED:
-      Serial.println("ETH Disconnected");
+      Serial.println("<ETH Disconnected>");
       connected = false;
+      startWiFi();
       break;
     case SYSTEM_EVENT_ETH_STOP:
-      Serial.println("ETH Stopped");
+      Serial.println("<ETH Stopped>");
       connected = false;
       break;
     default:
@@ -1300,20 +1314,20 @@ void WiFiEvent(WiFiEvent_t event)
 void startEthernet() {
   WiFi.onEvent(WiFiEvent);
   ETH.begin();
-  Serial.print("Connecting to Ethernet");
+  Serial.print("Accessing Ethernet");
   int started = millis();
   while (!connected) {
     Serial.print(".");
     delay(500);
     if ( (millis() - started) > ETHERNET_TIMEOUT ) {
-      Serial.println("Cannot connect to Ethernet");
+      Serial.println("\nCannot connect to Ethernet!");
       connected = false;
+      startWiFi();
       return;
     }
   }
   createApi();
   server.begin();
-  Serial.println("OK");
 }
 
 void startWiFi() {
@@ -1333,7 +1347,8 @@ void startWiFi() {
     createApi();
     server.begin();
     connected = true;
-    Serial.print("Connected on ");
+    connectionType = "WiFi";
+    Serial.print("Connected to WiFi at ");
     Serial.println(WiFi.localIP());
   } else {
     Serial.println("No WiFi credentials");
@@ -1342,10 +1357,9 @@ void startWiFi() {
 }
 
 void stopWiFi() {
-  if ( connected ) {
-    WiFi.disconnect(true);
-    connected = false;
-  }
+  WiFi.disconnect(true);
+  connected = false;
+  connectionType = "";
 }
 
 //////////
@@ -1357,7 +1371,7 @@ void sendHttp(String method, String url) {
 }
 
 void sendHttp(String method, String url, String payload) {
-  if (WiFi.status() == WL_CONNECTED) {
+  if (connected) {
     if ( verbose ) {
       Serial.print("HTTP ===> ");
       Serial.print(method);
@@ -1395,7 +1409,7 @@ void sendHttp(String method, String url, String payload) {
     http.end();
   }
   else {
-    Serial.println("Cannot Send HTTP - WiFi Disconnected");
+    Serial.println("Cannot Send HTTP - Network Disconnected");
   }
 }
 
