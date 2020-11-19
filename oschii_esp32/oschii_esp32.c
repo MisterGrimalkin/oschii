@@ -118,6 +118,14 @@ struct GpioSensor {
 };
 GpioSensor gpioSensors[INPUTS_LIMIT];
 
+struct UltrasonicSensor {
+  int triggerPin;
+  int echoPin;
+  int samples;
+  bool invert;
+};
+UltrasonicSensor ultrasonicSensors[INPUTS_LIMIT];
+
 struct Receiver {
   String ip;
   int oscPort;
@@ -309,6 +317,41 @@ int buildGpioSensor(int index, JsonObject inputJson) {
   return value;
 }
 
+int buildUltrasonicSensor(int index, JsonObject inputJson) {
+  errorMessage = "";
+
+  int triggerPin = -1;
+  int echoPin = -1;
+  int samples = 1;
+  bool invert = false;
+
+  if ( inputJson.containsKey("triggerPin") )  triggerPin = inputJson["triggerPin"];
+  if ( inputJson.containsKey("echoPin") )     echoPin =    inputJson["echoPin"];
+  if ( inputJson.containsKey("samples") )     samples =    inputJson["samples"];
+  if ( inputJson.containsKey("invert") )      invert =     inputJson["invert"];
+
+  if ( triggerPin < 0 ) {
+    errorMessage = "ERROR! Input " + String(index) + ": No trigger pin specified";
+    return -1;
+  }
+  if ( echoPin < 0 ) {
+    errorMessage = "ERROR! Input " + String(index) + ": No echo pin specified";
+    return -1;
+  }
+
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  UltrasonicSensor ultrasonicSensor = {
+    triggerPin, echoPin, samples, invert
+  };
+  ultrasonicSensors[index] = ultrasonicSensor;
+
+  if ( verbose ) printUltrasonicSensor(ultrasonicSensor);
+
+  return invert ? 100 : 0;
+}
+
 int buildGpioController(int index, JsonObject controllerJson) {
   errorMessage = "";
 
@@ -474,6 +517,19 @@ void printGpioSensor(GpioSensor sensor) {
   Serial.print(sensor.invert);
   Serial.print(" bounce:");
   Serial.print(sensor.bounceFilter);
+  Serial.println("]");
+}
+
+void printUltrasonicSensor(UltrasonicSensor sensor) {
+  Serial.println("   + Input:Ultrasonic");
+  Serial.print  ("     [trig:");
+  Serial.print(sensor.triggerPin);
+  Serial.print(" echo:");
+  Serial.print(sensor.echoPin);
+  Serial.print(" samples:");
+  Serial.print(sensor.samples);
+  Serial.print(" invert:");
+  Serial.print(sensor.invert);
   Serial.println("]");
 }
 
@@ -717,6 +773,21 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
     }
 
     gpioSensor->lastPolledState = state;
+
+  } else if ( sensor->type == "ultrasonic" ) {
+    UltrasonicSensor * ultrasonicSensor = &ultrasonicSensors[sensorIndex];
+
+    int reading = sampleUltrasonic(
+                          ultrasonicSensor->triggerPin,
+                          ultrasonicSensor->echoPin,
+                          ultrasonicSensor->samples
+                  );
+    if ( ultrasonicSensor->invert ) reading = 100 - reading;
+    if ( reading != sensor->value ) {
+      sensor->value = reading;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
   }
   return sensor;
 }
@@ -828,8 +899,6 @@ String parseJson(String input) {
 
   ///////// INPUTS //////////
 
-//  pullI2CGpio();
-
   if (doc.containsKey("inputs")) {
     if ( verbose ) Serial.println("\n-- Parsing INPUTS");
 
@@ -843,11 +912,19 @@ String parseJson(String input) {
 
         String sensorType = inputJson["type"];
         int value = -1;
+
         if ( sensorType == "gpio" ) {
           value = buildGpioSensor(sensorCount, inputJson);
           if ( value < 0 ) {
             return errorMessage;
           }
+
+        } else if ( sensorType == "ultrasonic" ) {
+          value = buildUltrasonicSensor(sensorCount, inputJson);
+          if ( value < 0 ) {
+            return errorMessage;
+          }
+
         } else {
           return "ERROR! Input " + String(sensorCount) + ": Unknown Input type '" + sensorType + "'";
         }
@@ -1516,4 +1593,48 @@ void startI2CPwm() {
   pwm.setOscillatorFrequency(23000000);
   pwm.setPWMFreq(1000);
   Wire.setClock(400000);
+}
+
+
+/////////////
+// HC-SR04 //
+/////////////
+
+const int HC_SR04_MAX = 2500;
+const int HC_SR04_MIN = 200;
+
+int sampleUltrasonic(int trig, int echo, int samples) {
+  int readings[samples];
+  int lastReading = 0;
+  for ( int i = 0; i<samples; i++) {
+    int reading = readUltrasonic(trig, echo);
+    readings[i] = reading >= HC_SR04_MAX ? lastReading : reading;
+    lastReading = reading;
+  }
+  qsort(readings, samples, sizeof(int), intCompare);
+  int median = readings[samples/2];
+  if ( median >= HC_SR04_MAX || median <= HC_SR04_MIN ) {
+    return 0;
+  } else {
+    int adjusted = ((HC_SR04_MAX - median + HC_SR04_MIN) * 100.0) / (HC_SR04_MAX - HC_SR04_MIN);
+    if ( adjusted >= 100 ) {
+      return 100;
+    } else {
+      return adjusted;
+    }
+  }
+}
+
+int readUltrasonic(int trig, int echo) {
+  digitalWrite(echo, LOW);
+  digitalWrite(trig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
+  return pulseIn(echo, HIGH);
+}
+
+int intCompare (const void * a, const void * b) {
+  return ( *(int*)a - *(int*)b );
 }

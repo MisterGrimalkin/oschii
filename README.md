@@ -125,6 +125,30 @@ Once the Sensor has sent its value, it will ignore subsequent pin changes for `b
 NOTE: When resistor mode is `"up"`, the behaviour of HIGH and LOW will be automatically inverted. You can re-invert
 using the `invert` flag.
 
+##### Ultrasonic Range Sensor HC-SR04
+
+Measures a distance value from ultrasonic sensor.
+
+```
+{
+    "type": "ultrasonic",         
+    "triggerPin": 5,           
+    "echoPin": 6,
+    "samples": 1,             # default=1
+    "invert": false,          # default=false
+    "receivers": [ ... ],
+    "controllers": [ ... ]
+}
+```
+
+The **HC-SR04** sensor will read a distance in range 0..100,
+proportional to the closeness of the object.
+
+The sensor value is the median of `samples` readings.
+ 
+Set `invert` to `true` to invert the range, ie. min distances
+returns `0` instead of `100`.
+
 ### `"receivers": [ ... ]`
 
 The `receivers` array specifies the Devices that will receive a message when the Sensor value changes. 

@@ -100,7 +100,8 @@ module Oschii
     def print_oschiis
       puts
       puts 'IP Address       Name'
-      oschii_data.each do |ip, name|
+      sorted = oschii_data.to_a.sort_by { |_ip, name| name }.to_h
+      sorted.each do |ip, name|
         puts "#{ip.ljust(16)} #{name}"
       end
       puts

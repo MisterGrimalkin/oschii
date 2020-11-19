@@ -1,0 +1,54 @@
+{
+  "devices": [
+    {
+      "name": "Ada",
+      "ip": "192.168.1.179"
+    },
+    {
+      "name": "Bob",
+      "ip": "192.168.1.162"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "ultrasonic",
+      "triggerPin": 25,
+      "echoPin": 26,
+      "samples": 3,
+      "receivers": [
+        {
+          "device": "Bob",
+          "oscAddress": "/green"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/red"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/orange"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/yellow"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/green"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/blue"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/indigo"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/violet"
+        }
+      ]
+    }
+  ]
+}
