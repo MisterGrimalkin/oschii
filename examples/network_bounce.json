@@ -1,0 +1,29 @@
+{
+  "devices": [
+    {
+      "name": "SnootBox",
+      "ip": "192.168.1.80"
+    }
+  ],
+  "outputs": [
+    {
+      "oscAddress": "/hello",
+      "receivers": [
+        {
+          "device": "SnootBox",
+          "oscAddress": "/i_am_oschii"
+        }
+      ]
+    },
+    {
+      "httpPath": "/hello",
+      "receivers": [
+        {
+          "device": "SnootBox",
+          "httpPath": ":8001",
+          "httpMethod": "get"
+        }
+      ]
+    }
+  ]
+}

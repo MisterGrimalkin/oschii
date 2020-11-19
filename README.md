@@ -203,7 +203,7 @@ PWM outputs send a modulated square wave from a pin.
     "type": "pwm"              
     "i2cPort": 0,               
     "pin": 0,
-    "valueTransform": "none",   # default="none" | "percentage" | "binary"
+    "valueTransform": "none",   # default="none" | "percentage" | "binary" | "8bit"
     "initialValue": 0,          # default=(none) 
     "invert": false             # default=false
 }
@@ -214,8 +214,10 @@ GPIOs will be used.
 
 The `valueTransform` property determines how the Controller interprets the value it receives:
 - `none`: Pass the Sensor's integer value directly to the output pin (0..255 for native, 0..4095 for I<sup>2</sup>C)
-- `percentage`: Treat the incoming value as a percentage (0-100) of the maximum output value
+- `percentage`: Treat the incoming value as a percentage (0..100) of the maximum output value
 - `binary`: Treat any incoming value `>= 1` as the maximum output value
+- `8bit`: Treat the incoming value as an 8-bit integer (0..255) proportion of the maximum output value
+
 
 If `initialValue` is set, the Output will be initialised to that value.
 
