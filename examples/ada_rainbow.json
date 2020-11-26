@@ -1,0 +1,80 @@
+{
+  "devices": [
+    {
+      "name": "SnootBox",
+      "ip": "192.168.1.101"
+    }
+  ],
+  "outputs": [
+    {
+      "oscAddress": "/red",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 12
+        }
+      ]
+    },
+    {
+      "oscAddress": "/orange",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 14
+        }
+      ]
+    },
+    {
+      "oscAddress": "/yellow",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 27
+        }
+      ]
+    },
+    {
+      "oscAddress": "/green",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 26
+        }
+      ]
+    },
+    {
+      "oscAddress": "/blue",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 25
+        }
+      ]
+    },
+    {
+      "oscAddress": "/indigo",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 19
+        }
+      ]
+    },
+    {
+      "oscAddress": "/violet",
+      "controllers": [
+        {
+          "type": "pwm",
+          "valueTransform": "percentage",
+          "pin": 18
+        }
+      ]
+    }
+  ]
+}

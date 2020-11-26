@@ -23,7 +23,7 @@ module Oschii
 
     def send_osc(address, value = 1, port: 3333)
       address = "/#{address}" unless address[0] == '/'
-      osc_client(port).send(OSC::Message.new(address, value))
+      osc_client(port).send(OSC::Message.new(address, *value))
     end
 
     def osc_client(port)

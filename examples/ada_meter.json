@@ -1,68 +1,38 @@
 {
   "outputs": [
     {
-      "oscAddress": "/red",
+      "oscAddress": "/rainbow",
       "controllers": [
         {
           "type": "gpio",
           "valueThreshold": 90,
           "pin": 12
-        }
-      ]
-    },
-    {
-      "oscAddress": "/orange",
-      "controllers": [
+        },
         {
           "type": "gpio",
           "valueThreshold": 80,
           "pin": 14
-        }
-      ]
-    },
-    {
-      "oscAddress": "/yellow",
-      "controllers": [
+        },
         {
           "type": "gpio",
           "valueThreshold": 70,
           "pin": 27
-        }
-      ]
-    },
-    {
-      "oscAddress": "/green",
-      "controllers": [
+        },
         {
           "type": "gpio",
           "valueThreshold": 60,
           "pin": 26
-        }
-      ]
-    },
-    {
-      "oscAddress": "/blue",
-      "controllers": [
+        },
         {
           "type": "gpio",
           "valueThreshold": 40,
           "pin": 25
-        }
-      ]
-    },
-    {
-      "oscAddress": "/indigo",
-      "controllers": [
+        },
         {
           "type": "gpio",
           "valueThreshold": 30,
           "pin": 19
-        }
-      ]
-    },
-    {
-      "oscAddress": "/violet",
-      "controllers": [
+        },
         {
           "type": "gpio",
           "valueThreshold": 20,

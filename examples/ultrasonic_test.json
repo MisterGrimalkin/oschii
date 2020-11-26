@@ -7,6 +7,10 @@
     {
       "name": "Bob",
       "ip": "192.168.1.162"
+    },
+    {
+      "name": "Max",
+      "ip": "192.168.1.45"
     }
   ],
   "inputs": [
@@ -17,36 +21,16 @@
       "samples": 3,
       "receivers": [
         {
+          "device": "Max",
+          "oscAddress": "/oschii/range"
+        },
+        {
           "device": "Bob",
           "oscAddress": "/green"
         },
         {
           "device": "Ada",
-          "oscAddress": "/red"
-        },
-        {
-          "device": "Ada",
-          "oscAddress": "/orange"
-        },
-        {
-          "device": "Ada",
-          "oscAddress": "/yellow"
-        },
-        {
-          "device": "Ada",
-          "oscAddress": "/green"
-        },
-        {
-          "device": "Ada",
-          "oscAddress": "/blue"
-        },
-        {
-          "device": "Ada",
-          "oscAddress": "/indigo"
-        },
-        {
-          "device": "Ada",
-          "oscAddress": "/violet"
+          "oscAddress": "/rainbow"
         }
       ]
     }

@@ -174,6 +174,20 @@ struct Pulser {
 Pulser pulsers[CONTROLLERS_LIMIT];
 int pulserCount = 0;
 
+const int MAX_PATTERN_SIZE = 30;
+
+struct Pattern {
+  int size;
+  bool repeat;
+  bool fade;
+  bool cosine;
+  int startedAt;
+};
+Pattern patterns[INPUTS_LIMIT];
+
+int patternValues[INPUTS_LIMIT][MAX_PATTERN_SIZE];
+int patternTimes[INPUTS_LIMIT][MAX_PATTERN_SIZE];
+
 //////////
 // Main //
 //////////
@@ -223,8 +237,9 @@ void loop() {
     loopSerial();
     loopOsc();
     scanPulsers();
+    scanPatterns();
     scanSensors();
-//    delay(10);
+
     if ( reboot ) {
       Serial.println("\n!!!!! R E B O O T I N G !!!!!\n");
       delay(1000);
@@ -625,6 +640,53 @@ void scanPulsers() {
   flushI2CGpioCache();
 
   pulserCount = j;
+}
+
+void scanPatterns() {
+  for ( int i=0; i<INPUTS_LIMIT; i++ ) {
+     Pattern * pattern = &patterns[i];
+     if ( pattern->startedAt > 0 ) {
+        int now = millis() - pattern->startedAt;
+        int acc = 0;
+        int patternComplete = true;
+        for ( int t=0; t < pattern->size; t++ ) {
+          int previousTime = acc;
+          acc += patternTimes[i][t];
+          if ( now < acc ) {
+            int value = patternValues[i][t];
+            if ( pattern->fade ) {
+              int previousValue = 0;
+              if ( t > 0 ) previousValue = patternValues[i][t-1];
+
+              double progress = (double)(now - previousTime) / patternTimes[i][t];
+
+              if ( pattern->cosine ) {
+                value = cosineInterpolate(previousValue, value, progress);
+              } else {
+                value = linearInterpolate(previousValue, value, progress);
+              }
+            }
+            Sensor * sensor = &sensors[i];
+            sensor->changed = true;
+            sensor->value = value;
+            patternComplete = false;
+            break;
+          }
+        }
+        if ( patternComplete && pattern->repeat ) {
+          pattern->startedAt = millis();
+        }
+     }
+  }
+}
+
+double linearInterpolate(double v1, double v2, double amount) {
+  return v1 + (amount * (v2 - v1));
+}
+
+double cosineInterpolate(double v1, double v2, double amount) {
+  double mu = (1-cos(amount*PI))/2;
+  return(v1*(1-mu)+v2*mu);
 }
 
 void scanSensors() {
@@ -1100,14 +1162,44 @@ void createOscTrigger(JsonObject outputJson) {
   const int sensorNo = sensorCount;
   OscWiFi.subscribe(port, address,
     [sensorNo](const OscMessage & m) {
-      int value = m.arg<int>(0);
-      if ( verbose ) {
-        Serial.print(value);
-        Serial.println(" <--- OSC");
+      int size = 0;
+      bool repeat = false;
+      bool fade = false;
+      bool cosine = false;
+      int startedAt = -1;
+
+      if ( m.size() <= 1 ) {
+        int value = m.arg<int>(0);
+        if ( verbose ) {
+          Serial.print(value);
+          Serial.println(" <--- OSC");
+        }
+        Sensor * sensor = &sensors[sensorNo];
+        sensor->value = value;
+        sensor->changed = true;
+
+      } else {
+        if ( verbose ) {
+          Serial.println("(...) <--- OSC");
+        }
+        String type = m.arg<String>(0);
+        String command = m.arg<String>(1);
+        cosine = type=="cosine";
+        fade = type=="linear" || cosine;
+        repeat = command=="repeat";
+        for ( int i = 2; i < (m.size()-1); i+=2 ) {
+          int value = m.arg<int>(i);
+          int time = m.arg<int>(i+1);
+          patternValues[sensorNo][size] = value;
+          patternTimes[sensorNo][size] = time;
+          size++;
+        }
+        startedAt = millis();
       }
-      Sensor * sensor = &sensors[sensorNo];
-      sensor->value = value;
-      sensor->changed = true;
+      Pattern pattern = {
+        size, repeat, fade, cosine, startedAt
+      };
+      patterns[sensorNo] = pattern;
     }
   );
 
