@@ -9,6 +9,10 @@ them with your media installation.
 #### Sensors 
 - **Digital GPIO**
   - ESP32 or MCP23017 I<sup>2</sup>C GPIO Expander
+- **Ultrasonic Range Sensor**
+  - Adafruit HC-SR04
+- **Infrared Range Sensor**
+  - Sharp GP2Y0A710F
 
 #### Controllers
 - **Digital GPIO**
@@ -125,7 +129,7 @@ Once the Sensor has sent its value, it will ignore subsequent pin changes for `b
 NOTE: When resistor mode is `"up"`, the behaviour of HIGH and LOW will be automatically inverted. You can re-invert
 using the `invert` flag.
 
-##### Ultrasonic Range Sensor HC-SR04
+##### Ultrasonic Range Sensor (Adafruit HC-SR04)
 
 Measures a distance value from ultrasonic sensor.
 
@@ -148,6 +152,19 @@ The sensor value is the median of `samples` readings.
  
 Set `invert` to `true` to invert the range, ie. min distances
 returns `0` instead of `100`.
+
+##### Infrared Range Sensor (Sharp GP2Y0A710F)
+
+Measure a distance value from infrared sensor.
+
+```
+{
+    "type": "range-ir",
+    "pin": 5
+}
+```
+
+Reads distance in range 0..100
 
 ### `"receivers": [ ... ]`
 

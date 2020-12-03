@@ -18,7 +18,7 @@
       "type": "ultrasonic",
       "triggerPin": 25,
       "echoPin": 26,
-      "samples": 3,
+      "samples": 5,
       "receivers": [
         {
           "device": "Max",

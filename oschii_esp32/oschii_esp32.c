@@ -229,10 +229,13 @@ void setup() {
     );
   }
 
-  oschiiGO = true;
+//  oschiiGO = true;
 }
 
 void loop() {
+  readInfrared(5);
+  delay(500);
+
   if ( oschiiGO ) {
     loopSerial();
     loopOsc();
@@ -1730,3 +1733,19 @@ int readUltrasonic(int trig, int echo) {
 int intCompare (const void * a, const void * b) {
   return ( *(int*)a - *(int*)b );
 }
+
+
+//////////////////////
+// Sharp GP2Y0A710F //
+//////////////////////
+
+int readInfrared(int pin) {
+  int voltage = analogRead(pin);
+
+  Serial.println(voltage);
+
+  int value = voltage;
+  return value;
+}
+
+

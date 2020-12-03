@@ -1,0 +1,28 @@
+{
+  "devices": [
+    {
+      "name": "Ada",
+      "ip": "192.168.1.179"
+    },
+    {
+      "name": "Edgar",
+      "ip": "192.168.1.140"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "analog",
+      "pin": 36,
+      "receivers": [
+        {
+          "device": "Ada",
+          "oscAddress": "/rainbow"
+        },
+        {
+          "device": "Edgar",
+          "oscAddress": "/oschii/out1"
+        }
+      ]
+    }
+  ]
+}
