@@ -118,6 +118,11 @@ struct GpioSensor {
 };
 GpioSensor gpioSensors[INPUTS_LIMIT];
 
+struct AnalogSensor {
+  int pin;
+};
+AnalogSensor analogSensors[INPUTS_LIMIT];
+
 struct UltrasonicSensor {
   int triggerPin;
   int echoPin;
@@ -125,6 +130,11 @@ struct UltrasonicSensor {
   bool invert;
 };
 UltrasonicSensor ultrasonicSensors[INPUTS_LIMIT];
+
+struct InfraredSensor {
+  int pin;
+};
+InfraredSensor infraredSensors[INPUTS_LIMIT];
 
 struct Receiver {
   String ip;
@@ -229,13 +239,10 @@ void setup() {
     );
   }
 
-//  oschiiGO = true;
+  oschiiGO = true;
 }
 
 void loop() {
-  readInfrared(5);
-  delay(500);
-
   if ( oschiiGO ) {
     loopSerial();
     loopOsc();
@@ -368,6 +375,54 @@ int buildUltrasonicSensor(int index, JsonObject inputJson) {
   if ( verbose ) printUltrasonicSensor(ultrasonicSensor);
 
   return invert ? 100 : 0;
+}
+
+int buildAnalogSensor(int index, JsonObject inputJson) {
+  errorMessage = "";
+
+  int pin = -1;
+
+  if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
+
+  if ( pin < 0 ) {
+    errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
+    return -1;
+  }
+
+  pinMode(pin, INPUT);
+
+  AnalogSensor analogSensor = {
+    pin
+  };
+  analogSensors[index] = analogSensor;
+
+  if ( verbose ) printAnalogSensor(analogSensor);
+
+  return 0;
+}
+
+int buildInfraredSensor(int index, JsonObject inputJson) {
+  errorMessage = "";
+
+  int pin = -1;
+
+  if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
+
+  if ( pin < 0 ) {
+    errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
+    return -1;
+  }
+
+  pinMode(pin, INPUT);
+
+  InfraredSensor infraredSensor = {
+    pin
+  };
+  infraredSensors[index] = infraredSensor;
+
+  if ( verbose ) printInfraredSensor(infraredSensor);
+
+  return 0;
 }
 
 int buildGpioController(int index, JsonObject controllerJson) {
@@ -548,6 +603,20 @@ void printUltrasonicSensor(UltrasonicSensor sensor) {
   Serial.print(sensor.samples);
   Serial.print(" invert:");
   Serial.print(sensor.invert);
+  Serial.println("]");
+}
+
+void printAnalogSensor(AnalogSensor sensor) {
+  Serial.println("   + Input:Analog");
+  Serial.print  ("     [pin:");
+  Serial.print(sensor.pin);
+  Serial.println("]");
+}
+
+void printInfraredSensor(InfraredSensor sensor) {
+  Serial.println("   + Input:Infrared");
+  Serial.print  ("     [pin:");
+  Serial.print(sensor.pin);
   Serial.println("]");
 }
 
@@ -839,6 +908,17 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
 
     gpioSensor->lastPolledState = state;
 
+  } else if ( sensor->type == "analog" ) {
+    AnalogSensor * analogSensor = &analogSensors[sensorIndex];
+
+    int reading = analogRead(analogSensor->pin);
+    int value = 100 * (reading / 4095.0);
+    if ( value != sensor->value ) {
+      sensor->value = value;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
   } else if ( sensor->type == "ultrasonic" ) {
     UltrasonicSensor * ultrasonicSensor = &ultrasonicSensors[sensorIndex];
 
@@ -853,6 +933,17 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
       sensor->changed = true;
       sensor->lastChangedAt = millis();
     }
+
+  } else if ( sensor->type == "infrared" ) {
+    InfraredSensor * infraredSensor = &infraredSensors[sensorIndex];
+
+    int reading = readInfrared(infraredSensor->pin);
+    if ( reading != sensor->value ) {
+      sensor->value = reading;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
   }
   return sensor;
 }
@@ -984,8 +1075,20 @@ String parseJson(String input) {
             return errorMessage;
           }
 
+        } else if ( sensorType == "analog" ) {
+          value = buildAnalogSensor(sensorCount, inputJson);
+          if ( value < 0 ) {
+            return errorMessage;
+          }
+
         } else if ( sensorType == "ultrasonic" ) {
           value = buildUltrasonicSensor(sensorCount, inputJson);
+          if ( value < 0 ) {
+            return errorMessage;
+          }
+
+        } else if ( sensorType == "infrared" ) {
+          value = buildInfraredSensor(sensorCount, inputJson);
           if ( value < 0 ) {
             return errorMessage;
           }
@@ -1739,13 +1842,24 @@ int intCompare (const void * a, const void * b) {
 // Sharp GP2Y0A710F //
 //////////////////////
 
+int lastValue = 0;
+
 int readInfrared(int pin) {
-  int voltage = analogRead(pin);
+  int reading = analogRead(pin);
 
-  Serial.println(voltage);
+  double voltage = (reading / 4095.0) * 3.3;
 
-  int value = voltage;
+  double distance = 1 / ((voltage*1000 - 1125) / 137500);
+
+  int value = 100 * (voltage / 3.3);
+//  if ( value != lastValue ) {
+//    sendOsc("192.168.1.179", 3333, "/rainbow", value);
+//    lastValue = value;
+//  }
+
+//  Serial.print(voltage);
+//  Serial.print("       ");
+//  Serial.println(distance);
+//
   return value;
 }
-
-
