@@ -1,0 +1,64 @@
+{
+  "outputs": [
+    {
+      "oscAddress": "/leds",
+      "controllers": [
+        {
+          "type": "gpio",
+          "i2cPort": 0,
+          "pin": 6,
+          "valueThreshold": 80
+        },
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 10,
+          "valueTransform": "percentage",
+          "invert": true
+        },
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 6,
+          "valueTransform": "percentage",
+          "invert": true
+        }
+      ]
+    },
+    {
+      "oscAddress": "/red",
+      "controllers": [
+        {
+          "type": "gpio",
+          "i2cPort": 0,
+          "pin": 6,
+          "valueThreshold": 75
+        }
+      ]
+    },
+    {
+      "oscAddress": "/green",
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 10,
+          "valueTransform": "percentage",
+          "invert": true
+        }
+      ]
+    },
+    {
+      "oscAddress": "/blue",
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 6,
+          "valueTransform": "percentage",
+          "invert": true
+        }
+      ]
+    }
+  ]
+}

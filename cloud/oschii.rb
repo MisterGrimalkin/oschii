@@ -12,6 +12,10 @@ module Oschii
       puts LOGO
     end
   end
+
+  def cloud
+    @cloud ||= Cloud.new.populate
+  end
 end
 
 include Oschii

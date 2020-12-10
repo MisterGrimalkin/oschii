@@ -133,6 +133,8 @@ UltrasonicSensor ultrasonicSensors[INPUTS_LIMIT];
 
 struct InfraredSensor {
   int pin;
+  int samples;
+  int minValue;
 };
 InfraredSensor infraredSensors[INPUTS_LIMIT];
 
@@ -405,18 +407,20 @@ int buildInfraredSensor(int index, JsonObject inputJson) {
   errorMessage = "";
 
   int pin = -1;
+  int samples = 3;
+  int minValue = 0;
 
   if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
+  if ( inputJson.containsKey("samples") ) samples = inputJson["samples"];
+  if ( inputJson.containsKey("minValue") ) minValue = inputJson["minValue"];
 
   if ( pin < 0 ) {
     errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
     return -1;
   }
 
-  pinMode(pin, INPUT);
-
   InfraredSensor infraredSensor = {
-    pin
+    pin, samples, minValue
   };
   infraredSensors[index] = infraredSensor;
 
@@ -937,7 +941,13 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
   } else if ( sensor->type == "infrared" ) {
     InfraredSensor * infraredSensor = &infraredSensors[sensorIndex];
 
-    int reading = readInfrared(infraredSensor->pin);
+    int reading = sampleInfrared(
+                      infraredSensor->pin,
+                      infraredSensor->samples
+                  );
+    if ( reading < infraredSensor->minValue ) {
+      reading = 0;
+    }
     if ( reading != sensor->value ) {
       sensor->value = reading;
       sensor->changed = true;
@@ -1844,22 +1854,52 @@ int intCompare (const void * a, const void * b) {
 
 int lastValue = 0;
 
-int readInfrared(int pin) {
+
+// Short range: Sharp GP2Y0A02YK0F  20 to 150 cm
+// Long range:  Sharp GP2Y0A710K0F 100 to 550
+
+const int IR_SHORT = 0;    // Sharp GP2Y0A02YK0F   20 to 150 cm
+const int IR_LONG = 1;     // Sharp GP2Y0A710K0F  100 to 550 cm
+
+int irType = IR_SHORT;
+
+double readVoltage(int pin) {
   int reading = analogRead(pin);
+  return (reading / 4095.0) * 3.3;
+}
 
-  double voltage = (reading / 4095.0) * 3.3;
+int sampleInfrared(int pin, int samples) {
+  int readings[samples];
+  int lastReading = 0;
+  for ( int i = 0; i<samples; i++) {
+    int reading = readInfrared(pin);
+    readings[i] = reading;
+    lastReading = reading;
+  }
+  qsort(readings, samples, sizeof(int), intCompare);
+  return readings[samples/2];
+}
 
-  double distance = 1 / ((voltage*1000 - 1125) / 137500);
+int readInfrared(int pin) {
+  double milliVolts = readVoltage(pin) * 1000;
+  if ( irType == IR_LONG ) {
+    return 1 / ((milliVolts - 1125) / 137500);
+  } else if ( irType == IR_SHORT ) {
+    int distance = shortRangeIR(milliVolts);
+    return 100 - ((float)(distance - 15) / (150 - 15)) * 100;
+  }
+}
 
-  int value = 100 * (voltage / 3.3);
-//  if ( value != lastValue ) {
-//    sendOsc("192.168.1.179", 3333, "/rainbow", value);
-//    lastValue = value;
-//  }
+const int TABLE_ENTRIES = 12;
+const int INTERVAL  = 250;
+static int distance[TABLE_ENTRIES] = {150,140,130,100,60,50,40,35,30,25,20,15};
 
-//  Serial.print(voltage);
-//  Serial.print("       ");
-//  Serial.println(distance);
-//
-  return value;
+int shortRangeIR(int mV) {
+   if (mV > INTERVAL * TABLE_ENTRIES - 1) {
+      return distance[TABLE_ENTRIES - 1];
+   } else {
+      int index = mV / INTERVAL;
+      float frac = (mV % 250) / (float)INTERVAL;
+      return distance[index] - ((distance[index] - distance[index + 1]) * frac);
+   }
 }

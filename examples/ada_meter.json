@@ -10,32 +10,32 @@
         },
         {
           "type": "gpio",
-          "valueThreshold": 80,
+          "valueThreshold": 76,
           "pin": 14
         },
         {
           "type": "gpio",
-          "valueThreshold": 70,
+          "valueThreshold": 62,
           "pin": 27
         },
         {
           "type": "gpio",
-          "valueThreshold": 60,
+          "valueThreshold": 50,
           "pin": 26
         },
         {
           "type": "gpio",
-          "valueThreshold": 40,
+          "valueThreshold": 38,
           "pin": 25
         },
         {
           "type": "gpio",
-          "valueThreshold": 30,
+          "valueThreshold": 24,
           "pin": 19
         },
         {
           "type": "gpio",
-          "valueThreshold": 20,
+          "valueThreshold": 10,
           "pin": 18
         }
       ]

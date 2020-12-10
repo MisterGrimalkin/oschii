@@ -1,0 +1,64 @@
+{
+  "devices": [
+    {
+      "name": "Ada",
+      "ip": "192.168.1.179"
+    },
+    {
+      "name": "Bob",
+      "ip": "192.168.1.162"
+    },
+    {
+      "name": "Max",
+      "ip": "192.168.1.45"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "infrared",
+      "pin": 33,
+      "minValue": 10,
+      "receivers": [
+        {
+          "device": "Max",
+          "oscAddress": "/oschii/range0"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/rainbow"
+        },
+        {
+          "device": "Bob",
+          "oscAddress": "/green"
+        },
+        {
+          "device": "Bob",
+          "oscAddress": "/red"
+        }
+      ]
+    },
+    {
+      "type": "infrared",
+      "pin": 32,
+      "minValue": 10,
+      "receivers": [
+        {
+          "device": "Max",
+          "oscAddress": "/oschii/range1"
+        },
+        {
+          "device": "Ada",
+          "oscAddress": "/rainbow"
+        },
+        {
+          "device": "Bob",
+          "oscAddress": "/blue"
+        },
+        {
+          "device": "Bob",
+          "oscAddress": "/red"
+        }
+      ]
+    }
+  ]
+}
