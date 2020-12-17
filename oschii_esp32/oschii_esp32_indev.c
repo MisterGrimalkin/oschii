@@ -76,6 +76,70 @@ bool oschiiGO = false;
 
 int pwmChannelCount = 0;
 
+//////////////
+// I2C GPIO //
+//////////////
+
+void startI2CGpio() {
+  Wire.begin(SDA_PIN, SCL_PIN);
+}
+
+void writeI2CGpio(int port, int pin, bool state) {
+  if ( state ) {
+    BIT_SET(i2COut[port], pin);
+  } else {
+    BIT_CLEAR(i2COut[port], pin);
+  }
+}
+
+void flushI2CGpioCache() {
+  sendI2C(I2C_ADDR, I2C_DATA_ADDR[0], i2COut[0]);
+  sendI2C(I2C_ADDR, I2C_DATA_ADDR[1], i2COut[1]);
+}
+
+void setI2CGpioDirection(int port, int pin, bool output) {
+  if ( output ) {
+    BIT_CLEAR(i2CDir[port], pin);
+  } else {
+    BIT_SET(i2CDir[port], pin);
+  }
+  sendI2C(I2C_ADDR, I2C_IODIR_ADDR[port], i2CDir[port]);
+}
+
+void setI2CGpioResistance(int port, int pin, bool up) {
+  if ( up ) {
+    BIT_SET(i2CRes[port], pin);
+  } else {
+    BIT_CLEAR(i2CRes[port], pin);
+  }
+  sendI2C(I2C_ADDR, I2C_RESISTANCE_ADDR[port], i2CRes[port]);
+}
+
+bool readI2CGpio(int port, int pin) {
+  return BIT_CHECK(i2CIn[port], pin);
+}
+
+void pullI2CGpio() {
+  i2CIn[0] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[0]);
+  i2CIn[1] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[1]);
+}
+
+void sendI2C(int deviceAddress, int registerAddress, int data) {
+  Wire.beginTransmission(deviceAddress);
+  Wire.write(registerAddress);
+  Wire.write(data);
+  Wire.endTransmission();
+}
+
+int requestI2C(int deviceAddress, int registerAddress) {
+  Wire.beginTransmission(deviceAddress);
+  Wire.write(registerAddress);
+  Wire.endTransmission();
+  Wire.requestFrom(deviceAddress, 1);
+  return Wire.read();
+}
+
+
 
 /////////////
 // Structs //
@@ -94,6 +158,7 @@ Device devices[DEVICES_LIMIT];
 int deviceCount = 0;
 
 struct Sensor {
+  int index;
   String type;
   int value;
   bool changed;
@@ -102,19 +167,170 @@ struct Sensor {
   int controllerCount;
   int receiverStartIndex;
   int receiverCount;
+
+  Sensor() {
+    Sensor(0, "");
+  }
+
+  Sensor(int sensorIndex, String sensorType) {
+    index = sensorIndex;
+    type = sensorType;
+    value = 0;
+    changed = false;
+  }
+
+  void bindControllers(int startIndex, int count) {
+    controllerStartIndex = startIndex;
+    controllerCount = count;
+  }
+
+  void bindReceivers(int startIndex, int count) {
+    receiverStartIndex = startIndex;
+    receiverCount = count;
+  }
+
+  void change(int newValue) {
+    if ( newValue != value ) {
+      value = newValue;
+      changed = true;
+    }
+  }
 };
 Sensor sensors[INPUTS_LIMIT];
 int sensorCount = 0;
 
 struct GpioSensor {
-  int i2cPort; // -1 for none
+  Sensor * sensor;
+
+  int index;
   int pin;
+  int i2cPort; // -1 for none
   String resistor;
   int onValue;
   int offValue; // -1 for none
   bool invert;
   int bounceFilter;
   bool lastPolledState;
+  String error;
+
+  GpioSensor() {
+  }
+
+  GpioSensor(Sensor * s) {
+    sensor = s;
+    pin = -1;
+    i2cPort = -1;
+    resistor = "off";
+    onValue = 1;
+    offValue = -1;
+    invert = false;
+    bounceFilter = 100;
+    error = "";
+  }
+
+  int build(JsonObject inputJson) {
+    int value = -1;
+
+    if ( inputJson.containsKey("pin") )          pin =          inputJson["pin"];
+    if ( inputJson.containsKey("i2cPort") )      i2cPort =      inputJson["i2cPort"];
+    if ( inputJson.containsKey("resistor") )     resistor =     inputJson["resistor"].as<String>();
+    if ( inputJson.containsKey("onValue") )      onValue =      inputJson["onValue"];
+    if ( inputJson.containsKey("offValue") )     offValue =     inputJson["offValue"];
+    if ( inputJson.containsKey("invert") )       invert =       inputJson["invert"];
+    if ( inputJson.containsKey("bounceFilter") ) bounceFilter = inputJson["bounceFilter"];
+
+    if ( i2cPort < 0 ) {
+      if ( pin < 0 ) {
+        error = "No GPIO pin specified";
+        return value;
+      } else if ( pin == 0 && resistor != "up" ) {
+        error = "GPIO 0 is fixed to PULL-UP";
+        return value;
+      } else if ( pin == 1 || pin == 3 || ( pin >= 6 && pin <= 12 ) ) {
+        error = "GPIOs 1, 3, 6-12 not recommended for use an inputs";
+        return value;
+      }
+    }
+
+    if ( i2cPort > 1 ) {
+      error = "Available I2C Ports are 0 or 1";
+      return value;
+    }
+
+    int resistance;
+    if ( resistor == "off" ) {
+      resistance = INPUT;
+    } else if ( resistor == "up" ) {
+      resistance = INPUT_PULLUP;
+      invert = !invert;
+    } else if ( resistor == "down" ) {
+      if ( i2cPort >= 0 ) {
+        error = "I2C Expander does not support 'down' resistor mode";
+        return value;
+      }
+      resistance = INPUT_PULLDOWN;
+    } else {
+      error = "Invalid resistor mode '" + resistor + "'";
+      return value;
+    }
+
+
+
+    if ( verbose ) print();
+
+    return value;
+  }
+
+  void read() {
+    if ( (millis() - sensor->lastChangedAt) < bounceFilter ) {
+      return ;
+    }
+
+    int state = -1;
+    if ( i2cPort == -1 ) {
+      state = digitalRead(pin);
+    } else {
+      state = readI2CGpio(i2cPort, pin);
+    }
+
+    if ( state != lastPolledState ) {
+      if ( (state && !invert) || (!state && invert) ) {
+        sensor->value = onValue;
+        sensor->changed = true;
+      } else {
+        sensor->value = offValue;
+        sensor->changed = offValue >= 0;
+      }
+      sensor->lastChangedAt = millis();
+    }
+
+    lastPolledState = state;
+  }
+
+  void print() {
+    Serial.println("   + Input:GPIO");
+    Serial.print  ("     [pin:");
+    if ( i2cPort >= 0 ) {
+      Serial.print(i2cPort);
+      Serial.print("/");
+    }
+    Serial.print(pin);
+    Serial.print(" resistor:");
+    Serial.print(resistor);
+    Serial.print(" on:");
+    Serial.print(onValue);
+    Serial.print(" off:");
+    if ( offValue == -1 ) {
+      Serial.print("(none)");
+    } else {
+      Serial.print(offValue);
+    }
+    Serial.print(" invert:");
+    Serial.print(invert);
+    Serial.print(" bounce:");
+    Serial.print(bounceFilter);
+    Serial.println("]");
+  }
 };
 GpioSensor gpioSensors[INPUTS_LIMIT];
 
@@ -133,26 +349,8 @@ UltrasonicSensor ultrasonicSensors[INPUTS_LIMIT];
 
 struct InfraredSensor {
   int pin;
-  int samples;
-  int minValue;
 };
 InfraredSensor infraredSensors[INPUTS_LIMIT];
-
-
-struct SonarSensor {
-  int pin;
-  int samples;
-};
-SonarSensor sonarSensors[INPUTS_LIMIT];
-
-//struct SonarRingSensor {
-//  int pins[];
-//  int directions[];
-//  int distances[];
-//
-//  SonarRingSensor(JsonObject inputJson) {
-//  }
-//};
 
 struct Receiver {
   String ip;
@@ -215,6 +413,29 @@ Pattern patterns[INPUTS_LIMIT];
 
 int patternValues[INPUTS_LIMIT][MAX_PATTERN_SIZE];
 int patternTimes[INPUTS_LIMIT][MAX_PATTERN_SIZE];
+
+void setupSensor(GpioSensor * sensor) {
+  int resistance;
+  int value;
+  if ( sensor->resistor == "off" ) {
+    resistance = INPUT;
+  } else if ( sensor->resistor == "up" ) {
+    resistance = INPUT_PULLUP;
+    sensor->invert = !sensor->invert;
+  } else if ( sensor->resistor == "down" ) {
+    resistance = INPUT_PULLDOWN;
+  }
+
+  if ( sensor->i2cPort < 0 ) {
+    pinMode(sensor->pin, resistance);
+    value = digitalRead(sensor->pin);
+  } else {
+    setI2CGpioResistance(sensor->i2cPort, sensor->pin, resistance == INPUT_PULLUP);
+    setI2CGpioDirection(sensor->i2cPort, sensor->pin, false);
+    value = readI2CGpio(sensor->i2cPort, sensor->pin);
+  }
+}
+
 
 //////////
 // Main //
@@ -283,82 +504,6 @@ void loop() {
 
 String errorMessage = "";
 
-int buildGpioSensor(int index, JsonObject inputJson) {
-  pullI2CGpio();
-
-  errorMessage = "";
-
-  int value = -1;
-
-  int pin = -1;
-  int i2cPort = -1;
-  String resistor = "off";
-  int onValue = 1;
-  int offValue = -1;
-  bool invert = false;
-  int bounceFilter = 100;
-
-  if ( inputJson.containsKey("pin") )          pin =          inputJson["pin"];
-  if ( inputJson.containsKey("i2cPort") )      i2cPort =      inputJson["i2cPort"];
-  if ( inputJson.containsKey("resistor") )     resistor =     inputJson["resistor"].as<String>();
-  if ( inputJson.containsKey("onValue") )      onValue =      inputJson["onValue"];
-  if ( inputJson.containsKey("offValue") )     offValue =     inputJson["offValue"];
-  if ( inputJson.containsKey("invert") )       invert =       inputJson["invert"];
-  if ( inputJson.containsKey("bounceFilter") ) bounceFilter = inputJson["bounceFilter"];
-
-  if ( i2cPort < 0 ) {
-    if ( pin < 0 ) {
-      errorMessage = "ERROR! Input " + String(index) + ": No GPIO pin specified";
-      return value;
-    } else if ( pin == 0 && resistor != "up" ) {
-      errorMessage = "ERROR! Input " + String(index) + ": GPIO 0 is fixed to PULL-UP";
-      return value;
-    } else if ( pin == 1 || pin == 3 || ( pin >= 6 && pin <= 12 ) ) {
-      errorMessage = "ERROR! Input " + String(index) + ": GPIOs 1, 3, 6-12 not recommended for use an inputs";
-      return value;
-    }
-  }
-
-  if ( i2cPort > 1 ) {
-    errorMessage = "ERROR! Input " + String(index) + ": If specified, I2C Port must be 0 or 1";
-    return value;
-  }
-
-  int resistance;
-  if ( resistor == "off" ) {
-    resistance = INPUT;
-  } else if ( resistor == "up" ) {
-    resistance = INPUT_PULLUP;
-    invert = !invert;
-  } else if ( resistor == "down" ) {
-    if ( i2cPort >= 0 ) {
-      errorMessage = "ERROR! Input " + String(index) + ": I2C Expander does not support 'down' resistor mode";
-      return value;
-    }
-    resistance = INPUT_PULLDOWN;
-  } else {
-    errorMessage = "ERROR! Input " + String(index) + ": Invalid resistor mode '" + resistor + "'";
-    return value;
-  }
-
-  if ( i2cPort < 0 ) {
-    pinMode(pin, resistance);
-    value = digitalRead(pin);
-  } else {
-    setI2CGpioResistance(i2cPort, pin, resistance == INPUT_PULLUP);
-    setI2CGpioDirection(i2cPort, pin, false);
-    value = readI2CGpio(i2cPort, pin);
-  }
-
-  GpioSensor gpioSensor = {
-    i2cPort, pin, resistor, onValue, offValue, invert, bounceFilter, offValue
-  };
-  gpioSensors[index] = gpioSensor;
-
-  if ( verbose ) printGpioSensor(gpioSensor);
-
-  return value;
-}
 
 int buildUltrasonicSensor(int index, JsonObject inputJson) {
   errorMessage = "";
@@ -419,50 +564,22 @@ int buildAnalogSensor(int index, JsonObject inputJson) {
   return 0;
 }
 
-int buildSonarSensor(int index, JsonObject inputJson) {
-  errorMessage = "";
-
-  int pin = -1;
-  int samples = 1;
-
-  if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
-  if ( inputJson.containsKey("samples") ) samples = inputJson["samples"];
-
-  if ( pin < 0 ) {
-    errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
-    return -1;
-  }
-
-  pinMode(pin, INPUT);
-
-  SonarSensor sonarSensor = {
-    pin, samples
-  };
-  sonarSensors[index] = sonarSensor;
-
-  if ( verbose ) printSonarSensor(sonarSensor);
-
-  return 0;
-}
-
 int buildInfraredSensor(int index, JsonObject inputJson) {
   errorMessage = "";
 
   int pin = -1;
-  int samples = 3;
-  int minValue = 0;
 
   if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
-  if ( inputJson.containsKey("samples") ) samples = inputJson["samples"];
-  if ( inputJson.containsKey("minValue") ) minValue = inputJson["minValue"];
 
   if ( pin < 0 ) {
     errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
     return -1;
   }
 
+//  pinMode(pin, INPUT);
+
   InfraredSensor infraredSensor = {
-    pin, samples, minValue
+    pin
   };
   infraredSensors[index] = infraredSensor;
 
@@ -614,30 +731,7 @@ bool buildReceiver(int index, JsonObject receiverJson) {
   return true;
 }
 
-void printGpioSensor(GpioSensor sensor) {
-  Serial.println("   + Input:GPIO");
-  Serial.print  ("     [pin:");
-  if ( sensor.i2cPort >= 0 ) {
-    Serial.print(sensor.i2cPort);
-    Serial.print("/");
-  }
-  Serial.print(sensor.pin);
-  Serial.print(" resistor:");
-  Serial.print(sensor.resistor);
-  Serial.print(" on:");
-  Serial.print(sensor.onValue);
-  Serial.print(" off:");
-  if ( sensor.offValue == -1 ) {
-    Serial.print("(none)");
-  } else {
-    Serial.print(sensor.offValue);
-  }
-  Serial.print(" invert:");
-  Serial.print(sensor.invert);
-  Serial.print(" bounce:");
-  Serial.print(sensor.bounceFilter);
-  Serial.println("]");
-}
+
 
 void printUltrasonicSensor(UltrasonicSensor sensor) {
   Serial.println("   + Input:Ultrasonic");
@@ -659,19 +753,10 @@ void printAnalogSensor(AnalogSensor sensor) {
   Serial.println("]");
 }
 
-void printSonarSensor(SonarSensor sensor) {
-  Serial.println("   + Input:Sonar");
-  Serial.print  ("     [pin:");
-  Serial.print(sensor.pin);
-  Serial.println("]");
-}
-
 void printInfraredSensor(InfraredSensor sensor) {
   Serial.println("   + Input:Infrared");
   Serial.print  ("     [pin:");
   Serial.print(sensor.pin);
-  Serial.print(" samples:");
-  Serial.print(sensor.samples);
   Serial.println("]");
 }
 
@@ -816,6 +901,52 @@ double cosineInterpolate(double v1, double v2, double amount) {
   return(v1*(1-mu)+v2*mu);
 }
 
+Sensor * readSensor(int sensorIndex) {
+  Sensor * sensor = &sensors[sensorIndex];
+  if ( sensor->type == "gpio" ) {
+    gpioSensors[sensorIndex].read();
+    return sensor;
+
+  } else if ( sensor->type == "analog" ) {
+    AnalogSensor * analogSensor = &analogSensors[sensorIndex];
+
+    int reading = analogRead(analogSensor->pin);
+    int value = 100 * (reading / 4095.0);
+    if ( value != sensor->value ) {
+      sensor->value = value;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
+  } else if ( sensor->type == "ultrasonic" ) {
+    UltrasonicSensor * ultrasonicSensor = &ultrasonicSensors[sensorIndex];
+
+    int reading = sampleUltrasonic(
+                          ultrasonicSensor->triggerPin,
+                          ultrasonicSensor->echoPin,
+                          ultrasonicSensor->samples
+                  );
+    if ( ultrasonicSensor->invert ) reading = 100 - reading;
+    if ( reading != sensor->value ) {
+      sensor->value = reading;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
+  } else if ( sensor->type == "infrared" ) {
+    InfraredSensor * infraredSensor = &infraredSensors[sensorIndex];
+
+    int reading = sampleInfrared(infraredSensor->pin, 3);
+    if ( reading != sensor->value ) {
+      sensor->value = reading;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
+  }
+  return sensor;
+}
+
 void scanSensors() {
   pullI2CGpio();
 
@@ -931,93 +1062,6 @@ void scanSensors() {
   }
 }
 
-Sensor * readSensor(int sensorIndex) {
-  return readSensor(sensorIndex, &sensors[sensorIndex]);
-}
-
-Sensor * readSensor(int sensorIndex, Sensor * sensor) {
-  if ( sensor->type == "gpio" ) {
-    GpioSensor * gpioSensor = &gpioSensors[sensorIndex];
-
-    if ( (millis() - sensor->lastChangedAt) < gpioSensor->bounceFilter ) {
-      return sensor;
-    }
-
-    int state = -1;
-    if ( gpioSensor->i2cPort == -1 ) {
-      state = digitalRead(gpioSensor->pin);
-    } else {
-      state = readI2CGpio(gpioSensor->i2cPort, gpioSensor->pin);
-    }
-
-    if ( state != gpioSensor->lastPolledState ) {
-      if ( (state && !gpioSensor->invert) || (!state && gpioSensor->invert) ) {
-        sensor->value = gpioSensor->onValue;
-        sensor->changed = true;
-      } else {
-        sensor->value = gpioSensor->offValue;
-        sensor->changed = gpioSensor->offValue >= 0;
-      }
-      sensor->lastChangedAt = millis();
-    }
-
-    gpioSensor->lastPolledState = state;
-
-  } else if ( sensor->type == "analog" ) {
-    AnalogSensor * analogSensor = &analogSensors[sensorIndex];
-
-    int reading = analogRead(analogSensor->pin);
-    int value = 100 * (reading / 4095.0);
-    if ( value != sensor->value ) {
-      sensor->value = value;
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
-
-  } else if ( sensor->type == "sonar" ) {
-    SonarSensor * sonarSensor = &sonarSensors[sensorIndex];
-
-    int value = readSonar(sonarSensor->pin, sonarSensor->samples);
-    if ( value != sensor->value ) {
-      sensor->value = value;
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
-
-  } else if ( sensor->type == "ultrasonic" ) {
-    UltrasonicSensor * ultrasonicSensor = &ultrasonicSensors[sensorIndex];
-
-    int reading = sampleUltrasonic(
-                          ultrasonicSensor->triggerPin,
-                          ultrasonicSensor->echoPin,
-                          ultrasonicSensor->samples
-                  );
-    if ( ultrasonicSensor->invert ) reading = 100 - reading;
-    if ( reading != sensor->value ) {
-      sensor->value = reading;
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
-
-  } else if ( sensor->type == "infrared" ) {
-    InfraredSensor * infraredSensor = &infraredSensors[sensorIndex];
-
-    int reading = sampleInfrared(
-                      infraredSensor->pin,
-                      infraredSensor->samples
-                  );
-    if ( reading < infraredSensor->minValue ) {
-      reading = 0;
-    }
-    if ( reading != sensor->value ) {
-      sensor->value = reading;
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
-
-  }
-  return sensor;
-}
 
 int buildControllers(JsonArray controllersJson) {
   int count = 0;
@@ -1138,22 +1182,22 @@ String parseJson(String input) {
         /* Sensor */
 
         String sensorType = inputJson["type"];
+
+        Sensor sensor = Sensor(sensorCount, sensorType);
+
         int value = -1;
 
         if ( sensorType == "gpio" ) {
-          value = buildGpioSensor(sensorCount, inputJson);
-          if ( value < 0 ) {
-            return errorMessage;
+          GpioSensor gpioSensor = GpioSensor(&sensor);
+          value = gpioSensor.build(inputJson);
+         if ( value < 0 ) {
+            return "ERROR! Input " + String(sensorCount) + ": " + gpioSensor.error;
           }
+          setupSensor(&gpioSensor);
+          gpioSensors[sensorCount] = gpioSensor;
 
         } else if ( sensorType == "analog" ) {
           value = buildAnalogSensor(sensorCount, inputJson);
-          if ( value < 0 ) {
-            return errorMessage;
-          }
-
-        } else if ( sensorType == "sonar" ) {
-          value = buildSonarSensor(sensorCount, inputJson);
           if ( value < 0 ) {
             return errorMessage;
           }
@@ -1200,11 +1244,8 @@ String parseJson(String input) {
 
         /* Save Input */
 
-        Sensor sensor = {
-          sensorType, value, false, -1,
-          inputControllerStartIndex, inputControllerCount,
-          inputReceiverStartIndex, inputReceiverCount
-        };
+        sensor.bindControllers(inputReceiverStartIndex, inputReceiverCount);
+        sensor.bindReceivers(inputReceiverStartIndex, inputReceiverCount);
         sensors[sensorCount++] = sensor;
       }
     }
@@ -1262,11 +1303,10 @@ String parseJson(String input) {
 
       /* Save Output */
 
-      Sensor sensor = {
-        "output", -1, false, -1,
-        outputControllerStartIndex, outputControllerCount,
-        outputReceiverStartIndex, outputReceiverCount
-      };
+
+      Sensor sensor = Sensor(sensorCount, "output");
+      sensor.bindControllers(outputControllerStartIndex, outputControllerCount);
+      sensor.bindReceivers(outputReceiverStartIndex, outputReceiverCount);
       sensors[sensorCount++] = sensor;
     }
     if ( verbose ) {
@@ -1795,70 +1835,6 @@ void sendOsc(String host, int port, String address, int argument) {
 }
 
 
-//////////////
-// I2C GPIO //
-//////////////
-
-void startI2CGpio() {
-  Wire.begin(SDA_PIN, SCL_PIN);
-}
-
-void writeI2CGpio(int port, int pin, bool state) {
-  if ( state ) {
-    BIT_SET(i2COut[port], pin);
-  } else {
-    BIT_CLEAR(i2COut[port], pin);
-  }
-}
-
-void flushI2CGpioCache() {
-  sendI2C(I2C_ADDR, I2C_DATA_ADDR[0], i2COut[0]);
-  sendI2C(I2C_ADDR, I2C_DATA_ADDR[1], i2COut[1]);
-}
-
-void setI2CGpioDirection(int port, int pin, bool output) {
-  if ( output ) {
-    BIT_CLEAR(i2CDir[port], pin);
-  } else {
-    BIT_SET(i2CDir[port], pin);
-  }
-  sendI2C(I2C_ADDR, I2C_IODIR_ADDR[port], i2CDir[port]);
-}
-
-void setI2CGpioResistance(int port, int pin, bool up) {
-  if ( up ) {
-    BIT_SET(i2CRes[port], pin);
-  } else {
-    BIT_CLEAR(i2CRes[port], pin);
-  }
-  sendI2C(I2C_ADDR, I2C_RESISTANCE_ADDR[port], i2CRes[port]);
-}
-
-bool readI2CGpio(int port, int pin) {
-  return BIT_CHECK(i2CIn[port], pin);
-}
-
-void pullI2CGpio() {
-  i2CIn[0] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[0]);
-  i2CIn[1] = requestI2C(I2C_ADDR, I2C_DATA_ADDR[1]);
-}
-
-void sendI2C(int deviceAddress, int registerAddress, int data) {
-  Wire.beginTransmission(deviceAddress);
-  Wire.write(registerAddress);
-  Wire.write(data);
-  Wire.endTransmission();
-}
-
-int requestI2C(int deviceAddress, int registerAddress) {
-  Wire.beginTransmission(deviceAddress);
-  Wire.write(registerAddress);
-  Wire.endTransmission();
-  Wire.requestFrom(deviceAddress, 1);
-  return Wire.read();
-}
-
-
 /////////////
 // I2C PWM //
 /////////////
@@ -1970,48 +1946,3 @@ int shortRangeIR(int mV) {
       return distance[index] - ((distance[index] - distance[index + 1]) * frac);
    }
 }
-
-
-///////////
-// SONAR //
-///////////
-
-
-double readMilliVolts(int pin) {
-  int reading = analogRead(pin);
-  return (reading / 4095.0) * 3300;
-}
-
-double sampleMilliVolts(int pin, int samples) {
-  double readings[samples];
-  double lastReading = 0;
-  for ( int i = 0; i<samples; i++) {
-    double reading = readMilliVolts(pin);
-    readings[i] = reading;
-    lastReading = reading;
-  }
-  qsort(readings, samples, sizeof(int), intCompare);
-  return readings[samples/2];
-}
-
-
-const int MV_PER_MM = 9.8 / 25.4;
-
-int readSonar(int pin) {
-  return readSonar(pin, 1);
-}
-
-int readSonar(int pin, int samples) {
-  double milliVolts;
-  if ( samples > 1 ) {
-    milliVolts = sampleMilliVolts(pin, samples);
-  } else {
-    milliVolts = readMilliVolts(pin);
-  }
-  int distance = milliVolts * MV_PER_MM;
-  Serial.print(distance);
-  Serial.println("mm");
-  return distance;
-}
-
-

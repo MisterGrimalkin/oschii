@@ -26,7 +26,6 @@ module Oschii
 
     def start_listening
       server.add_method RESPONSE_ADDR do |message|
-        # puts "#{message.ip_address} says '#{message.to_a.join(',')}'"
         name = message.to_a.first.split(':').last.strip
         if name == oschii_data[message.ip_address]
           puts "\n #{name} -- is back\n"

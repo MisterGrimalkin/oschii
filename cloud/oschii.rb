@@ -16,6 +16,10 @@ module Oschii
   def cloud
     @cloud ||= Cloud.new.populate
   end
+
+  def method_missing?(name)
+    puts "Looking for #{name}"
+  end
 end
 
 include Oschii

@@ -1,4 +1,36 @@
 {
+  "inputs": [
+    {
+      "type": "gpio",
+      "i2cPort": 1,
+      "pin": 0,
+      "resistor": "up",
+      "onValue": 0,
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 0,
+          "invert": true
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "i2cPort": 1,
+      "pin": 1,
+      "resistor": "up",
+      "onValue": 0,
+      "controllers": [
+        {
+          "type": "pwm",
+          "i2cPort": 0,
+          "pin": 1,
+          "invert": true
+        }
+      ]
+    }
+  ],
   "outputs": [
     {
       "oscAddress": "/leds",
@@ -6,20 +38,20 @@
         {
           "type": "gpio",
           "i2cPort": 0,
-          "pin": 6,
+          "pin": 0,
           "valueThreshold": 80
         },
         {
           "type": "pwm",
           "i2cPort": 0,
-          "pin": 10,
+          "pin": 0,
           "valueTransform": "percentage",
           "invert": true
         },
         {
           "type": "pwm",
           "i2cPort": 0,
-          "pin": 6,
+          "pin": 1,
           "valueTransform": "percentage",
           "invert": true
         }
@@ -31,7 +63,7 @@
         {
           "type": "gpio",
           "i2cPort": 0,
-          "pin": 6,
+          "pin": 0,
           "valueThreshold": 75
         }
       ]
@@ -42,7 +74,7 @@
         {
           "type": "pwm",
           "i2cPort": 0,
-          "pin": 10,
+          "pin": 0,
           "valueTransform": "percentage",
           "invert": true
         }
@@ -54,7 +86,7 @@
         {
           "type": "pwm",
           "i2cPort": 0,
-          "pin": 6,
+          "pin": 1,
           "valueTransform": "percentage",
           "invert": true
         }
