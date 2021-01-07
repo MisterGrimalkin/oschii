@@ -60,10 +60,22 @@ module Oschii
       end
     end
 
-    def capture_osc(address, &block)
+    attr_reader :monitor
+
+    def monitor_osc(address_list, max: 100)
+      @monitor ||= OscMonitor.new self
+
+      address_list.each do |address|
+        monitor.add address, max: max
+      end
+
+      monitor.run
+    end
+
+    def capture_osc(address, simple: true, &block)
       actual_address = "/#{address}" unless address[0] == '/'
       server.add_method actual_address do |message|
-        value = message.to_a.first&.to_i
+        value = simple ? message.to_a.first&.to_i : JSON.parse(message.to_a.first)
         if block_given?
           yield value
         else

@@ -1,4 +1,5 @@
 {
+  "verbose": true,
   "devices": [
     {
       "name": "SnootBox",
@@ -12,19 +13,8 @@
   "inputs": [
     {
       "type": "sonar",
-      "pin": 34,
-      "samples": 20,
-      "receivers": [
-        {
-          "device": "SnootBox",
-          "oscAddress": "/north"
-        }
-      ]
-    },
-    {
-      "type": "sonar",
       "pin": 39,
-      "samples": 20,
+      "samples": 30,
       "receivers": [
         {
           "device": "SnootBox",
@@ -33,17 +23,6 @@
         {
           "device": "Ben",
           "oscAddress": "/oschii/ranger"
-        }
-      ]
-    },
-    {
-      "type": "sonar",
-      "pin": 35,
-      "samples": 20,
-      "receivers": [
-        {
-          "device": "SnootBox",
-          "oscAddress": "/south"
         }
       ]
     }

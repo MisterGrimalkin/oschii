@@ -1,5 +1,6 @@
 require_relative 'device'
 require_relative 'cloud'
+require_relative 'osc_monitor'
 
 module Oschii
   LOGO = '

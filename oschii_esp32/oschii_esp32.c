@@ -95,6 +95,7 @@ int deviceCount = 0;
 
 struct Sensor {
   String type;
+  bool simple;
   int value;
   bool changed;
   int lastChangedAt;
@@ -189,8 +190,17 @@ struct InfraredSensor {
 InfraredSensor infraredSensors[INPUTS_LIMIT];
 
 struct SonarSensor {
-  int pin;
-  int samples;
+  int pin = -1;
+  int samples = 1;
+  String error = "";
+  SonarSensor() {}
+  SonarSensor(JsonObject inputJson) {
+    if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
+    if ( inputJson.containsKey("samples") ) samples = inputJson["samples"];
+    if ( pin < 0 ) {
+      error = "No pin specified";
+    }
+  }
   void print() {
     Serial.println("   + Input:Sonar");
     Serial.print  ("     [pin:");
@@ -202,14 +212,14 @@ struct SonarSensor {
 };
 SonarSensor sonarSensors[INPUTS_LIMIT];
 
-//struct SonarRingSensor {
-//  int pins[];
-//  int directions[];
-//  int distances[];
-//
-//  SonarRingSensor(JsonObject inputJson) {
-//  }
-//};
+struct SonarRingSensor {
+  int pins[];
+  int directions[];
+  int distances[];
+
+  SonarRingSensor(JsonObject inputJson) {
+  }
+};
 
 struct Receiver {
   String ip;
@@ -357,6 +367,8 @@ void setup() {
   startI2CPwm();
 
   const String config = readFile("/config.json");
+//  const String config = "{}";
+
   if ( config != "" ) {
     parseJson(config);
   }
@@ -470,7 +482,7 @@ int buildGpioSensor(int index, JsonObject inputJson) {
   };
   gpioSensors[index] = gpioSensor;
 
-  if ( verbose ) gpioSensor.print();
+  gpioSensor.print();
 
   return value;
 }
@@ -505,7 +517,7 @@ int buildUltrasonicSensor(int index, JsonObject inputJson) {
   };
   ultrasonicSensors[index] = ultrasonicSensor;
 
-  if ( verbose ) ultrasonicSensor.print();
+  ultrasonicSensor.print();
 
   return invert ? 100 : 0;
 }
@@ -529,7 +541,7 @@ int buildAnalogSensor(int index, JsonObject inputJson) {
   };
   analogSensors[index] = analogSensor;
 
-  if ( verbose ) analogSensor.print();
+  analogSensor.print();
 
   return 0;
 }
@@ -537,25 +549,17 @@ int buildAnalogSensor(int index, JsonObject inputJson) {
 int buildSonarSensor(int index, JsonObject inputJson) {
   errorMessage = "";
 
-  int pin = -1;
-  int samples = 1;
+  SonarSensor sonarSensor = SonarSensor(inputJson);
+  sonarSensors[index] = sonarSensor;
 
-  if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
-  if ( inputJson.containsKey("samples") ) samples = inputJson["samples"];
-
-  if ( pin < 0 ) {
-    errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
+  if ( sonarSensor.error != "" ) {
+    errorMessage = "ERROR! Input " + String(index) + ": " + sonarSensor.error;
     return -1;
   }
 
-  pinMode(pin, INPUT);
+  pinMode(sonarSensor.pin, INPUT);
 
-  SonarSensor sonarSensor = {
-    pin, samples
-  };
-  sonarSensors[index] = sonarSensor;
-
-  if ( verbose ) sonarSensor.print();
+  sonarSensor.print();
 
   return 0;
 }
@@ -581,7 +585,7 @@ int buildInfraredSensor(int index, JsonObject inputJson) {
   };
   infraredSensors[index] = infraredSensor;
 
-  if ( verbose ) infraredSensor.print();
+  infraredSensor.print();
 
   return 0;
 }
@@ -641,7 +645,7 @@ int buildGpioController(int index, JsonObject controllerJson) {
   };
   gpioControllers[index] = gpioController;
 
-  if ( verbose ) gpioController.print();
+  gpioController.print();
 
   return 0;
 }
@@ -689,7 +693,7 @@ int buildPwmController(int index, JsonObject controllerJson) {
   };
   pwmControllers[index] = pwmController;
 
-  if ( verbose ) pwmController.print();
+  pwmController.print();
 
   return 0;
 
@@ -724,7 +728,7 @@ bool buildReceiver(int index, JsonObject receiverJson) {
   };
   receivers[index] = receiver;
 
-  if ( verbose ) receiver.print();
+  receiver.print();
 
   return true;
 }
@@ -817,10 +821,12 @@ void scanSensors() {
     Sensor * sensor = readSensor(i);
     if ( sensor->changed ) {
       int value = sensor->value;
-      Serial.print("[#");
-      Serial.print(i);
-      Serial.print("] ---> ");
-      Serial.println(value);
+      if ( verbose ) {
+        Serial.print("[#");
+        Serial.print(i);
+        Serial.print("] ---> ");
+        Serial.println(value);
+      }
 
       int c;
       for ( c = sensor->controllerStartIndex; c < (sensor->controllerStartIndex + sensor->controllerCount); c++) {
@@ -903,12 +909,22 @@ void scanSensors() {
       for ( r = sensor->receiverStartIndex; r < (sensor->receiverStartIndex + sensor->receiverCount); r++ ) {
         Receiver * receiver = &receivers[r];
         if ( receiver->oscPort > 0 ) {
-          sendOsc(
-            receiver->ip,
-            receiver->oscPort,
-            receiver->oscAddress,
-            value
-          );
+          if ( sensor->simple ) {
+            sendOsc(
+              receiver->ip,
+              receiver->oscPort,
+              receiver->oscAddress,
+              value
+            );
+          } else {
+            String payload = "{\"distance\":"+String(value)+",\"direction\": 0,\"width\": 45}";
+            sendOsc(
+              receiver->ip,
+              receiver->oscPort,
+              receiver->oscAddress,
+              payload
+            );
+          }
         } else {
           String url = "http://" + receiver->ip + receiver->httpPath;
           sendHttp(
@@ -1061,9 +1077,7 @@ int buildReceivers(JsonArray receiversJson) {
 }
 
 String parseJson(String input) {
-  if ( verbose ) {
-    Serial.println("\n~~ Oschii is receiving new configuration ~~");
-  }
+  Serial.println("\n~~ Oschii is receiving new configuration ~~");
   oschiiGO = false;
 
   deviceCount = 0;
@@ -1073,10 +1087,8 @@ String parseJson(String input) {
   DeserializationError error = deserializeJson(doc, json);
   if (error) {
     String reply = "ERROR! Parsing JSON: " + String(error.c_str());
-    if ( verbose ) {
-      Serial.println(reply);
-      Serial.println("\n~~ Oschii could not comply :( ~~\n");
-    }
+    Serial.println(reply);
+    Serial.println("\n~~ Oschii could not comply :( ~~\n");
     oschiiGO = true;
 
     return reply;
@@ -1084,10 +1096,14 @@ String parseJson(String input) {
 
   int i;
 
+  if ( doc.containsKey("verbose") ) {
+    verbose = doc["verbose"];
+  }
+
   ////////// DEVICES //////////
 
   if ( doc.containsKey("devices") ) {
-    if ( verbose ) Serial.println("\n-- Parsing Devices");
+    Serial.println("\n-- Parsing Devices");
 
     JsonArray devicesJson = doc["devices"];
     for ( i = 0; i < DEVICES_LIMIT; i++ ) {
@@ -1096,12 +1112,10 @@ String parseJson(String input) {
         if ( deviceJson.containsKey("ip") ) {
           String name = deviceJson["name"];
           String ip = deviceJson["ip"];
-          if ( verbose ) {
-            Serial.print("   Device ");
-            Serial.print(name);
-            Serial.print(" at ");
-            Serial.println(ip);
-          }
+          Serial.print("   Device ");
+          Serial.print(name);
+          Serial.print(" at ");
+          Serial.println(ip);
           devices[deviceCount++] = { deviceJson["name"], deviceJson["ip"] };
         } else {
           String name = deviceJson["name"];
@@ -1109,18 +1123,16 @@ String parseJson(String input) {
         }
       }
     }
-    if ( verbose ) {
-      Serial.print("-- FOUND: ");
-      Serial.println(deviceCount);
-    }
+    Serial.print("-- FOUND: ");
+    Serial.println(deviceCount);
   } else {
-    if ( verbose ) Serial.println("\n-- No Devices");
+    Serial.println("\n-- No Devices");
   }
 
   ///////// INPUTS //////////
 
   if (doc.containsKey("inputs")) {
-    if ( verbose ) Serial.println("\n-- Parsing INPUTS");
+    Serial.println("\n-- Parsing INPUTS");
 
     JsonArray inputsJson = doc["inputs"];
     for ( i = 0; i < INPUTS_LIMIT; i++ ) {
@@ -1132,6 +1144,7 @@ String parseJson(String input) {
 
         String sensorType = inputJson["type"];
         int value = -1;
+        bool simple = true;
 
         if ( sensorType == "gpio" ) {
           value = buildGpioSensor(sensorCount, inputJson);
@@ -1147,6 +1160,7 @@ String parseJson(String input) {
 
         } else if ( sensorType == "sonar" ) {
           value = buildSonarSensor(sensorCount, inputJson);
+//          simple = false;
           if ( value < 0 ) {
             return errorMessage;
           }
@@ -1194,19 +1208,17 @@ String parseJson(String input) {
         /* Save Input */
 
         Sensor sensor = {
-          sensorType, value, false, -1,
+          sensorType, simple, value, false, -1,
           inputControllerStartIndex, inputControllerCount,
           inputReceiverStartIndex, inputReceiverCount
         };
         sensors[sensorCount++] = sensor;
       }
     }
-    if ( verbose ) {
-      Serial.print("-- FOUND: ");
-      Serial.println(sensorCount);
-    }
+    Serial.print("-- FOUND: ");
+    Serial.println(sensorCount);
   } else {
-    if ( verbose ) Serial.println("\n-- No Inputs");
+    Serial.println("\n-- No Inputs");
   }
 
   int inputCount = sensorCount;
@@ -1214,7 +1226,7 @@ String parseJson(String input) {
   ///////// OUTPUTS //////////
 
   if ( doc.containsKey("outputs") ) {
-    if ( verbose ) Serial.println("\n-- Parsing OUTPUTS");
+    Serial.println("\n-- Parsing OUTPUTS");
 
     JsonArray outputsJson = doc["outputs"];
 
@@ -1256,29 +1268,23 @@ String parseJson(String input) {
       /* Save Output */
 
       Sensor sensor = {
-        "output", -1, false, -1,
+        "output", true, -1, false, -1,
         outputControllerStartIndex, outputControllerCount,
         outputReceiverStartIndex, outputReceiverCount
       };
       sensors[sensorCount++] = sensor;
     }
-    if ( verbose ) {
-      Serial.print("-- FOUND: ");
-      Serial.println(sensorCount - inputCount);
-    }
+    Serial.print("-- FOUND: ");
+    Serial.println(sensorCount - inputCount);
   } else {
-    if ( verbose ) Serial.println("\n-- No Outputs");
+    Serial.println("\n-- No Outputs");
   }
 
   if (!writeFile("/config.json", input)) {
-    if ( verbose ) {
-      Serial.println("\n~~ Oschii could not write config :( ~~\n");
-    }
+    Serial.println("\n~~ Oschii could not write config :( ~~\n");
   }
 
-  if ( verbose ) {
-    Serial.println("\n~~ Oschii is ready :D ~~\n");
-  }
+  Serial.println("\n~~ Oschii is ready :D ~~\n");
   oschiiGO = true;
 
   return CONFIG_OK;
@@ -1286,9 +1292,7 @@ String parseJson(String input) {
 
 
 void createHttpTrigger(JsonObject outputJson) {
-  if ( verbose ) {
-    Serial.println("   + Output:HTTP");
-  }
+  Serial.println("   + Output:HTTP");
   const char * path = outputJson["httpPath"].as<char*>();
 
   WebRequestMethod method;
@@ -1307,29 +1311,23 @@ void createHttpTrigger(JsonObject outputJson) {
   server.on(path, method, [sensorNo](AsyncWebServerRequest * request) {
     String valueStr = request->getParam("body", true)->value();
     int value = valueStr.toInt();
-    if ( verbose ) {
-      Serial.print(value);
-      Serial.println(" <--- HTTP");
-    }
+    Serial.print(value);
+    Serial.println(" <--- HTTP");
     Sensor * sensor= &sensors[sensorNo];
     sensor->value = value;
     sensor->changed = true;
     request->send(200, "text/plain", "OK");
   }, NULL, [](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {});
 
-  if ( verbose ) {
-    Serial.print("     [method:");
-    Serial.print(methodStr);
-    Serial.print(" path:");
-    Serial.print(path);
-    Serial.println("]");
-  }
+  Serial.print("     [method:");
+  Serial.print(methodStr);
+  Serial.print(" path:");
+  Serial.print(path);
+  Serial.println("]");
 }
 
 void createOscTrigger(JsonObject outputJson) {
-  if ( verbose ) {
-    Serial.println("   + Output:OSC");
-  }
+  Serial.println("   + Output:OSC");
   String address = outputJson["oscAddress"];
 
   int port = 3333;
@@ -1379,13 +1377,11 @@ void createOscTrigger(JsonObject outputJson) {
     }
   );
 
-  if ( verbose ) {
-    Serial.print("     [port:");
-    Serial.print(port);
-    Serial.print(" address:");
-    Serial.print(address);
-    Serial.println("]");
-  }
+  Serial.print("     [port:");
+  Serial.print(port);
+  Serial.print(" address:");
+  Serial.print(address);
+  Serial.println("]");
 }
 
 
@@ -1754,7 +1750,7 @@ void sendHttp(String method, String url, String payload) {
     http.end();
   }
   else {
-    Serial.println("Cannot Send HTTP - Network Disconnected");
+    if ( verbose ) Serial.println("Cannot Send HTTP - Network Disconnected");
   }
 }
 
@@ -1780,6 +1776,26 @@ void sendOsc(String host, int port, String address, int argument) {
       Serial.println(" } ");
     }
     OscWiFi.send(host, port, address, argument);
+  } else {
+    if ( verbose ) {
+      Serial.println("Disconnected! Cannot send OSC");
+    }
+  }
+}
+
+void sendOsc(String host, int port, String address, String payload) {
+  if ( connected ) {
+    if ( verbose ) {
+      Serial.print("OSC ===> ");
+      Serial.print(host);
+      Serial.print(":");
+      Serial.print(port);
+      Serial.print(address);
+      Serial.print(" { ");
+      Serial.print(payload);
+      Serial.println(" } ");
+    }
+    OscWiFi.send(host, port, address, payload);
   } else {
     if ( verbose ) {
       Serial.println("Disconnected! Cannot send OSC");
@@ -1971,11 +1987,18 @@ int shortRangeIR(int mV) {
 
 
 double readMilliVolts(int pin) {
+  delay(5);
   int reading = analogRead(pin);
-  return (reading / 4095.0) * 3300;
+  double value = (reading / 4095.0) * 3300;
+  Serial.print("  ");
+  Serial.print(value);
+  Serial.println("mV");
+  return value;
 }
 
 double sampleMilliVolts(int pin, int samples) {
+  Serial.print("ADC Samples: ");
+  Serial.println(samples);
   double readings[samples];
   double lastReading = 0;
   for ( int i = 0; i<samples; i++) {
@@ -1984,7 +2007,11 @@ double sampleMilliVolts(int pin, int samples) {
     lastReading = reading;
   }
   qsort(readings, samples, sizeof(int), intCompare);
-  return readings[samples/2];
+  double median = readings[samples/2];
+  Serial.print(median);
+  Serial.println("mV");
+  Serial.println();
+  return median;
 }
 
 
