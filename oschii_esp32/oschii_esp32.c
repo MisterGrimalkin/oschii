@@ -115,11 +115,41 @@ struct GpioSensor {
   bool invert;
   int bounceFilter;
   bool lastPolledState;
+  void print() {
+    Serial.println("   + Input:GPIO");
+    Serial.print  ("     [pin:");
+    if ( i2cPort >= 0 ) {
+      Serial.print(i2cPort);
+      Serial.print("/");
+    }
+    Serial.print(pin);
+    Serial.print(" resistor:");
+    Serial.print(resistor);
+    Serial.print(" on:");
+    Serial.print(onValue);
+    Serial.print(" off:");
+    if ( offValue == -1 ) {
+      Serial.print("(none)");
+    } else {
+      Serial.print(offValue);
+    }
+    Serial.print(" invert:");
+    Serial.print(invert);
+    Serial.print(" bounce:");
+    Serial.print(bounceFilter);
+    Serial.println("]");
+  }
 };
 GpioSensor gpioSensors[INPUTS_LIMIT];
 
 struct AnalogSensor {
   int pin;
+  void print() {
+    Serial.println("   + Input:Analog");
+    Serial.print  ("     [pin:");
+    Serial.print(pin);
+    Serial.println("]");
+  }
 };
 AnalogSensor analogSensors[INPUTS_LIMIT];
 
@@ -128,6 +158,18 @@ struct UltrasonicSensor {
   int echoPin;
   int samples;
   bool invert;
+  void print() {
+    Serial.println("   + Input:Ultrasonic");
+    Serial.print  ("     [trig:");
+    Serial.print(triggerPin);
+    Serial.print(" echo:");
+    Serial.print(echoPin);
+    Serial.print(" samples:");
+    Serial.print(samples);
+    Serial.print(" invert:");
+    Serial.print(invert);
+    Serial.println("]");
+  }
 };
 UltrasonicSensor ultrasonicSensors[INPUTS_LIMIT];
 
@@ -135,13 +177,28 @@ struct InfraredSensor {
   int pin;
   int samples;
   int minValue;
+  void print() {
+    Serial.println("   + Input:Infrared");
+    Serial.print  ("     [pin:");
+    Serial.print(pin);
+    Serial.print(" samples:");
+    Serial.print(samples);
+    Serial.println("]");
+  }
 };
 InfraredSensor infraredSensors[INPUTS_LIMIT];
-
 
 struct SonarSensor {
   int pin;
   int samples;
+  void print() {
+    Serial.println("   + Input:Sonar");
+    Serial.print  ("     [pin:");
+    Serial.print(pin);
+    Serial.print(" samples:");
+    Serial.print(samples);
+    Serial.println("]");
+  }
 };
 SonarSensor sonarSensors[INPUTS_LIMIT];
 
@@ -160,6 +217,28 @@ struct Receiver {
   String oscAddress;
   String httpMethod;
   String httpPath;
+  void print() {
+    Serial.print("     + Receiver:");
+    if ( oscPort > 0 ) {
+      Serial.println("OSC");
+      Serial.print("       [ip:");
+      Serial.print(ip);
+      Serial.print(" port:");
+      Serial.print(oscPort);
+      Serial.print(" address:");
+      Serial.print(oscAddress);
+      Serial.println("]");
+    } else {
+      Serial.println("HTTP");
+      Serial.print("       [ip:");
+      Serial.print(ip);
+      Serial.print(" method:");
+      Serial.print(httpMethod);
+      Serial.print(" path:");
+      Serial.print(httpPath);
+      Serial.println("]");
+    }
+  }
 };
 Receiver receivers[RECEIVERS_LIMIT];
 int receiverCount = 0;
@@ -180,6 +259,28 @@ struct GpioController {
   bool toggle;
   int pulseLength;
   bool currentState;
+  void print() {
+    Serial.println("     + Controller:GPIO");
+    Serial.print  ("       [pin:");
+    if ( i2cPort >= 0 ) {
+      Serial.print(i2cPort);
+      Serial.print("/");
+    }
+    Serial.print(pin);
+    Serial.print(" on:");
+    Serial.print(onState);
+    Serial.print(" threshold:");
+    Serial.print(valueThreshold);
+    Serial.print(" invert:");
+    Serial.print(invert);
+    Serial.print(" follow:");
+    Serial.print(follow);
+    Serial.print(" toggle:");
+    Serial.print(toggle);
+    Serial.print(" pulse:");
+    Serial.print(pulseLength);
+    Serial.println("]");
+  }
 };
 GpioController gpioControllers[CONTROLLERS_LIMIT];
 
@@ -189,6 +290,20 @@ struct PwmController {
   int channel;
   String valueTransform;
   bool invert;
+  void print() {
+    Serial.println("     + Controller:PWM");
+    Serial.print  ("       [pin:");
+    if ( i2cPort >= 0 ) {
+      Serial.print(i2cPort);
+      Serial.print("/");
+    }
+    Serial.print(pin);
+    Serial.print(" transform:");
+    Serial.print(valueTransform);
+    Serial.print(" invert:");
+    Serial.print(invert);
+    Serial.println("]");
+  }
 };
 PwmController pwmControllers[CONTROLLERS_LIMIT];
 
@@ -355,7 +470,7 @@ int buildGpioSensor(int index, JsonObject inputJson) {
   };
   gpioSensors[index] = gpioSensor;
 
-  if ( verbose ) printGpioSensor(gpioSensor);
+  if ( verbose ) gpioSensor.print();
 
   return value;
 }
@@ -390,7 +505,7 @@ int buildUltrasonicSensor(int index, JsonObject inputJson) {
   };
   ultrasonicSensors[index] = ultrasonicSensor;
 
-  if ( verbose ) printUltrasonicSensor(ultrasonicSensor);
+  if ( verbose ) ultrasonicSensor.print();
 
   return invert ? 100 : 0;
 }
@@ -414,7 +529,7 @@ int buildAnalogSensor(int index, JsonObject inputJson) {
   };
   analogSensors[index] = analogSensor;
 
-  if ( verbose ) printAnalogSensor(analogSensor);
+  if ( verbose ) analogSensor.print();
 
   return 0;
 }
@@ -440,7 +555,7 @@ int buildSonarSensor(int index, JsonObject inputJson) {
   };
   sonarSensors[index] = sonarSensor;
 
-  if ( verbose ) printSonarSensor(sonarSensor);
+  if ( verbose ) sonarSensor.print();
 
   return 0;
 }
@@ -466,7 +581,7 @@ int buildInfraredSensor(int index, JsonObject inputJson) {
   };
   infraredSensors[index] = infraredSensor;
 
-  if ( verbose ) printInfraredSensor(infraredSensor);
+  if ( verbose ) infraredSensor.print();
 
   return 0;
 }
@@ -526,7 +641,7 @@ int buildGpioController(int index, JsonObject controllerJson) {
   };
   gpioControllers[index] = gpioController;
 
-  if ( verbose ) printGpioController(gpioController);
+  if ( verbose ) gpioController.print();
 
   return 0;
 }
@@ -574,7 +689,7 @@ int buildPwmController(int index, JsonObject controllerJson) {
   };
   pwmControllers[index] = pwmController;
 
-  if ( verbose ) printPwmController(pwmController);
+  if ( verbose ) pwmController.print();
 
   return 0;
 
@@ -609,131 +724,9 @@ bool buildReceiver(int index, JsonObject receiverJson) {
   };
   receivers[index] = receiver;
 
-  if ( verbose ) printReceiver(receiver);
+  if ( verbose ) receiver.print();
 
   return true;
-}
-
-void printGpioSensor(GpioSensor sensor) {
-  Serial.println("   + Input:GPIO");
-  Serial.print  ("     [pin:");
-  if ( sensor.i2cPort >= 0 ) {
-    Serial.print(sensor.i2cPort);
-    Serial.print("/");
-  }
-  Serial.print(sensor.pin);
-  Serial.print(" resistor:");
-  Serial.print(sensor.resistor);
-  Serial.print(" on:");
-  Serial.print(sensor.onValue);
-  Serial.print(" off:");
-  if ( sensor.offValue == -1 ) {
-    Serial.print("(none)");
-  } else {
-    Serial.print(sensor.offValue);
-  }
-  Serial.print(" invert:");
-  Serial.print(sensor.invert);
-  Serial.print(" bounce:");
-  Serial.print(sensor.bounceFilter);
-  Serial.println("]");
-}
-
-void printUltrasonicSensor(UltrasonicSensor sensor) {
-  Serial.println("   + Input:Ultrasonic");
-  Serial.print  ("     [trig:");
-  Serial.print(sensor.triggerPin);
-  Serial.print(" echo:");
-  Serial.print(sensor.echoPin);
-  Serial.print(" samples:");
-  Serial.print(sensor.samples);
-  Serial.print(" invert:");
-  Serial.print(sensor.invert);
-  Serial.println("]");
-}
-
-void printAnalogSensor(AnalogSensor sensor) {
-  Serial.println("   + Input:Analog");
-  Serial.print  ("     [pin:");
-  Serial.print(sensor.pin);
-  Serial.println("]");
-}
-
-void printSonarSensor(SonarSensor sensor) {
-  Serial.println("   + Input:Sonar");
-  Serial.print  ("     [pin:");
-  Serial.print(sensor.pin);
-  Serial.println("]");
-}
-
-void printInfraredSensor(InfraredSensor sensor) {
-  Serial.println("   + Input:Infrared");
-  Serial.print  ("     [pin:");
-  Serial.print(sensor.pin);
-  Serial.print(" samples:");
-  Serial.print(sensor.samples);
-  Serial.println("]");
-}
-
-void printGpioController(GpioController controller) {
-  Serial.println("     + Controller:GPIO");
-  Serial.print  ("       [pin:");
-  if ( controller.i2cPort >= 0 ) {
-    Serial.print(controller.i2cPort);
-    Serial.print("/");
-  }
-  Serial.print(controller.pin);
-  Serial.print(" on:");
-  Serial.print(controller.onState);
-  Serial.print(" threshold:");
-  Serial.print(controller.valueThreshold);
-  Serial.print(" invert:");
-  Serial.print(controller.invert);
-  Serial.print(" follow:");
-  Serial.print(controller.follow);
-  Serial.print(" toggle:");
-  Serial.print(controller.toggle);
-  Serial.print(" pulse:");
-  Serial.print(controller.pulseLength);
-  Serial.println("]");
-}
-
-void printPwmController(PwmController controller) {
-  Serial.println("     + Controller:PWM");
-  Serial.print  ("       [pin:");
-  if ( controller.i2cPort >= 0 ) {
-    Serial.print(controller.i2cPort);
-    Serial.print("/");
-  }
-  Serial.print(controller.pin);
-  Serial.print(" transform:");
-  Serial.print(controller.valueTransform);
-  Serial.print(" invert:");
-  Serial.print(controller.invert);
-  Serial.println("]");
-}
-
-void printReceiver(Receiver receiver) {
-  Serial.print("     + Receiver:");
-  if ( receiver.oscPort > 0 ) {
-    Serial.println("OSC");
-    Serial.print("       [ip:");
-    Serial.print(receiver.ip);
-    Serial.print(" port:");
-    Serial.print(receiver.oscPort);
-    Serial.print(" address:");
-    Serial.print(receiver.oscAddress);
-    Serial.println("]");
-  } else {
-    Serial.println("HTTP");
-    Serial.print("       [ip:");
-    Serial.print(receiver.ip);
-    Serial.print(" method:");
-    Serial.print(receiver.httpMethod);
-    Serial.print(" path:");
-    Serial.print(receiver.httpPath);
-    Serial.println("]");
-  }
 }
 
 String getDeviceIp(String name) {
@@ -1995,7 +1988,7 @@ double sampleMilliVolts(int pin, int samples) {
 }
 
 
-const int MV_PER_MM = 9.8 / 25.4;
+const double MV_PER_MM = 9.8 / 25.4;
 
 int readSonar(int pin) {
   return readSonar(pin, 1);
@@ -2009,8 +2002,6 @@ int readSonar(int pin, int samples) {
     milliVolts = readMilliVolts(pin);
   }
   int distance = milliVolts * MV_PER_MM;
-  Serial.print(distance);
-  Serial.println("mm");
   return distance;
 }
 

@@ -82,7 +82,7 @@ module Oschii
 
     def populate
       @oschii_data = {}
-      puts 'Sending pings...'
+      puts '~~Pinging network....'
       base_ip = local_ip_address.split('.')[0..2].join('.')
       (1..254).each do |i|
         target_ip = "#{base_ip}.#{i}"
@@ -90,9 +90,7 @@ module Oschii
         client.send(OSC::Message.new(PING_ADDR, 1))
         sleep 0.001
       end
-      puts 'DONE'
-
-      puts 'Waiting for replies...'
+      puts '~~Listening....'
       start_waiting = Time.now
       while Time.now - start_waiting < 3
         sleep 0.2
@@ -114,11 +112,11 @@ module Oschii
 
     def get(name)
       oschii_data.each do |ip, device_name|
-        if device_name == name.to_s
+        if device_name.downcase == name.to_s.downcase
           return Oschii::Device.new(ip: ip)
         end
       end
-      puts "Cannot find Oschii named #{name}"
+      # puts "Cannot find Oschii named #{name}"
       nil
     end
 

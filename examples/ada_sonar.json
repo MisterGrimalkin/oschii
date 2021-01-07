@@ -2,8 +2,8 @@
   "inputs": [
     {
       "type": "sonar",
-      "pin": 36,
-      "samples": 1
+      "pin": 39,
+      "samples": 100
    }
   ]
 }
