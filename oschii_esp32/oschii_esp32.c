@@ -734,6 +734,9 @@ bool buildReceiver(int index, JsonObject receiverJson) {
 }
 
 String getDeviceIp(String name) {
+  if ( name == "_CLOUD_" ) {
+    return readFromStorage("CloudIP");
+  }
   int i;
   for ( i = 0; i < deviceCount; i++ ) {
     Device device = devices[i];
@@ -1987,33 +1990,32 @@ int shortRangeIR(int mV) {
 
 
 double readMilliVolts(int pin) {
-  delay(5);
   int reading = analogRead(pin);
   double value = (reading / 4095.0) * 3300;
-  Serial.print("  ");
-  Serial.print(value);
-  Serial.println("mV");
+//  Serial.print("  ");
+//  Serial.print(value);
+//  Serial.println("mV");
   return value;
 }
 
 double sampleMilliVolts(int pin, int samples) {
-  Serial.print("ADC Samples: ");
-  Serial.println(samples);
+//  Serial.print("ADC Samples: ");
+//  Serial.println(samples);
   double readings[samples];
   double lastReading = 0;
   for ( int i = 0; i<samples; i++) {
+//    delay(20);
     double reading = readMilliVolts(pin);
     readings[i] = reading;
     lastReading = reading;
   }
   qsort(readings, samples, sizeof(int), intCompare);
   double median = readings[samples/2];
-  Serial.print(median);
-  Serial.println("mV");
-  Serial.println();
+//  Serial.print(median);
+//  Serial.println("mV");
+//  Serial.println();
   return median;
 }
-
 
 const double MV_PER_MM = 9.8 / 25.4;
 

@@ -1,28 +1,14 @@
 {
   "verbose": true,
-  "devices": [
-    {
-      "name": "SnootBox",
-      "ip": "192.168.1.80"
-    },
-    {
-      "name": "Ben",
-      "ip": "192.168.1.45"
-    }
-  ],
   "inputs": [
     {
       "type": "sonar",
       "pin": 39,
-      "samples": 30,
+      "samples": 1,
       "receivers": [
         {
-          "device": "SnootBox",
-          "oscAddress": "/east"
-        },
-        {
-          "device": "Ben",
-          "oscAddress": "/oschii/ranger"
+          "device": "_CLOUD_",
+          "oscAddress": "/sonar"
         }
       ]
     }

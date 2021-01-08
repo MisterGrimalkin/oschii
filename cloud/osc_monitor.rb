@@ -28,7 +28,7 @@ module Oschii
       puts
       while true
         render
-        sleep 0.1
+        sleep 0.01
       end
     end
 

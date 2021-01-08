@@ -28,9 +28,9 @@ module Oschii
       server.add_method RESPONSE_ADDR do |message|
         name = message.to_a.first.split(':').last.strip
         if name == oschii_data[message.ip_address]
-          puts "\n #{name} -- is back\n"
+          puts "\n~~#{name} - is back\n"
         else
-          puts "\n #{name} -- is online\n"
+          puts "\n~~#{name} - is online\n"
           oschii_data[message.ip_address] = name
         end
       end
@@ -114,6 +114,9 @@ module Oschii
 
     def print_oschiis
       puts
+
+      return if oschii_data.empty?
+
       puts 'IP Address       Name'
       sorted = oschii_data.to_a.sort_by { |_ip, name| name }.to_h
       sorted.each do |ip, name|

@@ -18,6 +18,14 @@ module Oschii
     @cloud ||= Cloud.new.populate
   end
 
+  def populate
+    @cloud.nil? ? cloud : cloud.populate
+  end
+
+  def serial
+    @serial ||= Device.find_serial
+  end
+
   def method_missing(m, *args, &block)
     return if @cloud.nil?
 

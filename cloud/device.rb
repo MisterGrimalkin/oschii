@@ -21,6 +21,22 @@ module Oschii
 
     attr_reader :name, :ip, :osc_clients
 
+    def self.find_serial(port = nil)
+      return Device.new(serial: port) if port
+
+      9.times do |i|
+        port = "/dev/ttyUSB#{i}"
+        print "~~#{port}..."
+        begin
+          device = Device.new(serial: "/dev/ttyUSB#{i}")
+          puts 'OK :)'
+          return device
+        rescue RubySerial::Error => e
+          puts e.message
+        end
+      end
+    end
+
     def send_osc(address, value = 1, port: 3333)
       address = "/#{address}" unless address[0] == '/'
       osc_client(port).send(OSC::Message.new(address, *value))
