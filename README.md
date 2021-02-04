@@ -225,6 +225,9 @@ Each Device has a name and an IP address.
 You can refer to a Device by name (e.g. `"device": "Laptop"`) elsewhere in the configuration
 and its IP address will be read from this list.
 
+You can also use the pre-defined Device symbol `_CLOUD_` to refer to the
+OschiiCloud server (if set).
+
  
 ## Inputs
 
@@ -267,9 +270,24 @@ Once the Sensor has sent its value, it will ignore subsequent pin changes for `b
 NOTE: When resistor mode is `"up"`, the behaviour of HIGH and LOW will be automatically inverted. You can re-invert
 using the `invert` flag.
 
+
+##### Analog
+
+Analog input reads the input voltage on a native GPIO pin, in the range
+0 to 3.3 Volts.
+
+```
+{
+    "type": "analog",
+    "pin": 0
+}
+```
+
+
 ##### Ultrasonic Range Sensor (Adafruit HC-SR04)
 
-Measures a distance value from ultrasonic sensor.
+Measures a distance value from ultrasonic sensor. This requires a Trigger pin
+and an Echo pin, which must be native GPIO.
 
 ```
 {
@@ -303,6 +321,8 @@ Measure a distance value from infrared sensor.
 ```
 
 Reads distance in range 0..100
+
+---
 
 ### `"receivers": [ ... ]`
 
