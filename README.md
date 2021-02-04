@@ -119,6 +119,60 @@ Do so. Oschii will now NOT try to connect to Ethernet on startup.
 
 See the section below for the required JSON format.
 
+## HTTP API
+
+Oschii offers HTTP endpoints to get and set the device's name and
+configuration.
+
+**Get Name:**
+
+**`GET`** `http://OSCHII_IP/name`
+
+e.g. `curl http://192.168.1.123/name`
+
+**Set Name:**
+
+**`POST`** `http://OSCHII_IP/name` with name as payload
+
+e.g. `curl -X POST -d "Bob" http://192.168.1.123/name`
+
+**Get Config:**
+
+**`GET`** `http://OSCHII_IP/config`
+
+e.g. `curl http://192.168.1.123/config`
+
+**Set Config:**
+
+**`POST`** `http://OSCHII_IP/config` with config JSON as payload
+
+e.g. `curl -X POST -d "@my_config.json" http://192.168.1.123/config`
+
+When config is received Oschii will attempt to parse and validate
+the incoming JSON document.
+- If there are errors, Oschii will respond with HTTP status `400` 
+and an error message. 
+- If config is valid, Oschii will respond with HTTP status `200` 
+and the message "Got it. Sounds fun!". It will then save the JSON
+to internal storage and reboot.
+
+## OSC API
+
+Oschii provides an OSC listener on port 3333, address: `/hello_oschii`,
+for integration with OschiiCloud.
+
+When an OSC message is received on this address, Oschii will save the
+remote IP address (referred to as 'Cloud IP') and send a message back, 
+containing its name, to port 3333 and address: `/i_am_oschii`.
+
+If Cloud IP is set, Oschii will perform this OSC operation 
+on every startup.
+
+You can refer to the Cloud IP in Receivers similarly to Devices:
+
+`"device": "_CLOUD_"`
+
+
 ---
 
 ## Configuration
