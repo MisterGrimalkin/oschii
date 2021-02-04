@@ -41,10 +41,11 @@ Set the line ending mode of your serial program to 'No line ending'.
 
 Oschii stores a name in internal storage, for easy identification.
 
+**Get current name:**
 - Send:     `name`
 - Response: `[NAME OF OSCHII]`
 
-
+**Set name:**
 - Send:     `set name`
 - Response: `Ready for name`
 - Send:     `[NAME OF OSCHII]`
@@ -54,10 +55,11 @@ Oschii stores a name in internal storage, for easy identification.
 
 Oschii can connect to WiFi or wired Ethernet (if available), but not both simultaneously.
 
+**Get IP of Oschii:**
 - Send:     `ip`
 - Response: `[IP ADDRESS OF OSCHII] (WiFi | Ethernet)` | `DISCONNECTED`
 
-
+**Get WiFi network name:**
 - Send:     `ssid`
 - Response: `[WIFI NETWORK NAME]`
 
@@ -106,18 +108,16 @@ Do so. Oschii will now NOT try to connect to Ethernet on startup.
 
 #### Configuration
 
+**Get current configuration:**
 - Send: `config`
 - Response: JSON configuration document, as saved to internal storage
 
-
+**Set new configuration:**
 - Send: `set config`
 - Response: `Ready for config`
 - Send: JSON document
 
 See the section below for the required JSON format.
-
-
-
 
 ---
 
@@ -125,19 +125,6 @@ See the section below for the required JSON format.
 
 Oschii stores its configuration in a JSON file. You can read and overwrite
 this file via a serial connection or with a HTTP request.
-
-### Configuration via Serial
-
-Open a serial connection to Oschii.
-
-1. Send string `config`
-1. Oschii will respond with config JSON
-
-
-1. Send string `set config`
-1. Oschii will respond with `Ready for config`
-1. Send JSON
-1. Oschii will respond with OK or an error message
 
 ### Configuration via HTTP
 
