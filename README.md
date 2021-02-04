@@ -24,6 +24,103 @@ them with your media installation.
 - **O**pen **S**ound **C**ontrol
 - **H**yper**T**ext **T**ransfer **P**rotocol
 
+
+## Serial API
+
+Oschii can accept commands over a serial connection, using PuTTy or Arduino IDE or similar,
+and will respond with strings written to serial output. Some commands require subsequent inputs.
+
+Set the line ending mode of your serial program to 'No line ending'.
+
+#### Simple health check
+
+- Send:     `poke`
+- Response: `Tickles!`
+
+#### Oschii Name
+
+Oschii stores a name in internal storage, for easy identification.
+
+- Send:     `name`
+- Response: `[NAME OF OSCHII]`
+
+
+- Send:     `set name`
+- Response: `Ready for name`
+- Send:     `[NAME OF OSCHII]`
+- Response: `Name is now [NAME OF OSCHII]`
+
+#### Networking
+
+Oschii can connect to WiFi or wired Ethernet (if available), but not both simultaneously.
+
+- Send:     `ip`
+- Response: `[IP ADDRESS OF OSCHII] (WiFi | Ethernet)` | `DISCONNECTED`
+
+
+- Send:     `ssid`
+- Response: `[WIFI NETWORK NAME]`
+
+_Oschii will return the SSID saved to internal storage, regardless of whether or not it is connected to WiFi_
+
+#### To use WiFi
+
+- Send:     `start wifi`
+- Response: `Ready for ssid`
+- Send:     `[WIFI NETWORK NAME]`
+- Response: `Ready for password`
+- Send:     `[WIFI PASSWORD]`
+- Response: `Accessing WiFi: [WIFI NETWORK NAME]`
+
+**If connection is successful:**
+
+- Response: `Connected to WiFi at [IP ADDRESS OF OSCHII]`
+ 
+**If connection fails:**
+
+- Response: `Cannot connect to WiFi`
+
+#### To use Ethernet
+
+- Send: `start ethernet`
+- Response: `Accessing Ethernet` plus probably loads of dots
+
+**If connection is successful:**
+
+- Response: _Some shit about MAC addresses and suchlike_ 
+
+Oschii will now try to connect to Ethernet on every startup.
+
+**If connection fails:**
+
+- Response: `Cannot connect to Ethernet!`
+
+Oschii will then try to connect to WiFi, but will try Ethernet again on startup.
+
+#### To disable Ethernet
+
+- Send: `stop ethernet`
+- Response: `Restart ESP now`
+
+Do so. Oschii will now NOT try to connect to Ethernet on startup.
+
+#### Configuration
+
+- Send: `config`
+- Response: JSON configuration document, as saved to internal storage
+
+
+- Send: `set config`
+- Response: `Ready for config`
+- Send: JSON document
+
+See the section below for the required JSON format.
+
+
+
+
+---
+
 ## Configuration
 
 Oschii stores its configuration in a JSON file. You can read and overwrite

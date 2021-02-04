@@ -3,12 +3,12 @@
   "inputs": [
     {
       "type": "sonar",
-      "pin": 39,
+      "pin": 32,
       "samples": 1,
       "receivers": [
         {
           "device": "_CLOUD_",
-          "oscAddress": "/sonar"
+          "oscAddress": "/ada_sonar"
         }
       ]
     }

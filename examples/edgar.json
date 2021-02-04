@@ -1,182 +1,25 @@
 {
-  "devices": [
-    {
-      "name": "Ben",
-      "ip": "192.168.1.45"
-    },
-    {
-      "name": "Dan",
-      "ip": "192.168.1.128"
-    }
-  ],
+  "verbose": true,
   "inputs": [
     {
-      "name": "input0",
-      "type": "gpio",
-      "i2cPort": 0,
-      "pin": 0,
+      "type": "sonar",
+      "pin": 32,
+      "samples": 10,
       "receivers": [
         {
-          "device": "Ben",
-          "oscAddress": "/oschii/in0"
-        },
-        {
-          "device": "Dan",
-          "oscAddress": "/oschii/in0"
+          "device": "_CLOUD_",
+          "oscAddress": "/sonar"
         }
       ]
     },
     {
-      "name": "input1",
-      "type": "gpio",
-      "i2cPort": 0,
-      "pin": 1,
+      "typeX": "sonar-ring",
+      "controlPin": 3,
+      "sensorPins": [32, 33, 34, 35, 36, 39],
       "receivers": [
         {
-          "device": "Ben",
-          "oscAddress": "/oschii/in1"
-        },
-        {
-          "device": "Dan",
-          "oscAddress": "/oschii/in1"
-        }
-      ]
-    },
-    {
-      "name": "input2",
-      "type": "gpio",
-      "i2cPort": 0,
-      "pin": 2,
-      "receivers": [
-        {
-          "device": "Ben",
-          "oscAddress": "/oschii/in2"
-        },
-        {
-          "device": "Dan",
-          "oscAddress": "/oschii/in2"
-        }
-      ]
-    },
-    {
-      "name": "input3",
-      "type": "gpio",
-      "i2cPort": 0,
-      "pin": 3,
-      "receivers": [
-        {
-          "device": "Ben",
-          "oscAddress": "/oschii/in3"
-        },
-        {
-          "device": "Dan",
-          "oscAddress": "/oschii/in3"
-        }
-      ]
-    }
-  ],
-  "outputs": [
-    {
-      "name": "output0",
-      "oscAddress": "/oschii/out0",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 0,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output1",
-      "oscAddress": "/oschii/out1",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 1,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output2",
-      "oscAddress": "/oschii/out2",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 2,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output3",
-      "oscAddress": "/oschii/out3",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 3,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output4",
-      "oscAddress": "/oschii/out4",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 4,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output5",
-      "oscAddress": "/oschii/out5",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 5,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output6",
-      "oscAddress": "/oschii/out6",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 6,
-          "invert": false,
-          "valueTransform": "binary"
-        }
-      ]
-    },
-    {
-      "name": "output7",
-      "oscAddress": "/oschii/out7",
-      "controllers": [
-        {
-          "type": "pwm",
-          "i2cPort": 0,
-          "pin": 7,
-          "invert": false,
-          "valueTransform": "binary"
+          "device": "_CLOUD_",
+          "oscAddress": "/test"
         }
       ]
     }

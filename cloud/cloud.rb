@@ -65,6 +65,8 @@ module Oschii
     def monitor_osc(address_list, max: 100)
       @monitor ||= OscMonitor.new self
 
+      address_list = [address_list] unless address_list.is_a?(Array)
+
       address_list.each do |address|
         monitor.add address, max: max
       end

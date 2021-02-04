@@ -21,8 +21,8 @@ bool reboot = false;
 
 bool verbose = true;
 
-const int SDA_PIN = 4;
-const int SCL_PIN = 5;
+const int SDA_PIN = 0;
+const int SCL_PIN = 4;
 
 const int I2C_ADDR = 0x20;
 const int I2C_IODIR_ADDR[] = { 0x00, 0x01 };
@@ -212,15 +212,6 @@ struct SonarSensor {
 };
 SonarSensor sonarSensors[INPUTS_LIMIT];
 
-struct SonarRingSensor {
-  int pins[];
-  int directions[];
-  int distances[];
-
-  SonarRingSensor(JsonObject inputJson) {
-  }
-};
-
 struct Receiver {
   String ip;
   int oscPort;
@@ -374,7 +365,7 @@ void setup() {
   }
 
   String cloudIp = readFromStorage("CloudIP");
-  if ( cloudIp != "" ) {
+  if ( connected && cloudIp != "" ) {
     Serial.println("Pinging Cloud....");
     OscWiFi.send(
       cloudIp,
@@ -1527,21 +1518,28 @@ void processSerialInput(String input) {
   } else if ( input == "name" ) {
     Serial.println(name);
 
-  } else if ( input == "ssid" ) {
-    Serial.println(ssid);
-
   } else if ( input == "set name" ) {
     name = promptSerial("Ready for name");
     writeToStorage("name", name);
     Serial.print("Name is now ");
     Serial.println(name);
 
-  } else if ( input == "config" ) {
-    Serial.println(readFile("/config.json"));
+  } else if ( input == "ip" ) {
+    if ( connected ) {
+      String ip = WiFi.localIP().toString();
+      if ( connectionType == "Ethernet" ) {
+        ip = ETH.localIP().toString();
+      }
+      Serial.print(ip);
+      Serial.print(" (");
+      Serial.print(connectionType);
+      Serial.println(")");
+    } else {
+      Serial.println("DISCONNECTED");
+    }
 
-  } else if ( input == "set config" ) {
-    String config = promptSerial("Ready for config");
-    Serial.println(parseJson(config));;
+  } else if ( input == "ssid" ) {
+    Serial.println(ssid);
 
   } else if ( input == "start wifi" ) {
     enableEthernet = false;
@@ -1564,19 +1562,12 @@ void processSerialInput(String input) {
     writeToStorage("enableEthernet", "no");
     Serial.println("Restart ESP now");
 
-  } else if ( input == "ip" ) {
-    if ( connected ) {
-      String ip = WiFi.localIP().toString();
-      if ( connectionType == "Ethernet" ) {
-        ip = ETH.localIP().toString();
-      }
-      Serial.print(ip);
-      Serial.print(" (");
-      Serial.print(connectionType);
-      Serial.println(")");
-    } else {
-      Serial.println("DISCONNECTED");
-    }
+  } else if ( input == "config" ) {
+    Serial.println(readFile("/config.json"));
+
+  } else if ( input == "set config" ) {
+    String config = promptSerial("Ready for config");
+    Serial.println(parseJson(config));;
   }
 }
 
@@ -2030,8 +2021,7 @@ int readSonar(int pin, int samples) {
   } else {
     milliVolts = readMilliVolts(pin);
   }
-  int distance = milliVolts * MV_PER_MM;
+  int distance = (int)((milliVolts / 3300.0) * 100.0);
+//  int distance = milliVolts * MV_PER_MM;
   return distance;
 }
-
-
