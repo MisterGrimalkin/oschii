@@ -143,6 +143,17 @@ struct GpioSensor {
 };
 GpioSensor gpioSensors[INPUTS_LIMIT];
 
+struct TouchSensor {
+  int pin;
+  void print() {
+    Serial.println("   + Input:Touch");
+    Serial.print  ("     [pin:");
+    Serial.print  (pin);
+    Serial.println("]");
+  }
+};
+TouchSensor touchSensors[INPUTS_LIMIT];
+
 struct AnalogSensor {
   int pin;
   void print() {
@@ -476,6 +487,28 @@ int buildGpioSensor(int index, JsonObject inputJson) {
   gpioSensor.print();
 
   return value;
+}
+
+int buildTouchSensor(int index, JsonObject inputJson) {
+  errorMessage = "";
+
+  int pin = -1;
+
+  if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
+
+  if ( pin < 0 ) {
+    errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
+    return -1;
+  }
+
+  TouchSensor touchSensor = {
+    pin
+  };
+  touchSensors[index] = touchSensor;
+
+  touchSensor.print();
+
+  return 0;
 }
 
 int buildUltrasonicSensor(int index, JsonObject inputJson) {
@@ -966,6 +999,18 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
 
     gpioSensor->lastPolledState = state;
 
+  } else if ( sensor->type == "touch" ) {
+    TouchSensor * touchSensor = &touchSensors[sensorIndex];
+
+    int reading = touchRead(touchSensor->pin);
+    int value = reading < 50 ? 1 : 0;
+    if ( value != sensor->value ) {
+      sensor->value = value;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
+
   } else if ( sensor->type == "analog" ) {
     AnalogSensor * analogSensor = &analogSensors[sensorIndex];
 
@@ -1142,6 +1187,12 @@ String parseJson(String input) {
 
         if ( sensorType == "gpio" ) {
           value = buildGpioSensor(sensorCount, inputJson);
+          if ( value < 0 ) {
+            return errorMessage;
+          }
+
+        } else if ( sensorType == "touch" ) {
+          value = buildTouchSensor(sensorCount, inputJson);
           if ( value < 0 ) {
             return errorMessage;
           }
