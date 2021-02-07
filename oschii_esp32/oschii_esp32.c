@@ -1,3 +1,6 @@
+#define VERSION "0.0.1"
+#define BUILD_DATETIME __DATE__ " " __TIME__
+
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -377,7 +380,8 @@ void setup() {
 
   String cloudIp = readFromStorage("CloudIP");
   if ( connected && cloudIp != "" ) {
-    Serial.println("Pinging Cloud....");
+    Serial.print("Pinging OschiiCloud at ");
+    Serial.println(cloudIp);
     OscWiFi.send(
       cloudIp,
       OSC_PING_RESPONSE_PORT,
@@ -1116,7 +1120,7 @@ int buildReceivers(JsonArray receiversJson) {
 }
 
 String parseJson(String input) {
-  Serial.println("\n~~ Oschii is receiving new configuration ~~");
+  Serial.println("\n== Oschii is receiving new configuration ==");
   oschiiGO = false;
 
   deviceCount = 0;
@@ -1127,7 +1131,7 @@ String parseJson(String input) {
   if (error) {
     String reply = "ERROR! Parsing JSON: " + String(error.c_str());
     Serial.println(reply);
-    Serial.println("\n~~ Oschii could not comply :( ~~\n");
+    Serial.println("\n== Oschii could not comply :( ==\n");
     oschiiGO = true;
 
     return reply;
@@ -1326,10 +1330,10 @@ String parseJson(String input) {
   }
 
   if (!writeFile("/config.json", input)) {
-    Serial.println("\n~~ Oschii could not write config :( ~~\n");
+    Serial.println("\n== Oschii could not write config :( ==\n");
   }
 
-  Serial.println("\n~~ Oschii is ready :D ~~\n");
+  Serial.println("\n== Oschii is ready :D ==\n");
   oschiiGO = true;
 
   return CONFIG_OK;
@@ -1522,6 +1526,23 @@ void createOscPing() {
 }
 
 void createHttpApi() {
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
+    String response =
+    "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"></head>"
+    "<body style='background-color:#068800;color:white;padding:10px;'>"
+      "<p style='font-family:courier;color:white;font-size:large'>"
+        "<strong>╔═╗┌─┐┌─┐┬<span style='color:#068800'>─</span>┬┬┬<br>"
+        "║<span style='color:#068800'>─</span>║└─┐│<span style='color:#068800'>──</span>├─┤││<br>"
+        "╚═╝└─┘└─┘┴<span style='color:#068800'>─</span>┴┴┴</strong><br>"
+        VERSION "<br>"
+       "<p style='font-family:sans-serif;font-weight:bold;font-size:x-large;color:white'>"
+        + String(name) +
+       "<p style='font-family:sans-serif;font-size: small;color:white'>"
+        "Built on <strong>" BUILD_DATETIME "<strong><br>"
+    "</body></html>";
+    request->send(200, "text/html", response);
+  });
+
   server.on(HTTP_NAME_ENDPOINT, HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(200, "text/plain", name);
   });
@@ -1554,11 +1575,18 @@ void createHttpApi() {
 void startSerial() {
   Serial.begin(115200);
   Serial.println();
+  Serial.println();
   Serial.println("  ╔═╗┌─┐┌─┐┬ ┬┬┬");
   Serial.println("  ║ ║└─┐│  ├─┤││");
   Serial.println("  ╚═╝└─┘└─┘┴ ┴┴┴");
   Serial.print  ("  ");
+  Serial.println(VERSION);
+  Serial.println();
+  Serial.print  ("  ");
   Serial.println(name);
+  Serial.println();
+  Serial.print  ("  Built on ");
+  Serial.println(BUILD_DATETIME);
   Serial.println();
 }
 
@@ -1662,24 +1690,24 @@ void WiFiEvent(WiFiEvent_t event)
 {
   switch (event) {
     case SYSTEM_EVENT_ETH_START:
-      Serial.print("<ETH Started>");
+//      Serial.print("<ETH Started>");
       ETH.setHostname(name.c_str());
       stopWiFi();
       break;
     case SYSTEM_EVENT_ETH_CONNECTED:
-      Serial.print("<ETH Connected>");
+//      Serial.print("<ETH Connected>");
       break;
     case SYSTEM_EVENT_ETH_GOT_IP:
       Serial.print("\nConnected to Ethernet on ");
       Serial.println(ETH.localIP());
-      Serial.print("  MAC: ");
-      Serial.print(ETH.macAddress());
-      if (ETH.fullDuplex()) {
-        Serial.print(" FULL_DUPLEX");
-      }
-      Serial.print(" ");
-      Serial.print(ETH.linkSpeed());
-      Serial.println("Mbps");
+//      Serial.print("  MAC: ");
+//      Serial.print(ETH.macAddress());
+//      if (ETH.fullDuplex()) {
+//        Serial.print(" FULL_DUPLEX");
+//      }
+//      Serial.print(" ");
+//      Serial.print(ETH.linkSpeed());
+//      Serial.println("Mbps");
       connected = true;
       connectionType = "Ethernet";
       break;
@@ -1719,13 +1747,14 @@ void startEthernet() {
 void startWiFi() {
   WiFi.disconnect(true);
   if ( ssid != "" && password != "" ) {
-    Serial.println("Accessing WiFi: " + String(ssid));
+    Serial.print("Accessing WiFi [" + String(ssid) + "]");
     WiFi.begin(ssid.c_str(), password.c_str());
     int started = millis();
     while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
       delay(500);
       if ( (millis() - started) > WIFI_TIMEOUT ) {
-        Serial.println("Cannot connect to WiFi");
+        Serial.println("\nCannot connect to WiFi");
         connected = false;
         return;
       }
@@ -1734,7 +1763,7 @@ void startWiFi() {
     server.begin();
     connected = true;
     connectionType = "WiFi";
-    Serial.print("Connected to WiFi at ");
+    Serial.print("\nConnected to WiFi on ");
     Serial.println(WiFi.localIP());
   } else {
     Serial.println("No WiFi credentials");
