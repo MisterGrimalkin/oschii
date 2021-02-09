@@ -1,3 +1,5 @@
+#include <WiFi.h>
+#include <ETH.h>
 
 /////////////////////
 // WiFi & Ethernet //
@@ -40,6 +42,14 @@ bool isEthernetPreferred() {
 
 bool isEthernetInUse() {
   return ethernetInUse;
+}
+
+String getIpAddress() {
+  String ip = WiFi.localIP().toString();
+  if ( isEthernetInUse() ) {
+    ip = ETH.localIP().toString();
+  }
+  return ip;
 }
 
 String getConnectionType() {

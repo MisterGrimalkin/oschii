@@ -7,10 +7,7 @@
 #include <ArduinoOSC.h>
 #include <ESPAsyncWebServer.h>
 
-#include <ETH.h>
 #include <HTTPClient.h>
-#include <Preferences.h>
-#include <WiFi.h>
 #include <Wire.h>
 
 #include "SPIFFS.h"
@@ -49,10 +46,8 @@ StaticJsonDocument<JSON_SIZE_LIMIT> doc;
 
 const String CONFIG_OK = "Got it. Sounds fun!\n";
 
-Preferences prefs;
 
 String name     = "";
-
 
 const String  DEFAULT_NAME = "Oschii";
 const char *  HTTP_CONFIG_ENDPOINT = "/config";
@@ -1428,73 +1423,6 @@ void createOscTrigger(JsonObject outputJson) {
 }
 
 
-////////////
-// EEPROM //
-////////////
-
-void writeToStorage(String key, String value) {
-  prefs.begin("oschii", false);
-  prefs.putString(key.c_str(), value);
-  prefs.end();
-}
-
-String readFromStorage(String key) {
-  prefs.begin("oschii", true);
-  String value = prefs.getString(key.c_str());
-  prefs.end();
-  return value;
-}
-
-
-////////////
-// SPIFFS //
-////////////
-
-bool writeFile(String filename, String content) {
-  if (!SPIFFS.begin(true)) {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return false;
-  }
-
-  File file = SPIFFS.open(filename, FILE_WRITE);
-
-  if (!file) {
-    Serial.println("There was an error opening the file for writing");
-    return false;
-  }
-  if (!file.print(content)) {
-    Serial.println("ERROR! File write failed");
-  }
-
-  file.close();
-
-  return true;
-}
-
-String readFile(String filename) {
-  if (!SPIFFS.begin(true)) {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return "";
-  }
-
-  File file = SPIFFS.open(filename);
-
-  if (!file) {
-    Serial.println("There was an error opening the file for reading");
-    return "";
-  }
-
-  String result = "";
-
-  while (file.available()) {
-    result += file.readString();
-  }
-
-  file.close();
-
-  return result;
-}
-
 /////////
 // API //
 /////////
@@ -1599,11 +1527,7 @@ void processSerialInput(String input) {
 
   } else if ( input == "ip" ) {
     if ( isConnected() ) {
-      String ip = WiFi.localIP().toString();
-      if ( isEthernetInUse() ) {
-        ip = ETH.localIP().toString();
-      }
-      Serial.print(ip);
+      Serial.print(getIpAddress());
       Serial.print(" (");
       Serial.print(getConnectionType());
       Serial.println(")");
