@@ -5,11 +5,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ArduinoOSC.h>
-#include <ESPAsyncWebServer.h>
-
-#include <HTTPClient.h>
 #include <Wire.h>
-
 
 #define BIT_CHECK(a,b) (!!((a) & (1ULL<<(b))))
 #define BIT_SET(a,b) ((a) |= (1ULL<<(b)))
@@ -61,8 +57,6 @@ const bool DIR_IN = false;
 
 const bool PULL_UP = true;
 const bool PULL_DOWN = false;
-
-AsyncWebServer server(80);
 
 bool oschiiGO = false;
 
@@ -370,11 +364,11 @@ void setup() {
   if ( isConnected() && cloudIp != "" ) {
     Serial.print("Pinging OschiiCloud at ");
     Serial.println(cloudIp);
-    OscWiFi.send(
+    sendOsc(
       cloudIp,
       OSC_PING_RESPONSE_PORT,
       OSC_PING_RESPONSE_ADDR,
-      ("Hello my name is: " + name).c_str()
+      ("Hello my name is: " + name)
     );
   }
 
@@ -1319,98 +1313,6 @@ String parseJson(String input) {
 }
 
 
-void createHttpTrigger(JsonObject outputJson) {
-  Serial.println("   + Output:HTTP");
-  const char * path = outputJson["httpPath"].as<char*>();
-
-  WebRequestMethod method;
-  String methodStr = "post";
-  if ( outputJson.containsKey("httpMethod") ) outputJson["httpMethod"];
-  if ( methodStr == "post" ) {
-    method = HTTP_POST;
-  } else if ( methodStr == "put" ) {
-    method = HTTP_PUT;
-  } else if ( methodStr == "delete" ) {
-    method = HTTP_DELETE;
-  } else {
-    method = HTTP_GET;
-  }
-  const int sensorNo = sensorCount;
-  server.on(path, method, [sensorNo](AsyncWebServerRequest * request) {
-    String valueStr = request->getParam("body", true)->value();
-    int value = valueStr.toInt();
-    Serial.print(value);
-    Serial.println(" <--- HTTP");
-    Sensor * sensor= &sensors[sensorNo];
-    sensor->value = value;
-    sensor->changed = true;
-    request->send(200, "text/plain", "OK");
-  }, NULL, [](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {});
-
-  Serial.print("     [method:");
-  Serial.print(methodStr);
-  Serial.print(" path:");
-  Serial.print(path);
-  Serial.println("]");
-}
-
-void createOscTrigger(JsonObject outputJson) {
-  Serial.println("   + Output:OSC");
-  String address = outputJson["oscAddress"];
-
-  int port = 3333;
-  if ( outputJson.containsKey("oscPort") ) port = outputJson["oscPort"];
-
-  const int sensorNo = sensorCount;
-  OscWiFi.subscribe(port, address,
-    [sensorNo](const OscMessage & m) {
-      int size = 0;
-      bool repeat = false;
-      bool fade = false;
-      bool cosine = false;
-      int startedAt = -1;
-
-      if ( m.size() <= 1 ) {
-        int value = m.arg<int>(0);
-        if ( verbose ) {
-          Serial.print(value);
-          Serial.println(" <--- OSC");
-        }
-        Sensor * sensor = &sensors[sensorNo];
-        sensor->value = value;
-        sensor->changed = true;
-
-      } else {
-        if ( verbose ) {
-          Serial.println("(...) <--- OSC");
-        }
-        String type = m.arg<String>(0);
-        String command = m.arg<String>(1);
-        cosine = type=="cosine";
-        fade = type=="linear" || cosine;
-        repeat = command=="repeat";
-        for ( int i = 2; i < (m.size()-1); i+=2 ) {
-          int value = m.arg<int>(i);
-          int time = m.arg<int>(i+1);
-          patternValues[sensorNo][size] = value;
-          patternTimes[sensorNo][size] = time;
-          size++;
-        }
-        startedAt = millis();
-      }
-      Pattern pattern = {
-        size, repeat, fade, cosine, startedAt
-      };
-      patterns[sensorNo] = pattern;
-    }
-  );
-
-  Serial.print("     [port:");
-  Serial.print(port);
-  Serial.print(" address:");
-  Serial.print(address);
-  Serial.println("]");
-}
 
 
 /////////
@@ -1420,169 +1322,6 @@ void createOscTrigger(JsonObject outputJson) {
 void createApi() {
   createOscPing();
   createHttpApi();
-}
-
-void createOscPing() {
-  OscWiFi.subscribe(OSC_PING_PORT, OSC_PING_ADDR,
-  [](const OscMessage & m) {
-    Serial.print("Received ping from ");
-    Serial.println(m.remoteIP());
-    writeToStorage("CloudIP", m.remoteIP());
-    OscWiFi.send(
-      m.remoteIP(),
-      OSC_PING_RESPONSE_PORT,
-      OSC_PING_RESPONSE_ADDR,
-      ("Hello my name is: " + name).c_str()
-    );
-  });
-}
-
-void createHttpApi() {
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    String response =
-    "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"></head>"
-    "<body style='background-color:#068800;color:white;padding:10px;'>"
-      "<p style='font-family:courier;color:white;font-size:large'>"
-        "<strong>╔═╗┌─┐┌─┐┬<span style='color:#068800'>─</span>┬┬┬<br>"
-        "║<span style='color:#068800'>─</span>║└─┐│<span style='color:#068800'>──</span>├─┤││<br>"
-        "╚═╝└─┘└─┘┴<span style='color:#068800'>─</span>┴┴┴</strong><br>"
-        VERSION "<br>"
-       "<p style='font-family:sans-serif;font-weight:bold;font-size:x-large;color:white'>"
-        + String(name) +
-       "<p style='font-family:sans-serif;font-size: small;color:white'>"
-        "Built on <strong>" BUILD_DATETIME "<strong><br>"
-    "</body></html>";
-    request->send(200, "text/html", response);
-  });
-
-  server.on(HTTP_NAME_ENDPOINT, HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", name);
-  });
-
-  server.on(HTTP_NAME_ENDPOINT, HTTP_POST, [](AsyncWebServerRequest * request) {
-    name = request->getParam("body", true)->value();
-    writeToStorage("name", name);
-    String reply = "Name is now " + name + "\n";
-    request->send(200, "text/plain", reply);
-  }, NULL, [](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {});
-
-  server.on(HTTP_CONFIG_ENDPOINT, HTTP_GET, [](AsyncWebServerRequest * request) {
-    String config = readFile("/config.json");
-    request->send(200, "text/plain", config);
-  });
-
-  server.on(HTTP_CONFIG_ENDPOINT, HTTP_POST, [](AsyncWebServerRequest * request) {
-    String reply = parseJson(request->getParam("body", true)->value());
-    int ok = (reply == CONFIG_OK);
-    request->send(ok ? 200 : 400, "text/plain", reply);
-    reboot = true;
-  }, NULL, [](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {});
-}
-
-
-////////////
-// Serial //
-////////////
-
-
-//////////
-// HTTP //
-//////////
-
-void sendHttp(String method, String url) {
-  sendHttp(method, url, "HELLO");
-}
-
-void sendHttp(String method, String url, String payload) {
-  if (isConnected()) {
-    if ( verbose ) {
-      Serial.print("HTTP ===> ");
-      Serial.print(method);
-      Serial.print(" ");
-      Serial.print(url);
-      Serial.print(" { ");
-      Serial.print(payload);
-      Serial.print(" } ");
-    }
-
-    HTTPClient http;
-    http.begin(url);
-
-    int httpResponseCode;
-    if ( method == "post" ) {
-      httpResponseCode = http.POST(payload);
-    } else if ( method == "put" ) {
-      httpResponseCode = http.PUT(payload);
-    } else {
-      httpResponseCode = http.GET();
-    }
-
-    if (httpResponseCode > 0) {
-      if ( verbose ) {
-        Serial.print("OK: ");
-        Serial.println(httpResponseCode);
-      }
-    }
-    else {
-      if ( verbose ) {
-        Serial.print("Error: ");
-        Serial.println(httpResponseCode);
-      }
-    }
-    http.end();
-  }
-  else {
-    if ( verbose ) Serial.println("Cannot Send HTTP - Network Disconnected");
-  }
-}
-
-
-/////////
-// OSC //
-/////////
-
-void loopOsc() {
-  if ( isConnected() ) OscWiFi.update();
-}
-
-void sendOsc(String host, int port, String address, int argument) {
-  if ( isConnected() ) {
-    if ( verbose ) {
-      Serial.print("OSC ===> ");
-      Serial.print(host);
-      Serial.print(":");
-      Serial.print(port);
-      Serial.print(address);
-      Serial.print(" { ");
-      Serial.print(argument);
-      Serial.println(" } ");
-    }
-    OscWiFi.send(host, port, address, argument);
-  } else {
-    if ( verbose ) {
-      Serial.println("Disconnected! Cannot send OSC");
-    }
-  }
-}
-
-void sendOsc(String host, int port, String address, String payload) {
-  if ( isConnected() ) {
-    if ( verbose ) {
-      Serial.print("OSC ===> ");
-      Serial.print(host);
-      Serial.print(":");
-      Serial.print(port);
-      Serial.print(address);
-      Serial.print(" { ");
-      Serial.print(payload);
-      Serial.println(" } ");
-    }
-    OscWiFi.send(host, port, address, payload);
-  } else {
-    if ( verbose ) {
-      Serial.println("Disconnected! Cannot send OSC");
-    }
-  }
 }
 
 
