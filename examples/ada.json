@@ -1,0 +1,93 @@
+{
+  "inputs": [
+    {
+      "type": "analog",
+      "pin": 36,
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 23
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "pin": 32,
+      "resistor": "down",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 22
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "pin": 33,
+      "resistor": "up",
+      "onValue": 0,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 22
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "pin": 25,
+      "resistor": "down",
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 21,
+          "toggle": true
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "pin": 26,
+      "resistor": "up",
+      "offValue": 0,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 19
+        }
+      ]
+    },
+    {
+      "type": "touch",
+      "pin": 4,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 18
+        }
+      ]
+    },
+    {
+      "type": "touch",
+      "pin": 2,
+      "controllers": [
+        {
+          "type": "gpio",
+          "pin": 17
+        }
+      ]
+    },
+    {
+      "type": "ultrasonic",
+      "triggerPin": 13,
+      "echoPin": 12,
+      "samples": 3,
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 16
+        }
+      ]
+    }
+  ]
+}

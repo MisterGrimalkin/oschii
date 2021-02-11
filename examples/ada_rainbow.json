@@ -1,10 +1,4 @@
 {
-  "devices": [
-    {
-      "name": "SnootBox",
-      "ip": "192.168.1.101"
-    }
-  ],
   "outputs": [
     {
       "oscAddress": "/red",
@@ -12,7 +6,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 12
+          "pin": 16
         }
       ]
     },
@@ -22,7 +16,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 14
+          "pin": 17
         }
       ]
     },
@@ -32,7 +26,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 27
+          "pin": 18
         }
       ]
     },
@@ -42,7 +36,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 26
+          "pin": 19
         }
       ]
     },
@@ -52,7 +46,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 25
+          "pin": 21
         }
       ]
     },
@@ -62,7 +56,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 19
+          "pin": 22
         }
       ]
     },
@@ -72,7 +66,7 @@
         {
           "type": "pwm",
           "valueTransform": "percentage",
-          "pin": 18
+          "pin": 23
         }
       ]
     }

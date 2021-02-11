@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "type": "gpio",
+      "pin": 32,
+      "offValue": 0,
+      "resistor": "down",
+      "receivers": [
+        {
+          "device": "_CLOUD_",
+          "oscAddress": "/button1"
+        }
+      ]
+    },
+    {
+      "type": "gpio",
+      "pin": 33,
+      "resistor": "up",
+      "offValue": 0,
+      "receivers": [
+        {
+          "ip": "192.168.1.80:8000",
+          "httpMethod": "post",
+          "httpPath": "/button2"
+        }
+      ]
+    }
+  ]
+}

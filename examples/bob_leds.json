@@ -5,14 +5,26 @@
       "i2cPort": 1,
       "pin": 0,
       "resistor": "up",
-      "onValue": 0
+      "onValue": 0,
+      "receivers": [
+        {
+          "device": "$CLOUD",
+          "oscAddress": "/button1"
+        }
+      ]
     },
     {
       "type": "gpio",
       "i2cPort": 1,
       "pin": 1,
       "resistor": "up",
-      "onValue": 0
+      "onValue": 0,
+      "receivers": [
+        {
+          "device": "$CLOUD",
+          "oscAddress": "/button2"
+        }
+      ]
     }
   ],
   "outputs": [
