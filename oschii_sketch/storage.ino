@@ -1,4 +1,5 @@
 #include <Preferences.h>
+#include "SPIFFS.h"
 
 ////////////
 // EEPROM //
