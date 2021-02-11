@@ -35,7 +35,7 @@ String buildDevices(JsonArray devicesJson) {
 }
 
 String getDeviceIp(String name) {
-  if ( name == "_CLOUD_" ) {
+  if ( name == "_CLOUD_" || name == "$CLOUD" ) {
     return readFromStorage("CloudIP");
   }
   int i;

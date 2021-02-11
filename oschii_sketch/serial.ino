@@ -61,7 +61,7 @@ void processSerialInput(String input) {
     stopWiFi();
     setEthernetPreferred(false);
     writeToStorage("enableEthernet", "no");
-    Serial.println("Restart ESP now");
+    reboot = true;
 
   } else if ( input == "config" ) {
     Serial.println(readFile("/config.json"));
