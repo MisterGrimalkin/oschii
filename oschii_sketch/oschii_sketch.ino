@@ -41,16 +41,9 @@ StaticJsonDocument<JSON_SIZE_LIMIT> doc;
 
 const String CONFIG_OK = "Got it. Sounds fun!\n";
 
-
 String name     = "";
 
 const String  DEFAULT_NAME = "Oschii";
-const char *  HTTP_CONFIG_ENDPOINT = "/config";
-const char *  HTTP_NAME_ENDPOINT = "/name";
-const int     OSC_PING_PORT = 3333;
-const String  OSC_PING_ADDR = "/hello_oschii";
-const int     OSC_PING_RESPONSE_PORT = 3333;
-const String  OSC_PING_RESPONSE_ADDR = "/i_am_oschii";
 
 const bool DIR_OUT = true;
 const bool DIR_IN = false;
@@ -67,17 +60,9 @@ int pwmChannelCount = 0;
 // Structs //
 /////////////
 
-const int DEVICES_LIMIT = 64;
 const int INPUTS_LIMIT = 128;
 const int CONTROLLERS_LIMIT = 128;
 const int RECEIVERS_LIMIT = 128;
-
-struct Device {
-  String name;
-  String ip;
-};
-Device devices[DEVICES_LIMIT];
-int deviceCount = 0;
 
 struct Sensor {
   String type;
@@ -360,17 +345,7 @@ void setup() {
     parseJson(config);
   }
 
-  String cloudIp = readFromStorage("CloudIP");
-  if ( isConnected() && cloudIp != "" ) {
-    Serial.print("Pinging OschiiCloud at ");
-    Serial.println(cloudIp);
-    sendOsc(
-      cloudIp,
-      OSC_PING_RESPONSE_PORT,
-      OSC_PING_RESPONSE_ADDR,
-      ("Hello my name is: " + name)
-    );
-  }
+  pingCloud();
 
   oschiiGO = true;
 }
@@ -743,19 +718,6 @@ bool buildReceiver(int index, JsonObject receiverJson) {
   return true;
 }
 
-String getDeviceIp(String name) {
-  if ( name == "_CLOUD_" ) {
-    return readFromStorage("CloudIP");
-  }
-  int i;
-  for ( i = 0; i < deviceCount; i++ ) {
-    Device device = devices[i];
-    if ( device.name == name ) {
-      return device.ip;
-    }
-  }
-  return "";
-}
 
 void scanPulsers() {
   int i = 0;
@@ -1096,7 +1058,6 @@ String parseJson(String input) {
   Serial.println("\n== Oschii is receiving new configuration ==");
   oschiiGO = false;
 
-  deviceCount = 0;
   sensorCount = 0;
 
   const char * json = input.c_str();
@@ -1116,31 +1077,14 @@ String parseJson(String input) {
     verbose = doc["verbose"];
   }
 
-  ////////// DEVICES //////////
-
   if ( doc.containsKey("devices") ) {
     Serial.println("\n-- Parsing Devices");
-
-    JsonArray devicesJson = doc["devices"];
-    for ( i = 0; i < DEVICES_LIMIT; i++ ) {
-      JsonObject deviceJson = devicesJson[i];
-      if ( deviceJson.containsKey("name") ) {
-        if ( deviceJson.containsKey("ip") ) {
-          String name = deviceJson["name"];
-          String ip = deviceJson["ip"];
-          Serial.print("   Device ");
-          Serial.print(name);
-          Serial.print(" at ");
-          Serial.println(ip);
-          devices[deviceCount++] = { deviceJson["name"], deviceJson["ip"] };
-        } else {
-          String name = deviceJson["name"];
-          return "ERROR! Missing IP for Device '" + name + "'";
-        }
-      }
+    String result = buildDevices(doc["devices"]);
+    if ( result != "OK" ) {
+      return result;
     }
     Serial.print("-- FOUND: ");
-    Serial.println(deviceCount);
+    Serial.println(getDeviceCount());
   } else {
     Serial.println("\n-- No Devices");
   }

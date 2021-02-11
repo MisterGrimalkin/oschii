@@ -1,6 +1,9 @@
 #include <ESPAsyncWebServer.h>
 #include <HTTPClient.h>
 
+const char *  HTTP_CONFIG_ENDPOINT = "/config";
+const char *  HTTP_NAME_ENDPOINT = "/name";
+
 AsyncWebServer server(80);
 
 void sendHttp(String method, String url) {

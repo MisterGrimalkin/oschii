@@ -1,5 +1,10 @@
 #include <ArduinoOSC.h>
 
+const int     OSC_PING_PORT = 3333;
+const String  OSC_PING_ADDR = "/hello_oschii";
+const int     OSC_PING_RESPONSE_PORT = 3333;
+const String  OSC_PING_RESPONSE_ADDR = "/i_am_oschii";
+
 void loopOsc() {
   if ( isConnected() ) OscWiFi.update();
 }
@@ -100,6 +105,24 @@ void createOscTrigger(JsonObject outputJson) {
   Serial.print(" address:");
   Serial.print(address);
   Serial.println("]");
+}
+
+String getCloudIp() {
+  return readFromStorage("CloudIP");
+}
+
+void pingCloud() {
+  String cloudIp = getCloudIp();
+  if ( isConnected() && cloudIp != "" ) {
+    Serial.print("Pinging OschiiCloud at ");
+    Serial.println(cloudIp);
+    sendOsc(
+      cloudIp,
+      OSC_PING_RESPONSE_PORT,
+      OSC_PING_RESPONSE_ADDR,
+      ("Hello my name is: " + name)
+    );
+  }
 }
 
 void createOscPing() {

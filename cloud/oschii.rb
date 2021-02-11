@@ -5,7 +5,7 @@ require_relative 'osc_monitor'
 module Oschii
   LOGO = '
   ╔═╗┌─┐┌─┐┬ ┬┬┬
-  ║ ║└─┐│  ├─┤││  Sensor/Actuator Driver
+  ║ ║└─┐│  ├─┤││  Sensor/Driver Interface
   ╚═╝└─┘└─┘┴ ┴┴┴
   '
   def self.included(base)
