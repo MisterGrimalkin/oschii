@@ -1,0 +1,6 @@
+{
+  "cadence": "FadeInOut",
+  "brightness": 90,
+  "fadeInTime": 250,
+  "fadeOutTime": 1000
+}

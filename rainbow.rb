@@ -19,5 +19,5 @@ while true
     value = 0
     delta = -delta
   end
-  sleep 0.1
+  # sleep 0.1
 end

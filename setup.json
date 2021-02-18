@@ -1,0 +1,13 @@
+{
+  "name": "Ada",
+  "preferEthernet": false,
+  "wifiSsid": "hjk",
+  "wifiPassword": "hjk",
+  "i2c": {
+    "sdaPin": 4,
+    "sclPin": 5,
+    "clock": 400000,
+    "pwmFrequency": 1000,
+    "oscillatorFrequency": 23000000
+  }
+}

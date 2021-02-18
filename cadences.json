@@ -1,0 +1,47 @@
+{
+  "Ring": [
+    {
+      "value": 1,
+      "time": 100
+    },
+    {
+      "value": 0,
+      "time": 250
+    },
+    {
+      "repeat": 3
+    },
+    {
+      "value": 0,
+      "time": 1000
+    },
+    {
+      "loop": true
+    }
+  ],
+  "FadeInOut": {
+    "valueKeys": [
+      "brightness",
+      "fadeInTime",
+      "fadeOutTime"
+    ],
+    "cadence": [
+      {
+        "startValue": 0,
+        "value0As": "endValue",
+        "value1As": "time",
+        "interpolation": "linear"
+      },
+      {
+        "value0As": "startValue",
+        "time": 1000
+      },
+      {
+        "value0As": "startValue",
+        "fadeTo": 0,
+        "value2As": "time",
+        "interpolation": "cosine"
+      }
+    ]
+  }
+}

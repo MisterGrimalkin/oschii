@@ -5,7 +5,6 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ArduinoOSC.h>
-#include <Wire.h>
 
 #define BIT_CHECK(a,b) (!!((a) & (1ULL<<(b))))
 #define BIT_SET(a,b) ((a) |= (1ULL<<(b)))

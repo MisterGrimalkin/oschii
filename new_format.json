@@ -1,0 +1,102 @@
+{
+  "sensors": [
+    {
+      "name": "Button 1",
+      "type": "gpio",
+      "i2cAddress": 32,
+      "i2cPort": 0,
+      "pin": 7,
+      "resistor": "off",
+      "onValue": 1,
+      "offValue": 0,
+      "invert": false,
+      "bounceFilter": 100
+    },
+    {
+      "name": "Knob",
+      "type": "analog",
+      "pin": 6,
+      "readingRange": [
+        100,
+        3000
+      ],
+      "valueRange": [
+        0,
+        100
+      ],
+      "triggerBand": [
+        10,
+        90
+      ],
+      "flipRange": false,
+      "samples": 5,
+      "interleave": true,
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Output1",
+      "type": "gpio",
+      "i2cAddress": 32,
+      "i2cPort": 0,
+      "pin": 3,
+      "defaultCadence": "Ring"
+    },
+    {
+      "name": "Fader",
+      "type": "pwm",
+      "pin": 9,
+      "i2c": false,
+      "minInputValue": 0,
+      "maxInputValue": 100,
+      "minOutputValue": 0,
+      "maxOutputValue": 4095
+    }
+  ],
+  "monitors": [
+    {
+      "readSensor": "Knob",
+      "sendTo": [
+        {
+          "receiver": "Bob",
+          "osc": "/whatever",
+          "type": "integer",
+          "valueFilter": {
+            "min": 50,
+            "max": 70,
+            "band": "pass"
+          }
+        },
+        {
+          "receiverIp": "192.168.1.123",
+          "http": "/thing",
+          "type": "json",
+          "valueAs": "amount",
+          "additionalPayload": {
+            "blah": "bleurg"
+          }
+        }
+      ],
+      "writeDrivers": [
+      ]
+    }
+  ],
+  "listeners": {
+    "osc": {
+      "/output1": {
+        "port": 3333,
+        "contentType": "integer",
+        "writeDrivers": [
+          "Output1"
+        ]
+      },
+      "/fader1": {
+        "contentType": "json",
+        "writeDrivers": [
+          "Fader"
+        ]
+      }
+    }
+  }
+}
+
