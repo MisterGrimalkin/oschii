@@ -120,7 +120,7 @@ void pingCloud() {
       cloudIp,
       OSC_PING_RESPONSE_PORT,
       OSC_PING_RESPONSE_ADDR,
-      ("Hello my name is: " + name)
+      ("Hello my name is: " + settings.getName())
     );
   }
 }
@@ -135,7 +135,7 @@ void createOscPing() {
       m.remoteIP(),
       OSC_PING_RESPONSE_PORT,
       OSC_PING_RESPONSE_ADDR,
-      ("Hello my name is: " + name).c_str()
+      ("Hello my name is: " + settings.getName()).c_str()
     );
   });
 }

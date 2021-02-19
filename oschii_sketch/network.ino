@@ -8,11 +8,11 @@
 const int WIFI_TIMEOUT = 5000;
 const int ETHERNET_TIMEOUT = 120000;
 
-static bool ethernetPreferred = false;
+//static bool ethernetPreferred = false;
 static bool ethernetInUse = false;
-
-String wiFiSsid     = "";
-String wiFiPassword = "";
+//
+//String wiFiSsid     = "";
+//String wiFiPassword = "";
 bool connected = false;
 
 bool isConnected() {
@@ -20,24 +20,8 @@ bool isConnected() {
 }
 
 void setWiFiCredentials(String ssid, String password) {
-  wiFiSsid = ssid;
-  wiFiPassword = password;
-}
-
-String getWiFiSsid() {
-  return wiFiSsid;
-}
-
-String getWiFiPassword() {
-  return wiFiPassword;
-}
-
-void setEthernetPreferred(bool preferred) {
-  ethernetPreferred = preferred;
-}
-
-bool isEthernetPreferred() {
-  return ethernetPreferred;
+  settings.setWifiSsid(ssid);
+  settings.setWifiPassword(password);
 }
 
 bool isEthernetInUse() {
@@ -57,7 +41,7 @@ String getConnectionType() {
 }
 
 void startNetwork() {
-  if ( ethernetPreferred ) {
+  if ( settings.isEthernetPreferred() ) {
     startEthernet();
   } else {
     startWiFi();
@@ -67,7 +51,7 @@ void startNetwork() {
 void WiFiEvent(WiFiEvent_t event) {
   switch (event) {
     case SYSTEM_EVENT_ETH_START:
-      ETH.setHostname(name.c_str());
+      ETH.setHostname(settings.getName().c_str());
       stopWiFi();
       break;
     case SYSTEM_EVENT_ETH_CONNECTED:
@@ -116,9 +100,12 @@ void startEthernet() {
 
 void startWiFi() {
   WiFi.disconnect(true);
-  if ( wiFiSsid != "" && wiFiPassword != "" ) {
-    Serial.print("Accessing WiFi [" + String(wiFiSsid) + "]");
-    WiFi.begin(wiFiSsid.c_str(), wiFiPassword.c_str());
+  String ssid = settings.getWifiSsid();
+  String password = settings.getWifiPassword();
+
+  if ( ssid != "" && password != "" ) {
+    Serial.print("Accessing WiFi [" + ssid + "]");
+    WiFi.begin(ssid.c_str(), password.c_str());
     int started = millis();
     while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");

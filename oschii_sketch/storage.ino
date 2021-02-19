@@ -1,5 +1,5 @@
 #include <Preferences.h>
-#include "SPIFFS.h"
+//#include "SPIFFS.h"
 
 ////////////
 // EEPROM //
@@ -27,47 +27,47 @@ String readFromStorage(String key) {
 // SPIFFS //
 ////////////
 
-bool writeFile(String filename, String content) {
-  if (!SPIFFS.begin(true)) {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return false;
-  }
+//bool writeFile(String filename, String content) {
+//  if (!SPIFFS.begin(true)) {
+//    Serial.println("An Error has occurred while mounting SPIFFS");
+//    return false;
+//  }
+//
+//  File file = SPIFFS.open(filename, FILE_WRITE);
+//
+//  if (!file) {
+//    Serial.println("There was an error opening the file for writing");
+//    return false;
+//  }
+//  if (!file.print(content)) {
+//    Serial.println("ERROR! File write failed");
+//  }
+//
+//  file.close();
+//
+//  return true;
+//}
 
-  File file = SPIFFS.open(filename, FILE_WRITE);
-
-  if (!file) {
-    Serial.println("There was an error opening the file for writing");
-    return false;
-  }
-  if (!file.print(content)) {
-    Serial.println("ERROR! File write failed");
-  }
-
-  file.close();
-
-  return true;
-}
-
-String readFile(String filename) {
-  if (!SPIFFS.begin(true)) {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return "";
-  }
-
-  File file = SPIFFS.open(filename);
-
-  if (!file) {
-    Serial.println("There was an error opening the file for reading");
-    return "";
-  }
-
-  String result = "";
-
-  while (file.available()) {
-    result += file.readString();
-  }
-
-  file.close();
-
-  return result;
-}
+//String readFile(String filename) {
+//  if (!SPIFFS.begin(true)) {
+//    Serial.println("An Error has occurred while mounting SPIFFS");
+//    return "";
+//  }
+//
+//  File file = SPIFFS.open(filename);
+//
+//  if (!file) {
+//    Serial.println("There was an error opening the file for reading");
+//    return "";
+//  }
+//
+//  String result = "";
+//
+//  while (file.available()) {
+//    result += file.readString();
+//  }
+//
+//  file.close();
+//
+//  return result;
+//}

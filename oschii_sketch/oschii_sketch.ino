@@ -6,6 +6,8 @@
 #include <ArduinoJson.h>
 #include <ArduinoOSC.h>
 
+#include <Oschii.h>
+
 #define BIT_CHECK(a,b) (!!((a) & (1ULL<<(b))))
 #define BIT_SET(a,b) ((a) |= (1ULL<<(b)))
 #define BIT_CLEAR(a,b) ((a) &= ~(1ULL<<(b)))
@@ -22,8 +24,6 @@ const int JSON_SIZE_LIMIT = 8192;
 StaticJsonDocument<JSON_SIZE_LIMIT> doc;
 
 const String CONFIG_OK = "Got it. Sounds fun!\n";
-
-String name     = "";
 
 const String  DEFAULT_NAME = "Oschii";
 
@@ -301,27 +301,21 @@ int patternTimes[INPUTS_LIMIT][MAX_PATTERN_SIZE];
 // Main //
 //////////
 
+
+FileService files;
+SettingsService settings(files, "/settings.json");
+
 static String configToLoad = "";
 
 void setup() {
-  name = readFromStorage("name");
-  if ( name == "" ) {
-    name = DEFAULT_NAME;
-  }
-  setWiFiCredentials(readFromStorage("ssid"), readFromStorage("password"));
+  settings.load();
 
   startSerial();
-
-  String enableEthernetStr = readFromStorage("enableEthernet");
-  if ( enableEthernetStr == "yes" ) {
-    setEthernetPreferred(true);
-  }
-
   startNetwork();
   startI2CGpio();
   startI2CPwm();
 
-  const String config = readFile("/config.json");
+  const String config = files.readFile("/config.json");
 //  const String config = "{}";
 
   if ( config != "" ) {
@@ -1229,7 +1223,7 @@ String parseJson(String input) {
     Serial.println("\n-- No Outputs");
   }
 
-  if (!writeFile("/config.json", input)) {
+  if (!files.writeFile("/config.json", input)) {
     Serial.println("\n== Oschii could not write config :( ==\n");
   }
 

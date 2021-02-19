@@ -64,7 +64,7 @@ void createHttpApi() {
         "╚═╝└─┘└─┘┴<span style='color:#068800'>─</span>┴┴┴</strong><br>"
         VERSION "<br>"
        "<p style='font-family:sans-serif;font-weight:bold;font-size:x-large;color:white'>"
-        + String(name) +
+        + String(settings.getName()) +
        "<p style='font-family:sans-serif;font-size: small;color:white'>"
         "Built on <strong>" BUILD_DATETIME "<strong><br>"
     "</body></html>";
@@ -72,18 +72,18 @@ void createHttpApi() {
   });
 
   server.on(HTTP_NAME_ENDPOINT, HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", name);
+    request->send(200, "text/plain", settings.getName());
   });
 
   server.on(HTTP_NAME_ENDPOINT, HTTP_POST, [](AsyncWebServerRequest * request) {
-    name = request->getParam("body", true)->value();
-    writeToStorage("name", name);
-    String reply = "Name is now " + name + "\n";
+    String name = request->getParam("body", true)->value();
+    settings.setName(name);
+    String reply = "Name is now " + settings.getName() + "\n";
     request->send(200, "text/plain", reply);
   }, NULL, [](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {});
 
   server.on(HTTP_CONFIG_ENDPOINT, HTTP_GET, [](AsyncWebServerRequest * request) {
-    String config = readFile("/config.json");
+    String config = files.readFile("/config.json");
     request->send(200, "text/plain", config);
   });
 

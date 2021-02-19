@@ -9,7 +9,7 @@ void startSerial() {
   Serial.println(VERSION);
   Serial.println();
   Serial.print  ("  ");
-  Serial.println(name);
+  Serial.println(settings.getName());
   Serial.println();
   Serial.print  ("  Built on ");
   Serial.println(BUILD_DATETIME);
@@ -20,14 +20,17 @@ void processSerialInput(String input) {
   if ( input == "poke" ) {
     Serial.println("Tickles!");
 
+  } else if ( input == "setup" ) {
+    Serial.println(settings.toJson());
+
   } else if ( input == "name" ) {
-    Serial.println(name);
+    Serial.println(settings.getName());
 
   } else if ( input == "set name" ) {
-    name = promptSerial("Ready for name");
-    writeToStorage("name", name);
+    String name = promptSerial("Ready for name");
+    settings.setName(name);
     Serial.print("Name is now ");
-    Serial.println(name);
+    Serial.println(settings.getName());
 
   } else if ( input == "ip" ) {
     if ( isConnected() ) {
@@ -40,31 +43,31 @@ void processSerialInput(String input) {
     }
 
   } else if ( input == "ssid" ) {
-    Serial.println(getWiFiSsid());
+    Serial.println(settings.getWifiSsid());
 
   } else if ( input == "start wifi" ) {
-    writeToStorage("enableEthernet", "no");
+    settings.setEthernetPreferred(false);
+
     String ssid = promptSerial("Ready for ssid");
-    writeToStorage("ssid", ssid);
+    settings.setWifiSsid(ssid);
+
     String password = promptSerial("Ready for password");
-    writeToStorage("password", password);
-    setWiFiCredentials(ssid, password);
+    settings.setWifiPassword(password);
+
     startWiFi();
 
   } else if ( input == "start ethernet" ) {
     stopWiFi();
-    setEthernetPreferred(true);
+    settings.setEthernetPreferred(true);
     startEthernet();
-    writeToStorage("enableEthernet", "yes");
 
   } else if ( input == "stop ethernet" ) {
     stopWiFi();
-    setEthernetPreferred(false);
-    writeToStorage("enableEthernet", "no");
+    settings.setEthernetPreferred(false);
     reboot = true;
 
   } else if ( input == "config" ) {
-    Serial.println(readFile("/config.json"));
+    Serial.println(files.readFile("/config.json"));
 
   } else if ( input == "set config" ) {
     String config = promptSerial("Ready for config");
