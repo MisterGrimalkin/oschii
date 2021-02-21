@@ -6,15 +6,7 @@
       "echoPin": 12,
       "samples": 20,
       "interleave": true,
-      "readingRange": [
-        100,
-        3500
-      ],
-      "valueRange": [
-        0,
-        100
-      ],
-      "flipRange": false,
+      "flipRange": true,
       "receivers": [
         {
           "device": "$CLOUD",

@@ -9,8 +9,8 @@ RangeSensor::RangeSensor(int index) {
 
   _samples = 1;
   _interleave = false;
-  _readingRange[MIN] = 200;
-  _readingRange[MAX] = 2500;
+  _readingRange[MIN] = 0;
+  _readingRange[MAX] = 3300;
   _valueRange[MIN] = 0;
   _valueRange[MAX] = 100;
   _flipRange = false;
