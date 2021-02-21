@@ -43,7 +43,7 @@ bool oschiiGO = false;
 // Structs //
 /////////////
 
-const int INPUTS_LIMIT = 64;
+const int INPUTS_LIMIT = 40;
 const int CONTROLLERS_LIMIT = 128;
 const int RECEIVERS_LIMIT = 128;
 
@@ -108,17 +108,7 @@ struct TouchSensor {
 };
 TouchSensor touchSensors[INPUTS_LIMIT];
 
-struct AnalogSensor {
-  int pin;
-  void print() {
-    Serial.println("   + Input:Analog");
-    Serial.print  ("     [pin:");
-    Serial.print(pin);
-    Serial.println("]");
-  }
-};
 AnalogSensor analogSensors[INPUTS_LIMIT];
-
 HCSRSensor hcsrSensors[INPUTS_LIMIT];
 
 struct InfraredSensor {
@@ -427,30 +417,6 @@ int buildTouchSensor(int index, JsonObject inputJson) {
   touchSensors[index] = touchSensor;
 
   touchSensor.print();
-
-  return 0;
-}
-
-int buildAnalogSensor(int index, JsonObject inputJson) {
-  errorMessage = "";
-
-  int pin = -1;
-
-  if ( inputJson.containsKey("pin") ) pin = inputJson["pin"];
-
-  if ( pin < 0 ) {
-    errorMessage = "ERROR! Input " + String(index) + ": No pin specified";
-    return -1;
-  }
-
-  pinMode(pin, INPUT);
-
-  AnalogSensor analogSensor = {
-    pin
-  };
-  analogSensors[index] = analogSensor;
-
-  analogSensor.print();
 
   return 0;
 }
@@ -874,23 +840,21 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
     }
 
 
-  } else if ( sensor->type == "analog" ) {
-    AnalogSensor * analogSensor = &analogSensors[sensorIndex];
-
-    int reading = analogRead(analogSensor->pin);
-    int value = 100 * (reading / 4095.0);
-    if ( value != sensor->value ) {
-      sensor->value = value;
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
-
   } else if ( sensor->type == "sonar" ) {
     SonarSensor * sonarSensor = &sonarSensors[sensorIndex];
 
     int value = readSonar(sonarSensor->pin, sonarSensor->samples);
     if ( value != sensor->value ) {
       sensor->value = value;
+      sensor->changed = true;
+      sensor->lastChangedAt = millis();
+    }
+
+  } else if ( sensor->type == "analog" ) {
+    AnalogSensor * analog = &analogSensors[sensorIndex];
+    analog->readSensor();
+    if ( analog->hasChanged() ) {
+      sensor->value = analog->getValue();
       sensor->changed = true;
       sensor->lastChangedAt = millis();
     }
@@ -1036,18 +1000,21 @@ String parseJson(String input) {
             return errorMessage;
           }
 
-        } else if ( sensorType == "analog" ) {
-          value = buildAnalogSensor(sensorCount, inputJson);
-          if ( value < 0 ) {
-            return errorMessage;
-          }
-
         } else if ( sensorType == "sonar" ) {
           value = buildSonarSensor(sensorCount, inputJson);
 //          simple = false;
           if ( value < 0 ) {
             return errorMessage;
           }
+
+        } else if ( sensorType == "analog" ) {
+          AnalogSensor analog = AnalogSensor(sensorCount);
+          if ( !analog.build(inputJson) ) {
+            return analog.getError();
+          }
+          analogSensors[sensorCount] = analog;
+          value = analog.getValue();
+          analog.print();
 
         } else if ( sensorType == "hc-sr04" ) {
           HCSRSensor hcsr = HCSRSensor(sensorCount);

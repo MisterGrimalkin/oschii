@@ -6,6 +6,7 @@
 
 #include "SettingsService.h"
 #include "FileService.h"
+#include "AnalogSensor.h"
 #include "HCSRSensor.h"
 
 #endif

@@ -47,7 +47,7 @@ int HCSRSensor::getReading() {
 void HCSRSensor::print() {
   Serial.print  ("   + Input-");
   Serial.print  (_index);
-  Serial.println(":HC-SR04 ");
+  Serial.println(":HC-SR04");
   Serial.print  ("     [trig:");
   Serial.print(_trigPin);
   Serial.print(" echo:");
