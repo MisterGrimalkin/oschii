@@ -14,7 +14,7 @@
         0,
         100
       ],
-      "flipRange": true,
+      "flipRange": false,
       "receivers": [
         {
           "device": "$CLOUD",

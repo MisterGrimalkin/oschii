@@ -1,5 +1,5 @@
 {
-  "verbose": true,
+  "verbose": false,
   "inputs": [
     {
       "type": "analog",
@@ -82,7 +82,7 @@
       "type": "hc-sr04",
       "trigPin": 13,
       "echoPin": 12,
-      "samples": 20,
+      "samples": 15,
       "interleave": true,
       "readingRange": [
         100,
