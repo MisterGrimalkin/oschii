@@ -1,4 +1,5 @@
 {
+  "verbose": true,
   "inputs": [
     {
       "type": "analog",
@@ -78,10 +79,20 @@
       ]
     },
     {
-      "type": "ultrasonic",
-      "triggerPin": 13,
+      "type": "hc-sr04",
+      "trigPin": 13,
       "echoPin": 12,
-      "samples": 3,
+      "samples": 20,
+      "interleave": true,
+      "readingRange": [
+        100,
+        3500
+      ],
+      "valueRange": [
+        0,
+        100
+      ],
+      "flipRange": true,
       "controllers": [
         {
           "type": "pwm",

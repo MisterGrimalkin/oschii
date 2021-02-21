@@ -6,5 +6,6 @@
 
 #include "SettingsService.h"
 #include "FileService.h"
+#include "HCSRSensor.h"
 
 #endif

@@ -1,42 +1,66 @@
 {
+  "inputs": [
+    {
+      "type": "hc-sr04",
+      "trigPin": 13,
+      "echoPin": 12,
+      "samples": 20,
+      "interleave": true,
+      "readingRange": [
+        100,
+        3500
+      ],
+      "valueRange": [
+        0,
+        100
+      ],
+      "flipRange": true,
+      "receivers": [
+        {
+          "device": "$CLOUD",
+          "oscAddress": "/range"
+        }
+      ]
+    }
+  ],
   "outputs": [
     {
-      "oscAddress": "/rainbow",
+      "oscAddress": "/meter",
       "controllers": [
         {
           "type": "gpio",
           "valueThreshold": 90,
-          "pin": 12
+          "pin": 23
         },
         {
           "type": "gpio",
           "valueThreshold": 76,
-          "pin": 14
+          "pin": 22
         },
         {
           "type": "gpio",
           "valueThreshold": 62,
-          "pin": 27
+          "pin": 21
         },
         {
           "type": "gpio",
           "valueThreshold": 50,
-          "pin": 26
-        },
-        {
-          "type": "gpio",
-          "valueThreshold": 38,
-          "pin": 25
-        },
-        {
-          "type": "gpio",
-          "valueThreshold": 24,
           "pin": 19
         },
         {
           "type": "gpio",
-          "valueThreshold": 10,
+          "valueThreshold": 38,
           "pin": 18
+        },
+        {
+          "type": "gpio",
+          "valueThreshold": 24,
+          "pin": 17
+        },
+        {
+          "type": "gpio",
+          "valueThreshold": 10,
+          "pin": 16
         }
       ]
     }

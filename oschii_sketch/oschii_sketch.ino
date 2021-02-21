@@ -43,7 +43,7 @@ bool oschiiGO = false;
 // Structs //
 /////////////
 
-const int INPUTS_LIMIT = 128;
+const int INPUTS_LIMIT = 64;
 const int CONTROLLERS_LIMIT = 128;
 const int RECEIVERS_LIMIT = 128;
 
@@ -119,25 +119,7 @@ struct AnalogSensor {
 };
 AnalogSensor analogSensors[INPUTS_LIMIT];
 
-struct UltrasonicSensor {
-  int triggerPin;
-  int echoPin;
-  int samples;
-  bool invert;
-  void print() {
-    Serial.println("   + Input:Ultrasonic");
-    Serial.print  ("     [trig:");
-    Serial.print(triggerPin);
-    Serial.print(" echo:");
-    Serial.print(echoPin);
-    Serial.print(" samples:");
-    Serial.print(samples);
-    Serial.print(" invert:");
-    Serial.print(invert);
-    Serial.println("]");
-  }
-};
-UltrasonicSensor ultrasonicSensors[INPUTS_LIMIT];
+HCSRSensor hcsrSensors[INPUTS_LIMIT];
 
 struct InfraredSensor {
   int pin;
@@ -447,41 +429,6 @@ int buildTouchSensor(int index, JsonObject inputJson) {
   touchSensor.print();
 
   return 0;
-}
-
-int buildUltrasonicSensor(int index, JsonObject inputJson) {
-  errorMessage = "";
-
-  int triggerPin = -1;
-  int echoPin = -1;
-  int samples = 1;
-  bool invert = false;
-
-  if ( inputJson.containsKey("triggerPin") )  triggerPin = inputJson["triggerPin"];
-  if ( inputJson.containsKey("echoPin") )     echoPin =    inputJson["echoPin"];
-  if ( inputJson.containsKey("samples") )     samples =    inputJson["samples"];
-  if ( inputJson.containsKey("invert") )      invert =     inputJson["invert"];
-
-  if ( triggerPin < 0 ) {
-    errorMessage = "ERROR! Input " + String(index) + ": No trigger pin specified";
-    return -1;
-  }
-  if ( echoPin < 0 ) {
-    errorMessage = "ERROR! Input " + String(index) + ": No echo pin specified";
-    return -1;
-  }
-
-  pinMode(triggerPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-
-  UltrasonicSensor ultrasonicSensor = {
-    triggerPin, echoPin, samples, invert
-  };
-  ultrasonicSensors[index] = ultrasonicSensor;
-
-  ultrasonicSensor.print();
-
-  return invert ? 100 : 0;
 }
 
 int buildAnalogSensor(int index, JsonObject inputJson) {
@@ -948,17 +895,11 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
       sensor->lastChangedAt = millis();
     }
 
-  } else if ( sensor->type == "ultrasonic" ) {
-    UltrasonicSensor * ultrasonicSensor = &ultrasonicSensors[sensorIndex];
-
-    int reading = sampleUltrasonic(
-                          ultrasonicSensor->triggerPin,
-                          ultrasonicSensor->echoPin,
-                          ultrasonicSensor->samples
-                  );
-    if ( ultrasonicSensor->invert ) reading = 100 - reading;
-    if ( reading != sensor->value ) {
-      sensor->value = reading;
+  } else if ( sensor->type == "hc-sr04" ) {
+    HCSRSensor * hcsr = &hcsrSensors[sensorIndex];
+    hcsr->readSensor();
+    if ( hcsr->hasChanged() ) {
+      sensor->value = hcsr->getValue();
       sensor->changed = true;
       sensor->lastChangedAt = millis();
     }
@@ -1108,11 +1049,14 @@ String parseJson(String input) {
             return errorMessage;
           }
 
-        } else if ( sensorType == "ultrasonic" ) {
-          value = buildUltrasonicSensor(sensorCount, inputJson);
-          if ( value < 0 ) {
-            return errorMessage;
+        } else if ( sensorType == "hc-sr04" ) {
+          HCSRSensor hcsr = HCSRSensor(sensorCount);
+          if ( !hcsr.build(inputJson) ) {
+            return hcsr.getError();
           }
+          hcsrSensors[sensorCount] = hcsr;
+          value = hcsr.getValue();
+          hcsr.print();
 
         } else if ( sensorType == "infrared" ) {
           value = buildInfraredSensor(sensorCount, inputJson);
@@ -1234,8 +1178,6 @@ String parseJson(String input) {
 }
 
 
-
-
 /////////
 // API //
 /////////
@@ -1243,47 +1185,6 @@ String parseJson(String input) {
 void createApi() {
   createOscPing();
   createHttpApi();
-}
-
-
-
-/////////////
-// HC-SR04 //
-/////////////
-
-const int HC_SR04_MAX = 2500;
-const int HC_SR04_MIN = 200;
-
-int sampleUltrasonic(int trig, int echo, int samples) {
-  int readings[samples];
-  int lastReading = 0;
-  for ( int i = 0; i<samples; i++) {
-    int reading = readUltrasonic(trig, echo);
-    readings[i] = reading >= HC_SR04_MAX ? lastReading : reading;
-    lastReading = reading;
-  }
-  qsort(readings, samples, sizeof(int), intCompare);
-  int median = readings[samples/2];
-  if ( median >= HC_SR04_MAX || median <= HC_SR04_MIN ) {
-    return 0;
-  } else {
-    int adjusted = ((HC_SR04_MAX - median + HC_SR04_MIN) * 100.0) / (HC_SR04_MAX - HC_SR04_MIN);
-    if ( adjusted >= 100 ) {
-      return 100;
-    } else {
-      return adjusted;
-    }
-  }
-}
-
-int readUltrasonic(int trig, int echo) {
-  digitalWrite(echo, LOW);
-  digitalWrite(trig, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-  return pulseIn(echo, HIGH);
 }
 
 

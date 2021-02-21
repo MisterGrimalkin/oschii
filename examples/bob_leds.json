@@ -5,7 +5,8 @@
       "i2cPort": 1,
       "pin": 0,
       "resistor": "up",
-      "onValue": 0,
+      "onValue": 1,
+      "offValue": 0,
       "receivers": [
         {
           "device": "$CLOUD",
@@ -18,7 +19,8 @@
       "i2cPort": 1,
       "pin": 1,
       "resistor": "up",
-      "onValue": 0,
+      "onValue": 1,
+      "offValue": 0,
       "receivers": [
         {
           "device": "$CLOUD",
