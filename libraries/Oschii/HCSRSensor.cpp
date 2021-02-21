@@ -188,5 +188,3 @@ void HCSRSensor::print() {
   Serial.print(_triggerBand[MAX]);
   Serial.println(")]");
 }
-
-
