@@ -108,8 +108,16 @@ struct TouchSensor {
 };
 TouchSensor touchSensors[INPUTS_LIMIT];
 
-AnalogSensor analogSensors[INPUTS_LIMIT];
-HCSRSensor hcsrSensors[INPUTS_LIMIT];
+//std::vector<RangeSensor*> rangeSensors;
+
+std::vector<AnalogSensor> analogSensors;
+std::vector<HCSRSensor> hcsrSensors;
+
+
+
+//RangeSensor rangeSensors[INPUTS_LIMIT];
+//AnalogSensor analogSensors[INPUTS_LIMIT];
+//HCSRSensor hcsrSensors[INPUTS_LIMIT];
 
 struct InfraredSensor {
   int pin;
@@ -851,22 +859,22 @@ Sensor * readSensor(int sensorIndex, Sensor * sensor) {
     }
 
   } else if ( sensor->type == "analog" ) {
-    AnalogSensor * analog = &analogSensors[sensorIndex];
-    analog->readSensor();
-    if ( analog->hasChanged() ) {
-      sensor->value = analog->getValue();
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
+      AnalogSensor * analog = &analogSensors.front();
+      analog->readSensor();
+      if ( analog->hasChanged() ) {
+        sensor->value = analog->getValue();
+        sensor->changed = true;
+        sensor->lastChangedAt = millis();
+      }
 
   } else if ( sensor->type == "hc-sr04" ) {
-    HCSRSensor * hcsr = &hcsrSensors[sensorIndex];
-    hcsr->readSensor();
-    if ( hcsr->hasChanged() ) {
-      sensor->value = hcsr->getValue();
-      sensor->changed = true;
-      sensor->lastChangedAt = millis();
-    }
+      HCSRSensor * hcsr = &hcsrSensors.front();
+      hcsr->readSensor();
+      if ( hcsr->hasChanged() ) {
+        sensor->value = hcsr->getValue();
+        sensor->changed = true;
+        sensor->lastChangedAt = millis();
+      }
 
   } else if ( sensor->type == "infrared" ) {
     InfraredSensor * infraredSensor = &infraredSensors[sensorIndex];
@@ -1012,7 +1020,8 @@ String parseJson(String input) {
           if ( !analog.build(inputJson) ) {
             return analog.getError();
           }
-          analogSensors[sensorCount] = analog;
+          analogSensors.push_back(analog);
+//          analogSensors[sensorCount] = analog;
           value = analog.getValue();
           analog.print();
 
@@ -1021,7 +1030,8 @@ String parseJson(String input) {
           if ( !hcsr.build(inputJson) ) {
             return hcsr.getError();
           }
-          hcsrSensors[sensorCount] = hcsr;
+          hcsrSensors.push_back(hcsr);
+//          hcsrSensors[sensorCount] = hcsr;
           value = hcsr.getValue();
           hcsr.print();
 

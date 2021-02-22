@@ -1,0 +1,37 @@
+{
+  "verbose": true,
+  "inputs": [
+    {
+      "type": "analog",
+      "pin": 36,
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 23
+        }
+      ]
+    },
+    {
+      "type": "hc-sr04",
+      "trigPin": 13,
+      "echoPin": 12,
+      "samples": 15,
+      "interleave": true,
+      "readingRange": [
+        100,
+        3500
+      ],
+      "valueRange": [
+        0,
+        100
+      ],
+      "flipRange": true,
+      "controllers": [
+        {
+          "type": "pwm",
+          "pin": 16
+        }
+      ]
+    }
+  ]
+}
