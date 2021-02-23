@@ -2,6 +2,7 @@
   "verbose": true,
   "inputs": [
     {
+      "name": "knob",
       "type": "analog",
       "pin": 36,
       "controllers": [
@@ -12,6 +13,7 @@
       ]
     },
     {
+      "name": "ultrasonic",
       "type": "hc-sr04",
       "trigPin": 13,
       "echoPin": 12,

@@ -1,4 +1,4 @@
-#define VERSION "0.0.1"
+#define VERSION "0.0.2"
 #define BUILD_DATETIME __DATE__ " " __TIME__
 
 #include <Adafruit_PWMServoDriver.h>

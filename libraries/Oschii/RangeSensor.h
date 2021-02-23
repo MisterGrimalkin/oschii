@@ -1,6 +1,8 @@
 #ifndef RangeSensor_h
 #define RangeSensor_h
 
+#include "OSensor.h"
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
@@ -9,33 +11,28 @@
 
 #define MAX_SAMPLES 100
 
-class RangeSensor {
+class RangeSensor : public OSensor {
   public:
-    RangeSensor();
-    RangeSensor(int index);
+    RangeSensor() : OSensor() {};
+    RangeSensor(int index) : OSensor(index) {};
 
-    void readSensor();
-    bool hasChanged();
-    int getValue();
-    String getError();
+    virtual void readSensor();
 
     virtual bool build(JsonObject json);
     virtual void print() {};
+    virtual int getReading() {};
 
   protected:
-    int _index, _samples, _value, _sampleCount;
-    bool _flipRange, _interleave, _changed;
+    int _samples, _sampleCount;
+    bool _flipRange, _interleave;
     int _readingRange[2];
     int _valueRange[2];
     int _triggerBand[2];
     int _sampleBuffer[MAX_SAMPLES];
-    String _error;
 
     int mapToValue(int reading);
     int capReading(int reading);
     int getMedianValue(int samples);
-
-    virtual int getReading() {};
 };
 
 #endif

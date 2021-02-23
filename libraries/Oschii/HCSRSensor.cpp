@@ -1,11 +1,11 @@
 #include "HCSRSensor.h"
 
 bool HCSRSensor::build(JsonObject json) {
-  _readingRange[MIN] = 100;
-  _readingRange[MAX] = 3500;
+  if ( !RangeSensor::build(json) ) return false;
 
-  if ( !RangeSensor::build(json) ) {
-    return false;
+  if ( !json.containsKey("readingRange") ) {
+    _readingRange[MIN] = 100;
+    _readingRange[MAX] = 3500;
   }
 
   _trigPin = -1;

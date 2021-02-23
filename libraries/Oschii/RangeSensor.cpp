@@ -1,11 +1,7 @@
 #include "RangeSensor.h"
 
-RangeSensor::RangeSensor() {
-  RangeSensor(-1);
-}
-
-RangeSensor::RangeSensor(int index) {
-  _index = index;
+bool RangeSensor::build(JsonObject json) {
+  if ( !OSensor::build(json) ) return false;
 
   _samples = 1;
   _interleave = false;
@@ -17,14 +13,6 @@ RangeSensor::RangeSensor(int index) {
   _triggerBand[MIN] = 0;
   _triggerBand[MAX] = 100;
   _sampleCount = 0;
-  _error = "";
-
-  _value = -1;
-  _changed = false;
-}
-
-bool RangeSensor::build(JsonObject json) {
-  _error = "";
 
   if ( json.containsKey("samples") )  _samples = json["samples"];
   if ( json.containsKey("interleave") )  _interleave = json["interleave"];
@@ -58,18 +46,6 @@ bool RangeSensor::build(JsonObject json) {
   }
 
   return true;
-}
-
-bool RangeSensor::hasChanged() {
-  return _changed;
-}
-
-int RangeSensor::getValue() {
-  return _value;
-}
-
-String RangeSensor::getError() {
-  return _error;
 }
 
 void RangeSensor::readSensor() {
