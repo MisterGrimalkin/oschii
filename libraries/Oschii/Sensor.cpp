@@ -61,7 +61,7 @@ String Sensor::getError() {
 }
 
 String Sensor::toString() {
-  return String(_index) + ":" + String(_name) + ":" + String(_type);
+  return String(_index) + ":[" + _type + "] \"" + String(_name) + "\"";
 }
 
 StaticJsonDocument<1024> doc;

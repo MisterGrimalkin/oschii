@@ -11,8 +11,10 @@
 class SensorRack {
   public:
     SensorRack() {};
-    bool buildSensor(JsonObject json);
-    void readAllSensors();
+    String buildSensors(JsonArray array);
+    String buildSensor(JsonObject json);
+    void readSensors();
+    void printSensorValues();
 
   private:
     Sensor * _sensors[100];
