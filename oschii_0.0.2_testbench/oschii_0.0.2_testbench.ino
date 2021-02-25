@@ -33,10 +33,12 @@ void setup() {
     Serial.println(error);
   }
 
+  Serial.println(sensorRack.toPrettyJson());
+
 }
 
 void loop() {
   sensorRack.readSensors();
-  sensorRack.printSensorValues();
+//  sensorRack.printSensorValues();
   delay(50);
 }

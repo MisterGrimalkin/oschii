@@ -11,16 +11,17 @@ bool HCSRSensor::build(JsonObject json) {
   _trigPin = -1;
   _echoPin = -1;
 
-  if ( json.containsKey("trigPin") )  _trigPin = json["trigPin"];
-  if ( json.containsKey("echoPin") )  _echoPin = json["echoPin"];
-
-  if ( _trigPin < 0 ) {
-    _error = "RuleTwoError: Sensor " + String(_index) + " needs HCSR TRIG pin number";
+  if ( json.containsKey("trigPin") ) {
+    _trigPin = json["trigPin"];
+  } else {
+    _error = "RuleTwoError: Sensor '" + _name + "' needs value for 'trigPin'";
     return false;
   }
 
-  if ( _echoPin < 0 ) {
-    _error = "RuleTwoError: Sensor " + String(_index) + " needs HCSR ECHO pin number";
+  if ( json.containsKey("echoPin") ) {
+    _echoPin = json["echoPin"];
+  } else {
+    _error = "RuleTwoError: Sensor '" + _name + "' needs value for 'echoPin'";
     return false;
   }
 

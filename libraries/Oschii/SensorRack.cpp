@@ -1,14 +1,13 @@
 #include "SensorRack.h"
 
+const bool ECHO_SENSORS = true;
+
 String SensorRack::buildSensors(JsonArray array) {
-  String errorBuffer = "";
   Serial.println("Building Sensors:");
+  String errorBuffer = "";
   for ( int i = 0; i < array.size(); i++ ) {
-    JsonObject json = array[_sensorIndex];
-    String error = buildSensor(json);
-    if ( error != "" ) {
-      errorBuffer += error + "\n";
-    }
+    JsonObject json = array[i];
+    errorBuffer += buildSensor(json);
   }
   Serial.print("Found: ");
   Serial.print(_sensorIndex);
@@ -30,7 +29,7 @@ String SensorRack::buildSensor(JsonObject json) {
     hcsrSensor = HCSRSensor(_sensorIndex);
     sensor = &hcsrSensor;
   } else {
-    return "What is this thing called " + type + "?";
+    return "RuleTwoError: Don't know type '" + type + "'\n";
   }
 
   if ( sensor->build(json) ) {
@@ -38,7 +37,7 @@ String SensorRack::buildSensor(JsonObject json) {
     _sensors[_sensorIndex++] = sensor;
     return "";
   } else {
-    return sensor->getError();
+    return sensor->getError() + "\n";
   }
 }
 
@@ -47,6 +46,11 @@ void SensorRack::readSensors() {
     Sensor * sensor = _sensors[i];
     sensor->readSensor();
     if ( sensor->hasChanged() ) {
+      if ( ECHO_SENSORS ) {
+        Serial.print(sensor->getName());
+        Serial.print(" --> ");
+        Serial.println(sensor->getValue());
+      }
     }
   }
 }
@@ -79,4 +83,22 @@ void SensorRack::printSensorValues() {
   } else {
     printCount++;
   }
+}
+
+StaticJsonDocument<1024> doc2;
+
+JsonArray SensorRack::toJson() {
+
+  JsonArray array = doc2.createNestedArray("sensors");
+  for ( int i=0; i<_sensorIndex; i++ ) {
+    Sensor * sensor = _sensors[i];
+    array.add(sensor->toJson());
+  }
+  return array;
+}
+
+String SensorRack::toPrettyJson() {
+  String outputStr = "";
+  serializeJsonPretty(toJson(), outputStr);
+  return outputStr;
 }

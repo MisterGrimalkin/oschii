@@ -15,6 +15,8 @@ class SensorRack {
     String buildSensor(JsonObject json);
     void readSensors();
     void printSensorValues();
+    JsonArray toJson();
+    String toPrettyJson();
 
   private:
     Sensor * _sensors[100];

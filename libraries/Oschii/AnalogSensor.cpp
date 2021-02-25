@@ -7,10 +7,10 @@ bool AnalogSensor::build(JsonObject json) {
 
   _pin = -1;
 
-  if ( json.containsKey("pin") ) _pin = json["pin"];
-
-  if ( _pin < 0 ) {
-    _error = "RuleTwoError: Sensor " + String(_index) + " needs Analog Pin number";
+  if ( json.containsKey("pin") ) {
+    _pin = json["pin"];
+  } else {
+    _error = "RuleTwoError: Sensor '" + _name + "' needs value for 'pin'";
     return false;
   }
 

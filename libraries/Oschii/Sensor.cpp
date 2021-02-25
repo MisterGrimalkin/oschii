@@ -17,21 +17,21 @@ Sensor::Sensor(int index) {
 
 bool Sensor::build(JsonObject json) {
   if ( _built ) {
-    _error = "WhatTheFuckError: Sensor " + String(_index) + " has already been built";
+    _error = "RuleTwoError: Sensor '" + _name + "' has already been built";
     return false;
   }
 
   if ( json.containsKey("type") ) {
     _type = json["type"].as<String>();
   } else {
-    _error = "RuleTwoError: Sensor " + String(_index) + " needs a type";
+    _error = "RuleTwoError: Sensor '" + _name + "' needs a type";
     return false;
   }
 
   if ( json.containsKey("name") ) {
     _name = json["name"].as<String>();
   } else {
-    _error = "RuleTwoError: Sensor " + String(_index) + " needs a name";
+    _error = "RuleTwoError: Sensor needs a name";
     return false;
   }
 
@@ -61,7 +61,7 @@ String Sensor::getError() {
 }
 
 String Sensor::toString() {
-  return String(_index) + ":[" + _type + "] \"" + String(_name) + "\"";
+  return String(_index) + ":'" + _name + "' [" + _type + "]";
 }
 
 StaticJsonDocument<1024> doc;
