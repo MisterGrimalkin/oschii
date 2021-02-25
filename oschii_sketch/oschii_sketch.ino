@@ -281,7 +281,6 @@ int patternTimes[INPUTS_LIMIT][MAX_PATTERN_SIZE];
 // Main //
 //////////
 
-
 FileService files;
 SettingsService settings(files, "/settings.json");
 

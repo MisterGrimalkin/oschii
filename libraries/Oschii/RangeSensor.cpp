@@ -1,7 +1,7 @@
 #include "RangeSensor.h"
 
 bool RangeSensor::build(JsonObject json) {
-  if ( !OSensor::build(json) ) return false;
+  if ( !Sensor::build(json) ) return false;
 
   _samples = 1;
   _interleave = false;
@@ -107,4 +107,36 @@ int RangeSensor::getMedianValue(int samples) {
   }
   qsort(values, samples, sizeof(int), compareIntegers);
   return values[samples/2];
+}
+
+String RangeSensor::toString() {
+  return Sensor::toString() + " samples:" + String(_samples) + (_interleave ? "i" : "")
+  + " reading[" + String(_readingRange[MIN]) + "-" + String(_readingRange[MAX])
+  + "] value[" + String(_flipRange ? _valueRange[MAX] : _valueRange[MIN])
+  + "-" + String(_flipRange ? _valueRange[MIN] : _valueRange[MAX])
+  + "] trigger[" + String(_triggerBand[MIN]) + "-" + String(_triggerBand[MAX])
+  + String("]");
+}
+
+JsonObject RangeSensor::toJson() {
+  JsonObject json = Sensor::toJson();
+  json["samples"] = _samples;
+  json["interleave"] = _interleave;
+
+  JsonArray readingRange = json.createNestedArray("readingRange");
+  readingRange.add(_readingRange[MIN]);
+  readingRange.add(_readingRange[MAX]);
+
+  JsonArray valueRange = json.createNestedArray("valueRange");
+  valueRange.add(_valueRange[MIN]);
+  valueRange.add(_valueRange[MAX]);
+
+  json["flipRange"] = _flipRange;
+
+  JsonArray triggerBand = json.createNestedArray("triggerBand");
+  triggerBand.add(_triggerBand[MIN]);
+  triggerBand.add(_triggerBand[MAX]);
+
+  return json;
+
 }

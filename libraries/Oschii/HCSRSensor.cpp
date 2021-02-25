@@ -15,12 +15,12 @@ bool HCSRSensor::build(JsonObject json) {
   if ( json.containsKey("echoPin") )  _echoPin = json["echoPin"];
 
   if ( _trigPin < 0 ) {
-    _error = "HC-SR04 TRIG Pin not specified";
+    _error = "RuleTwoError: Sensor " + String(_index) + " needs HCSR TRIG pin number";
     return false;
   }
 
   if ( _echoPin < 0 ) {
-    _error = "HC-SR04 ECHO Pin not specified";
+    _error = "RuleTwoError: Sensor " + String(_index) + " needs HCSR ECHO pin number";
     return false;
   }
 
@@ -44,28 +44,13 @@ int HCSRSensor::getReading() {
   return reading;
 }
 
-void HCSRSensor::print() {
-  Serial.print  ("   + Input-");
-  Serial.print  (_index);
-  Serial.println(":HC-SR04");
-  Serial.print  ("     [trig:");
-  Serial.print(_trigPin);
-  Serial.print(" echo:");
-  Serial.print(_echoPin);
-  Serial.print(" samples:");
-  Serial.print(_interleave ? "~" : "#");
-  Serial.print(_samples);
-  Serial.print(" reading(");
-  Serial.print(_readingRange[MIN]);
-  Serial.print("-");
-  Serial.print(_readingRange[MAX]);
-  Serial.print(") value(");
-  Serial.print(_flipRange ? _valueRange[MAX] : _valueRange[MIN]);
-  Serial.print("-");
-  Serial.print(_flipRange ? _valueRange[MIN] : _valueRange[MAX]);
-  Serial.print(") trigger(");
-  Serial.print(_triggerBand[MIN]);
-  Serial.print("-");
-  Serial.print(_triggerBand[MAX]);
-  Serial.println(")]");
+String HCSRSensor::toString() {
+  return RangeSensor::toString() + " trigPin:" + String(_trigPin) + " echoPin:" + String(_echoPin);
+}
+
+JsonObject HCSRSensor::toJson() {
+  JsonObject json = RangeSensor::toJson();
+  json["trigPin"] = _trigPin;
+  json["echoPin"] = _echoPin;
+  return json;
 }

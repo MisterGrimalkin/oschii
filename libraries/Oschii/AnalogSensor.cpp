@@ -10,7 +10,7 @@ bool AnalogSensor::build(JsonObject json) {
   if ( json.containsKey("pin") ) _pin = json["pin"];
 
   if ( _pin < 0 ) {
-    _error = "Analog Pin not specified";
+    _error = "RuleTwoError: Sensor " + String(_index) + " needs Analog Pin number";
     return false;
   }
 
@@ -25,26 +25,12 @@ int AnalogSensor::getReading() {
   return (int)milliVolts;
 }
 
-void AnalogSensor::print() {
-  Serial.print  ("   + Input-");
-  Serial.print  (_index);
-  Serial.println(":Analog");
-  Serial.print  ("     [pin:");
-  Serial.print(_pin);
-  Serial.print(" samples:");
-  Serial.print(_interleave ? "~" : "#");
-  Serial.print(_samples);
-  Serial.print(" reading(");
-  Serial.print(_readingRange[MIN]);
-  Serial.print("-");
-  Serial.print(_readingRange[MAX]);
-  Serial.print(") value(");
-  Serial.print(_flipRange ? _valueRange[MAX] : _valueRange[MIN]);
-  Serial.print("-");
-  Serial.print(_flipRange ? _valueRange[MIN] : _valueRange[MAX]);
-  Serial.print(") trigger(");
-  Serial.print(_triggerBand[MIN]);
-  Serial.print("-");
-  Serial.print(_triggerBand[MAX]);
-  Serial.println(")]");
+String AnalogSensor::toString() {
+  return RangeSensor::toString() + " pin:" + String(_pin);
+}
+
+JsonObject AnalogSensor::toJson() {
+  JsonObject json = RangeSensor::toJson();
+  json["pin"] = _pin;
+  return json;
 }

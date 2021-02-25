@@ -1,13 +1,13 @@
-#ifndef OSensor_h
-#define OSensor_h
+#ifndef Sensor_h
+#define Sensor_h
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-class OSensor {
+class Sensor {
   public:
-    OSensor();
-    OSensor(int index);
+    Sensor();
+    Sensor(int index);
 
     int getValue();
     bool hasChanged();
@@ -18,8 +18,10 @@ class OSensor {
     virtual void readSensor() {};
 
     virtual bool build(JsonObject json);
-    virtual void print() {};
     virtual int getReading() {};
+    virtual String toString();
+    virtual JsonObject toJson();
+    String toPrettyJson();
 
   protected:
     int _index, _value;

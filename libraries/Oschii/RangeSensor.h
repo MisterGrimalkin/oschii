@@ -1,7 +1,7 @@
 #ifndef RangeSensor_h
 #define RangeSensor_h
 
-#include "OSensor.h"
+#include "Sensor.h"
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -11,16 +11,17 @@
 
 #define MAX_SAMPLES 100
 
-class RangeSensor : public OSensor {
+class RangeSensor : public Sensor {
   public:
-    RangeSensor() : OSensor() {};
-    RangeSensor(int index) : OSensor(index) {};
+    RangeSensor() : Sensor() {};
+    RangeSensor(int index) : Sensor(index) {};
 
     virtual void readSensor();
 
     virtual bool build(JsonObject json);
-    virtual void print() {};
     virtual int getReading() {};
+    virtual String toString();
+    virtual JsonObject toJson();
 
   protected:
     int _samples, _sampleCount;

@@ -1,10 +1,10 @@
-#include "OSensor.h"
+#include "Sensor.h"
 
-OSensor::OSensor() {
-  OSensor(-1);
+Sensor::Sensor() {
+  Sensor(-1);
 }
 
-OSensor::OSensor(int index) {
+Sensor::Sensor(int index) {
   _index = index;
   _value = -1;
   _built = false;
@@ -15,7 +15,7 @@ OSensor::OSensor(int index) {
   _error = "";
 }
 
-bool OSensor::build(JsonObject json) {
+bool Sensor::build(JsonObject json) {
   if ( _built ) {
     _error = "WhatTheFuckError: Sensor " + String(_index) + " has already been built";
     return false;
@@ -40,22 +40,41 @@ bool OSensor::build(JsonObject json) {
   return true;
 }
 
-int OSensor::getValue() {
+int Sensor::getValue() {
   return _value;
 }
 
-bool OSensor::hasChanged() {
+bool Sensor::hasChanged() {
   return _changed;
 }
 
-String OSensor::getType() {
+String Sensor::getType() {
   return _type;
 }
 
-String OSensor::getName() {
+String Sensor::getName() {
   return _name;
 }
 
-String OSensor::getError() {
+String Sensor::getError() {
   return _error;
+}
+
+String Sensor::toString() {
+  return String(_index) + ":" + String(_name) + ":" + String(_type);
+}
+
+StaticJsonDocument<1024> doc;
+
+JsonObject Sensor::toJson() {
+  JsonObject json = doc.to<JsonObject>();
+  json["name"] = _name;
+  json["type"] = _type;
+  return json;
+}
+
+String Sensor::toPrettyJson() {
+  String outputStr = "";
+  serializeJsonPretty(toJson(), outputStr);
+  return outputStr;
 }
