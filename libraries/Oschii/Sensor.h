@@ -27,6 +27,7 @@ class Sensor {
     int _index, _value;
     bool _built, _changed;
     String _name, _type, _error;
+    void setError(String error);
 };
 
 #endif

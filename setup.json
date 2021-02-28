@@ -1,13 +1,27 @@
 {
   "name": "Ada",
-  "preferEthernet": false,
-  "wifiSsid": "hjk",
-  "wifiPassword": "hjk",
-  "i2c": {
-    "sdaPin": 4,
-    "sclPin": 5,
-    "clock": 400000,
-    "pwmFrequency": 1000,
-    "oscillatorFrequency": 23000000
+  "network": {
+    "wifiEnabled": true,
+    "wifiName": "TotallyNotSkynet",
+    "wifiTimeout": 5000,
+    "ethernetPreferred": false,
+    "ethernetTimeout": 60000,
+    "oscPort": 3333,
+    "httpPort": 80
+  },
+  "cloud": {
+    "ip": "192.168.1.123",
+    "connectOnStartup": true,
+    "allowRemoteUpdate": true,
+    "mirrorOsc": true,
+    "mirrorHttp": false
+  },
+  "serialEcho": {
+    "startUp": true,
+    "build": true,
+    "sensors": false,
+    "drivers": false,
+    "monitors": false,
+    "remotes": false
   }
 }

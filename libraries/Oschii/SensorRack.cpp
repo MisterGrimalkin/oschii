@@ -4,14 +4,17 @@ const bool ECHO_SENSORS = true;
 
 String SensorRack::buildSensors(JsonArray array) {
   Serial.println("Building Sensors:");
+
   String errorBuffer = "";
   for ( int i = 0; i < array.size(); i++ ) {
     JsonObject json = array[i];
     errorBuffer += buildSensor(json);
   }
+
   Serial.print("Found: ");
   Serial.print(_sensorIndex);
   Serial.println("\n");
+
   return errorBuffer;
 }
 
@@ -33,8 +36,9 @@ String SensorRack::buildSensor(JsonObject json) {
   }
 
   if ( sensor->build(json) ) {
-    Serial.println(" " + sensor->toString());
     _sensors[_sensorIndex++] = sensor;
+
+    Serial.println(" " + sensor->toString());
     return "";
   } else {
     return sensor->getError() + "\n";

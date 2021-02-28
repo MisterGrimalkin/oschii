@@ -17,28 +17,43 @@ void setup() {
   JsonObject analogJson = sensorArray.createNestedObject();
   analogJson["name"] = "Knob";
   analogJson["type"] = "analog";
+  analogJson["samples"] = 1;
+  analogJson["interleave"] = false;
   analogJson["pin"] = 36;
+  JsonArray readingRange = analogJson.createNestedArray("readingRange");
+  readingRange.add(0);
+  readingRange.add(3300);
+  JsonArray valueRange = analogJson.createNestedArray("valueRange");
+  valueRange.add(0);
+  valueRange.add(100);
+  analogJson["flipRange"] = false;
+  JsonArray bandPass = analogJson.createNestedArray("bandPass");
+  bandPass.add(0);
+  bandPass.add(100);
+  JsonArray bandCut = analogJson.createNestedArray("bandCut");
+  bandCut.add(0);
+  bandCut.add(0);
 
-  JsonObject hcsrJson = sensorArray.createNestedObject();
-  hcsrJson["name"] = "Ultrasonic";
-  hcsrJson["type"] = "hc-sr04";
-  hcsrJson["samples"] = 5;
-  hcsrJson["interleave"] = true;
-  hcsrJson["flipRange"] = true;
-  hcsrJson["trigPin"] = 13;
-  hcsrJson["echoPin"] = 12;
+//  JsonObject hcsrJson = sensorArray.createNestedObject();
+//  hcsrJson["name"] = "Ultrasonic";
+//  hcsrJson["type"] = "hc-sr04";
+//  hcsrJson["samples"] = 5;
+//  hcsrJson["interleave"] = true;
+//  hcsrJson["flipRange"] = true;
+//  hcsrJson["trigPin"] = 13;
+//  hcsrJson["echoPin"] = 12;
 
   String error = sensorRack.buildSensors(sensorArray);
+
   if ( error != "" ) {
     Serial.println(error);
   }
 
   Serial.println(sensorRack.toPrettyJson());
-
 }
 
 void loop() {
   sensorRack.readSensors();
 //  sensorRack.printSensorValues();
-  delay(50);
+//  delay(50);
 }

@@ -25,10 +25,12 @@ class RangeSensor : public Sensor {
 
   protected:
     int _samples, _sampleCount;
-    bool _flipRange, _interleave;
+    bool _flipRange, _interleave, _bandCutActive;
+
     int _readingRange[2];
     int _valueRange[2];
-    int _triggerBand[2];
+    int _bandPass[2];
+    int _bandCut[2];
     int _sampleBuffer[MAX_SAMPLES];
 
     int mapToValue(int reading);

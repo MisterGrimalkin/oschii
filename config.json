@@ -1,0 +1,144 @@
+{
+  "i2c": {
+    "sdaPin": 4,
+    "sclPin": 5,
+    "clock": 400000,
+    "pwmFrequency": 1000,
+    "oscillatorFrequency": 23000000,
+    "devices": [
+      {
+        "name": "GPIO-A",
+        "type": "gpio",
+        "address": "0x20",
+        "chip": "MCP23017"
+      },
+      {
+        "name": "TOUCH-A (nth)",
+        "type": "touch",
+        "address": "0xBB",
+        "chip": "CAP1188"
+      },
+      {
+        "name": "ADC-A (nth)",
+        "type": "analog",
+        "address": "0x48",
+        "chip": "ADS1115"
+      },
+      {
+        "name": "PTH-A (nth)",
+        "type": "atmospheric",
+        "address": "0xAA",
+        "chip": "BME280"
+      },
+      {
+        "name": "PWM-A",
+        "type": "pwm",
+        "address": "0x70",
+        "chip": "PCA9685"
+      }
+    ]
+  },
+  "sensors": [
+    {
+      "name": "Button 1",
+      "type": "gpio",
+      "onValue": 100,
+      "offValue": -1,
+      "bounceFilter": 0,
+      "holdFilter": 0,
+      "i2cDevice": "GPIO-A",
+      "pin": 7,
+      "resistor": "off"
+    },
+    {
+      "name": "Touch 1",
+      "type": "touch",
+      "onValue": -1,
+      "offValue": 0,
+      "bounceFilter": 100,
+      "holdFilter": 0,
+      "triggerThreshold": 50,
+      "triggerHighPass": true,
+      "pin": 2,
+      "sendRawValue": false
+    },
+    {
+      "name": "Knob 1",
+      "type": "analog",
+      "readingRange": [
+        0,
+        3300
+      ],
+      "valueRange": [
+        0,
+        100
+      ],
+      "bandPass": [
+        0,
+        100
+      ],
+      "bandCut": [
+        0,
+        0
+      ],
+      "samples": 1,
+      "interleave": false,
+      "pin": 6
+    },
+    {
+      "name": "Ultrasonic 1",
+      "type": "hc-sr04",
+      "readingRange": [
+        150,
+        3500
+      ],
+      "valueRange": [
+        100,
+        0
+      ],
+      "bandPass": [
+        0,
+        100
+      ],
+      "bandCut": [
+        0,
+        0
+      ],
+      "samples": 5,
+      "interleave": true,
+      "trigPin": 12,
+      "echoPin": 13
+    }
+  ],
+  "drivers": [
+    {
+      "name": "LED 1",
+      "type": "gpio",
+      "i2cDevice": "GPIO-A",
+      "thresholdValue": 50,
+      "thresholdHighPass": true,
+      "initialOutput": -1,
+      "pin": 3
+    },
+    {
+      "name": "LED 2",
+      "type": "pwm",
+      "i2cDevice": "PWM-A",
+      "initialValue": 0,
+      "valueRange": [
+        0,
+        100
+      ],
+      "outputRange": [
+        0,
+        100
+      ],
+      "interpolation": {
+        "type": "linear",
+        "time": 2000
+      },
+      "pin": 9
+    }
+  ]
+}
+

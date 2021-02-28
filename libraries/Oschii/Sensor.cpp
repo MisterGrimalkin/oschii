@@ -60,6 +60,10 @@ String Sensor::getError() {
   return _error;
 }
 
+void Sensor::setError(String error) {
+  _error = "ERROR! Sensor '" + _name + "': " + error;
+}
+
 String Sensor::toString() {
   return String(_index) + ":'" + _name + "' [" + _type + "]";
 }

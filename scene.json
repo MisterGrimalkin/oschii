@@ -1,0 +1,118 @@
+{
+  "receivers": [
+    {
+      "name": "Ada",
+      "ip": "192.168.1.2",
+      "oscPort": 3333,
+      "httpPort": 80
+    },
+    {
+      "name": "Bob",
+      "ip": "192.168.1.5",
+      "oscPort": 3333,
+      "httpPort": 80
+    }
+  ],
+  "sensorMonitors": {
+    "Button 1": {
+      "reportTo": [
+        {
+          "address": "/oschii/button1",
+          "type": "osc"
+        }
+      ],
+      "fireRemotes": [
+        "/led1"
+      ]
+    },
+    "Touch 1": {
+      "reportTo": [],
+      "fireRemotes": [
+        "/led1"
+      ]
+    },
+    "Knob 1": {
+      "reportTo": [
+        {
+          "address": "/test",
+          "type": "http",
+          "receivers": [
+            "Bob"
+          ]
+        }
+      ],
+      "fireRemotes": [
+        "/led2"
+      ]
+    }
+  },
+  "driverRemotes": {
+    "/led1": {
+      "type": "osc",
+      "group": 1,
+      "accepts": "int",
+      "writeTo": [
+        {
+          "driver": "LED 1",
+          "pattern": [
+            {
+              "amount": "$value",
+              "time": 500
+            },
+            {
+              "amount": 0,
+              "time": 500
+            },
+            {
+              "amount": "$value",
+              "time": 2000
+            },
+            {
+              "amount": 0,
+              "time": 3000
+            },
+            {
+              "repeat": 3,
+              "loop": false,
+              "hold": false
+            }
+          ]
+        }
+      ]
+    },
+    "/led2": {
+      "type": "http",
+      "group": 1,
+      "expectJson": true,
+      "writeTo": [
+        {
+          "driver": "LED 2",
+          "envelope": [
+            {
+              "setStartValue": 0,
+              "getEndValue": {
+                ""
+                "fromJson": "value",
+                "default": 100,
+                "multiplier": 1.0,
+                "offset": 0
+              },
+              "setTime": 1000,
+              "setInterpolation": "cosine"
+            },
+            {
+              "startValue": 0,
+              "endValue": 0,
+              "time": 2000,
+              "interpolationType": "linear",
+              "valueAs": "startValue",
+              "valueMultiplier": 1.0,
+              "valueOffset": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
