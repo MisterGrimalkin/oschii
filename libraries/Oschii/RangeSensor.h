@@ -17,15 +17,16 @@ class RangeSensor : public Sensor {
     RangeSensor(int index) : Sensor(index) {};
 
     virtual void readSensor();
+    virtual int getReading() {};
 
     virtual bool build(JsonObject json);
-    virtual int getReading() {};
-    virtual String toString();
+
     virtual JsonObject toJson();
+    virtual String toString();
 
   protected:
     int _samples, _sampleCount;
-    bool _flipRange, _interleave, _bandCutActive;
+    bool _flipRange, _interleave, _discardOutliers;
 
     int _readingRange[2];
     int _valueRange[2];

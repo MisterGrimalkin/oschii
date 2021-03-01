@@ -2,6 +2,7 @@
 
 const bool ECHO_SENSORS = true;
 
+
 String SensorRack::buildSensors(JsonArray array) {
   Serial.println("Building Sensors:");
 
@@ -21,18 +22,30 @@ String SensorRack::buildSensors(JsonArray array) {
 String SensorRack::buildSensor(JsonObject json) {
   Sensor * sensor;
 
-  static AnalogSensor analogSensor;
-  static HCSRSensor hcsrSensor;
-
   String type = json["type"];
-  if ( type == "analog" ) {
-    analogSensor = AnalogSensor(_sensorIndex);
-    sensor = &analogSensor;
+
+  if ( type == "gpio" ) {
+    GpioSensor gpioSensor = GpioSensor(_sensorIndex);
+    _gpioSensors[_sensorIndex] = gpioSensor;
+    sensor = &_gpioSensors[_sensorIndex];
+
+  } else if ( type == "touch" ) {
+    TouchSensor touchSensor = TouchSensor(_sensorIndex);
+    _touchSensors[_sensorIndex] = touchSensor;
+    sensor = &_touchSensors[_sensorIndex];
+
+  } else if ( type == "analog" ) {
+    AnalogSensor analogSensor = AnalogSensor(_sensorIndex);
+    _analogSensors[_sensorIndex] = analogSensor;
+    sensor = &_analogSensors[_sensorIndex];
+
   } else if ( type == "hc-sr04" ) {
-    hcsrSensor = HCSRSensor(_sensorIndex);
-    sensor = &hcsrSensor;
+    HCSRSensor hcsrSensor = HCSRSensor(_sensorIndex);
+    _hcsrSensors[_sensorIndex] = hcsrSensor;
+    sensor = &_hcsrSensors[_sensorIndex];
+
   } else {
-    return "RuleTwoError: Don't know type '" + type + "'\n";
+    return "RuleTwoError: No type of sensor called '" + type + "'\n";
   }
 
   if ( sensor->build(json) ) {
@@ -89,7 +102,7 @@ void SensorRack::printSensorValues() {
   }
 }
 
-StaticJsonDocument<1024> doc2;
+StaticJsonDocument<4096> doc2;
 
 JsonArray SensorRack::toJson() {
 

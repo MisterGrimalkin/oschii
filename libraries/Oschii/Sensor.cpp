@@ -21,13 +21,6 @@ bool Sensor::build(JsonObject json) {
     return false;
   }
 
-  if ( json.containsKey("type") ) {
-    _type = json["type"].as<String>();
-  } else {
-    _error = "RuleTwoError: Sensor '" + _name + "' needs a type";
-    return false;
-  }
-
   if ( json.containsKey("name") ) {
     _name = json["name"].as<String>();
   } else {
@@ -35,9 +28,36 @@ bool Sensor::build(JsonObject json) {
     return false;
   }
 
+  if ( json.containsKey("type") ) {
+    _type = json["type"].as<String>();
+  } else {
+    setError("No value given for 'type'");
+    return false;
+  }
+
   _built = true;
+  _lastChanged = millis();
 
   return true;
+}
+
+String Sensor::toPrettyJson() {
+  String outputStr = "";
+  serializeJsonPretty(toJson(), outputStr);
+  return outputStr;
+}
+
+JsonObject Sensor::toJson() {
+  JsonObject json = _jsonRoot.to<JsonObject>();
+
+  json["name"] = _name;
+  json["type"] = _type;
+
+  return json;
+}
+
+String Sensor::toString() {
+  return String(_index) + ":'" + _name + "' [" + _type + "]";
 }
 
 int Sensor::getValue() {
@@ -62,23 +82,4 @@ String Sensor::getError() {
 
 void Sensor::setError(String error) {
   _error = "ERROR! Sensor '" + _name + "': " + error;
-}
-
-String Sensor::toString() {
-  return String(_index) + ":'" + _name + "' [" + _type + "]";
-}
-
-StaticJsonDocument<1024> doc;
-
-JsonObject Sensor::toJson() {
-  JsonObject json = doc.to<JsonObject>();
-  json["name"] = _name;
-  json["type"] = _type;
-  return json;
-}
-
-String Sensor::toPrettyJson() {
-  String outputStr = "";
-  serializeJsonPretty(toJson(), outputStr);
-  return outputStr;
 }

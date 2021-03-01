@@ -1,82 +1,5 @@
 #include "RangeSensor.h"
 
-bool RangeSensor::build(JsonObject json) {
-  if ( !Sensor::build(json) ) return false;
-
-  _samples = 1;
-  _sampleCount = 0;
-  _interleave = false;
-
-  _readingRange[MIN] = 0;
-  _readingRange[MAX] = 3300;
-
-  _valueRange[MIN] = 0;
-  _valueRange[MAX] = 100;
-  _flipRange = false;
-
-  _bandPass[MIN] = 0;
-  _bandPass[MAX] = 100;
-  _bandCut[MIN] = 0;
-  _bandCut[MAX] = 0;
-
-  if ( json.containsKey("samples") )  _samples = json["samples"];
-  if ( json.containsKey("interleave") )  _interleave = json["interleave"];
-
-  if ( json.containsKey("readingRange") ) {
-    JsonArray readingRange = json["readingRange"];
-    if ( readingRange[MAX] < readingRange[MIN] ) {
-      setError("Reading Range must be positive");
-      return false;
-    }
-    _readingRange[MIN] = readingRange[MIN];
-    _readingRange[MAX] = readingRange[MAX];
-  }
-
-  if ( json.containsKey("valueRange") ) {
-    JsonArray valueRange = json["valueRange"];
-    if ( valueRange[MAX] < valueRange[MIN] ) {
-      setError("Value Range must be positive");
-      return false;
-    }
-    _valueRange[MIN] = valueRange[MIN];
-    _valueRange[MAX] = valueRange[MAX];
-  }
-
-  if ( json.containsKey("flipRange") )  _flipRange = json["flipRange"];
-
-  if ( json.containsKey("bandPass") ) {
-    JsonArray bandPass = json["bandPass"];
-    if ( bandPass[MAX] < bandPass[MIN] ) {
-      setError("Band Pass must be positive");
-      return false;
-    }
-    _bandPass[MIN] = bandPass[MIN];
-    _bandPass[MAX] = bandPass[MAX];
-  } else {
-    _bandPass[MIN] = _valueRange[MIN];
-    _bandPass[MAX] = _valueRange[MAX];
-  }
-
-  if ( json.containsKey("bandCut") ) {
-    JsonArray bandCut = json["bandCut"];
-    if ( bandCut[MAX] < bandCut[MIN] ) {
-      setError("Band Cut must be positive");
-      return false;
-    }
-    _bandCut[MIN] = bandCut[MIN];
-    _bandCut[MAX] = bandCut[MAX];
-  }
-  _bandCutActive = _bandCut[MAX] > _bandCut[MIN];
-
-
-  if ( _samples > MAX_SAMPLES ) {
-    setError("Max samples is " + String(MAX_SAMPLES));
-    return false;
-  }
-
-  return true;
-}
-
 void RangeSensor::readSensor() {
   _changed = false;
 
@@ -100,9 +23,10 @@ void RangeSensor::readSensor() {
   }
 
   _changed = (   tempValue != _value
-              && tempValue >= _bandPass[MIN] && tempValue <= _bandPass[MAX]
-              && !(_bandCutActive && tempValue >= _bandCut[MIN] && tempValue <= _bandCut[MAX])
+              && (tempValue >= _bandPass[MIN] && tempValue <= _bandPass[MAX])
+              && !(tempValue >= _bandCut[MIN] && tempValue <= _bandCut[MAX])
             );
+  if ( _changed ) _lastChanged = millis();
   _value = tempValue;
 }
 
@@ -145,24 +69,95 @@ int RangeSensor::getMedianValue(int samples) {
   return values[samples/2];
 }
 
-String RangeSensor::toString() {
-  return Sensor::toString() + " samples:" + (_interleave ? "I:" : "B:") + String(_samples)
-  + " reading[" + String(_readingRange[MIN]) + "-" + String(_readingRange[MAX])
-  + "] value[" + String(_valueRange[MIN]) + "-" + String(_valueRange[MAX])
-  + "] flip:" + String(_flipRange)
-  + " bandPass[" + String(_bandPass[MIN]) + "-" + String(_bandPass[MAX])
-  + "] bandCut[" + String(_bandCut[MIN]) + "-" + String(_bandCut[MAX])
-  + String("]");
+bool RangeSensor::build(JsonObject json) {
+  if ( !Sensor::build(json) ) return false;
+
+  _samples = 1;
+  _sampleCount = 0;
+  _interleave = false;
+
+  _readingRange[MIN] = 0;
+  _readingRange[MAX] = 3300;
+  _discardOutliers = true;
+
+  _valueRange[MIN] = 0;
+  _valueRange[MAX] = 100;
+  _flipRange = false;
+
+  _bandPass[MIN] = 0;
+  _bandPass[MAX] = 100;
+  _bandCut[MIN] = -1;
+  _bandCut[MAX] = -1;
+
+  if ( json.containsKey("samples") )     _samples    = json["samples"];
+  if ( json.containsKey("interleave") )  _interleave = json["interleave"];
+
+  if ( json.containsKey("readingRange") ) {
+    JsonArray readingRange = json["readingRange"];
+    if ( readingRange[MAX] < readingRange[MIN] ) {
+      setError("Reading Range must be positive");
+      return false;
+    }
+    _readingRange[MIN] = readingRange[MIN];
+    _readingRange[MAX] = readingRange[MAX];
+  }
+
+  if ( json.containsKey("discardOutliers") ) _discardOutliers = json["discardOutliers"];
+
+  if ( json.containsKey("valueRange") ) {
+    JsonArray valueRange = json["valueRange"];
+    if ( valueRange[MAX] < valueRange[MIN] ) {
+      setError("Value Range must be positive");
+      return false;
+    }
+    _valueRange[MIN] = valueRange[MIN];
+    _valueRange[MAX] = valueRange[MAX];
+  }
+
+  if ( json.containsKey("flipRange") )  _flipRange = json["flipRange"];
+
+  if ( json.containsKey("bandPass") ) {
+    JsonArray bandPass = json["bandPass"];
+    if ( bandPass[MAX] < bandPass[MIN] ) {
+      setError("Band Pass must be positive");
+      return false;
+    }
+    _bandPass[MIN] = bandPass[MIN];
+    _bandPass[MAX] = bandPass[MAX];
+  } else {
+    _bandPass[MIN] = _valueRange[MIN];
+    _bandPass[MAX] = _valueRange[MAX];
+  }
+
+  if ( json.containsKey("bandCut") ) {
+    JsonArray bandCut = json["bandCut"];
+    if ( bandCut[MAX] < bandCut[MIN] ) {
+      setError("Band Cut must be positive");
+      return false;
+    }
+    _bandCut[MIN] = bandCut[MIN];
+    _bandCut[MAX] = bandCut[MAX];
+  }
+
+  if ( _samples > MAX_SAMPLES ) {
+    setError("Maximum samples is " + String(MAX_SAMPLES));
+    return false;
+  }
+
+  return true;
 }
 
 JsonObject RangeSensor::toJson() {
   JsonObject json = Sensor::toJson();
+
   json["samples"] = _samples;
   json["interleave"] = _interleave;
 
   JsonArray readingRange = json.createNestedArray("readingRange");
   readingRange.add(_readingRange[MIN]);
   readingRange.add(_readingRange[MAX]);
+
+  json["discardOutliers"] = _discardOutliers;
 
   JsonArray valueRange = json.createNestedArray("valueRange");
   valueRange.add(_valueRange[MIN]);
@@ -179,4 +174,16 @@ JsonObject RangeSensor::toJson() {
   bandCut.add(_bandCut[MAX]);
 
   return json;
+}
+
+String RangeSensor::toString() {
+  return Sensor::toString()
+  + " samples:" + (_interleave ? "I:" : "B:") + String(_samples)
+  + " reading[" + String(_readingRange[MIN]) + "-" + String(_readingRange[MAX])
+  + "] discard:" + String(_discardOutliers)
+  + " value[" + String(_valueRange[MIN]) + "-" + String(_valueRange[MAX])
+  + "] flip:" + String(_flipRange)
+  + " pass[" + String(_bandPass[MIN]) + "-" + String(_bandPass[MAX])
+  + "] cut[" + String(_bandCut[MIN]) + "-" + String(_bandCut[MAX])
+  + String("]");
 }

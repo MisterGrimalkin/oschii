@@ -1,19 +1,23 @@
 #ifndef BinarySensor_h
 #define BinarySensor_h
 
-class BinarySensor : public OSensor {
+#include "Sensor.h"
+
+class BinarySensor : public Sensor {
   public:
     BinarySensor() : Sensor() {};
     BinarySensor(int index) : Sensor(index) {};
 
     virtual void readSensor();
-
     virtual bool build(JsonObject json);
-    virtual void print() {};
-    virtual int getReading() {};
+
+    virtual JsonObject toJson();
+    virtual String toString();
+
+    virtual bool getState() {};
 
   protected:
-    int _bounceFilter, _holdFilter, _onValue, _offValue;
+    int _onValue, _offValue, _bounceFilter;
     bool _invert;
 };
 

@@ -1,5 +1,11 @@
 #include "AnalogSensor.h"
 
+int AnalogSensor::getReading() {
+  int reading = analogRead(_pin);
+  double milliVolts = (reading / 4095.0) * 3300;
+  return (int)milliVolts;
+}
+
 bool AnalogSensor::build(JsonObject json) {
   if ( !RangeSensor::build(json) ) {
     return false;
@@ -10,7 +16,7 @@ bool AnalogSensor::build(JsonObject json) {
   if ( json.containsKey("pin") ) {
     _pin = json["pin"];
   } else {
-    _error = "RuleTwoError: Sensor '" + _name + "' needs value for 'pin'";
+    setError("No value given for 'pin'");
     return false;
   }
 
@@ -19,18 +25,15 @@ bool AnalogSensor::build(JsonObject json) {
   return true;
 }
 
-int AnalogSensor::getReading() {
-  int reading = analogRead(_pin);
-  double milliVolts = (reading / 4095.0) * 3300;
-  return (int)milliVolts;
+JsonObject AnalogSensor::toJson() {
+  JsonObject json = RangeSensor::toJson();
+
+  json["pin"] = _pin;
+
+  return json;
 }
 
 String AnalogSensor::toString() {
-  return RangeSensor::toString() + " pin:" + String(_pin);
-}
-
-JsonObject AnalogSensor::toJson() {
-  JsonObject json = RangeSensor::toJson();
-  json["pin"] = _pin;
-  return json;
+  return RangeSensor::toString()
+          + " pin:" + String(_pin);
 }

@@ -9,24 +9,25 @@ class Sensor {
     Sensor();
     Sensor(int index);
 
+    virtual void readSensor() {};
+    virtual bool build(JsonObject json);
+
+    String toPrettyJson();
+    virtual JsonObject toJson();
+    virtual String toString();
+
     int getValue();
     bool hasChanged();
     String getType();
     String getName();
     String getError();
 
-    virtual void readSensor() {};
-
-    virtual bool build(JsonObject json);
-    virtual int getReading() {};
-    virtual String toString();
-    virtual JsonObject toJson();
-    String toPrettyJson();
-
   protected:
-    int _index, _value;
+    int _index, _value, _lastChanged;
     bool _built, _changed;
     String _name, _type, _error;
+    StaticJsonDocument<512> _jsonRoot;
+
     void setError(String error);
 };
 
