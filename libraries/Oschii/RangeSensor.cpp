@@ -31,13 +31,16 @@ void RangeSensor::readSensor() {
 }
 
 int RangeSensor::capReading(int reading) {
+  int newReading = reading;
+
   if ( reading < _readingRange[MIN] ) {
-    return _readingRange[MIN];
+    newReading = _discardOutliers ? _lastReading : _readingRange[MIN];
+
   } else if ( reading > _readingRange[MAX] ) {
-    return _readingRange[MAX];
-  } else {
-    return reading;
+    newReading = _discardOutliers ? _lastReading : _readingRange[MAX];
   }
+
+  return _lastReading = newReading;
 }
 
 int RangeSensor::mapToValue(int reading) {

@@ -9,7 +9,7 @@ int HCSRSensor::getReading() {
   digitalWrite(_trigPin, LOW);
   int reading = pulseIn(_echoPin, HIGH, _readingRange[MAX]);
   if ( reading == 0 ) {
-    reading = _readingRange[MAX];
+    reading = _readingRange[MAX] + 1;
   }
   return reading;
 }

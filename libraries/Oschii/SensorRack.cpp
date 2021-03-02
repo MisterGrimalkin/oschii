@@ -1,8 +1,5 @@
 #include "SensorRack.h"
 
-const bool ECHO_SENSORS = true;
-
-
 String SensorRack::buildSensors(JsonArray array) {
   Serial.println("Building Sensors:");
 
@@ -25,24 +22,16 @@ String SensorRack::buildSensor(JsonObject json) {
   String type = json["type"];
 
   if ( type == "gpio" ) {
-    GpioSensor gpioSensor = GpioSensor(_sensorIndex);
-    _gpioSensors[_sensorIndex] = gpioSensor;
-    sensor = &_gpioSensors[_sensorIndex];
+    sensor = new GpioSensor(_sensorIndex);
 
   } else if ( type == "touch" ) {
-    TouchSensor touchSensor = TouchSensor(_sensorIndex);
-    _touchSensors[_sensorIndex] = touchSensor;
-    sensor = &_touchSensors[_sensorIndex];
+    sensor = new TouchSensor(_sensorIndex);
 
   } else if ( type == "analog" ) {
-    AnalogSensor analogSensor = AnalogSensor(_sensorIndex);
-    _analogSensors[_sensorIndex] = analogSensor;
-    sensor = &_analogSensors[_sensorIndex];
+    sensor = new AnalogSensor(_sensorIndex);
 
   } else if ( type == "hc-sr04" ) {
-    HCSRSensor hcsrSensor = HCSRSensor(_sensorIndex);
-    _hcsrSensors[_sensorIndex] = hcsrSensor;
-    sensor = &_hcsrSensors[_sensorIndex];
+    sensor = new HCSRSensor(_sensorIndex);
 
   } else {
     return "RuleTwoError: No type of sensor called '" + type + "'\n";
@@ -105,7 +94,6 @@ void SensorRack::printSensorValues() {
 StaticJsonDocument<4096> doc2;
 
 JsonArray SensorRack::toJson() {
-
   JsonArray array = doc2.createNestedArray("sensors");
   for ( int i=0; i<_sensorIndex; i++ ) {
     Sensor * sensor = _sensors[i];

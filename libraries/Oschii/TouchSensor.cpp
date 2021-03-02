@@ -1,7 +1,13 @@
 #include "TouchSensor.h"
 
+#define ECHO_RAW_READING false
+
 bool TouchSensor::getState() {
   int reading = touchRead(_pin);
+  if ( ECHO_RAW_READING ) {
+    Serial.print("~=");
+    Serial.println(reading);
+  }
   if ( _triggerHighPass ) {
     return reading >= _triggerThreshold;
   } else {
@@ -13,7 +19,7 @@ bool TouchSensor::build(JsonObject json) {
   if ( !BinarySensor::build(json) ) return false;
 
   _pin = -1;
-  _triggerThreshold = 15;
+  _triggerThreshold = 30;
   _triggerHighPass = false;
 
   if ( json.containsKey("pin") )              _pin              = json["pin"];

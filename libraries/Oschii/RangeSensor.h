@@ -25,7 +25,7 @@ class RangeSensor : public Sensor {
     virtual String toString();
 
   protected:
-    int _samples, _sampleCount;
+    int _samples, _sampleCount, _lastReading;
     bool _flipRange, _interleave, _discardOutliers;
 
     int _readingRange[2];

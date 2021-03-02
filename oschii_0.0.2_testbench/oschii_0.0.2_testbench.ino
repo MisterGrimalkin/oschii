@@ -42,6 +42,7 @@ void setup() {
     json["type"] = "hc-sr04";
     json["trigPin"] = 13;
     json["echoPin"] = 12;
+//    json["discardOutliers"] = false;
 //    json["samples"] = 5;
 //    json["interleave"] = false;
 //    JsonArray readingRange = json.createNestedArray("readingRange");
@@ -65,9 +66,10 @@ void setup() {
     json["type"] = "gpio";
     json["resistor"] = "down";
     json["pin"] = 32;
-//    json["onValue"] = 100;
-//    json["offValue"] = 75;
-//    json["bounceFilter"] = 1000;
+    json["onValue"] = 101;
+    json["offValue"] = 1;
+    json["bounceFilter"] = 100;
+//    json["holdOnFilter"] = 1000;
 //    json["invert"] = false;
   }
 
@@ -77,33 +79,56 @@ void setup() {
     json["type"] = "gpio";
     json["resistor"] = "up";
     json["pin"] = 33;
-//    json["onValue"] = 0;
-//    json["offValue"] = 25;
-//    json["bounceFilter"] = 100;
+    json["onValue"] = 102;
+    json["offValue"] = 2;
+    json["bounceFilter"] = 100;
 //    json["invert"] = true;
   }
 
   {
-//    JsonObject json = sensorArray.createNestedObject();
-//    json["name"] = "Touch 1";
-//    json["type"] = "touch";
-//    json["pin"] = 4;
-//    json["onValue"] = 44;
-//    json["offValue"] = 25;
-//    json["bounceFilter"] = 100;
+    JsonObject json = sensorArray.createNestedObject();
+    json["name"] = "Button 3";
+    json["type"] = "gpio";
+    json["resistor"] = "down";
+    json["pin"] = 25;
+    json["onValue"] = 103;
+    json["offValue"] = 3;
+    json["bounceFilter"] = 100;
 //    json["invert"] = true;
   }
 
   {
-//    JsonObject json = sensorArray.createNestedObject();
-//    json["name"] = "Touch 2";
-//    json["type"] = "touch";
-//    json["pin"] = 2;
-//    json["triggerThreshold"] = 10;
-//    json["onValue"] = 88;
-//    json["offValue"] = 25;
-//    json["bounceFilter"] = 100;
+    JsonObject json = sensorArray.createNestedObject();
+    json["name"] = "Button 4";
+    json["type"] = "gpio";
+    json["resistor"] = "up";
+    json["pin"] = 26;
+    json["onValue"] = 104;
+    json["offValue"] = 4;
+    json["bounceFilter"] = 100;
 //    json["invert"] = true;
+  }
+
+  {
+    JsonObject json = sensorArray.createNestedObject();
+    json["name"] = "Touch 1";
+    json["type"] = "touch";
+    json["pin"] = 4;
+    json["onValue"] = 501;
+    json["offValue"] = 51;
+    json["bounceFilter"] = 100;
+    json["holdOnFilter"] = 150;
+  }
+
+  {
+    JsonObject json = sensorArray.createNestedObject();
+    json["name"] = "Touch 2";
+    json["type"] = "touch";
+    json["pin"] = 2;
+    json["onValue"] = 601;
+    json["offValue"] = 6;
+    json["bounceFilter"] = 100;
+    json["holdOnFilter"] = 150;
   }
 
   String error = sensorRack.buildSensors(sensorArray);

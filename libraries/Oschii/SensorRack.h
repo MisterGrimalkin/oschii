@@ -10,7 +10,9 @@
 #include "AnalogSensor.h"
 #include "HCSRSensor.h"
 
-#define MAX_SENSORS 20
+#define MAX_SENSORS 128
+
+#define ECHO_SENSORS true;
 
 class SensorRack {
   public:
@@ -24,10 +26,6 @@ class SensorRack {
 
   private:
     Sensor * _sensors[MAX_SENSORS];
-    GpioSensor _gpioSensors[MAX_SENSORS];
-    TouchSensor _touchSensors[MAX_SENSORS];
-    AnalogSensor _analogSensors[MAX_SENSORS];
-    HCSRSensor _hcsrSensors[MAX_SENSORS];
     int _sensorIndex;
 };
 

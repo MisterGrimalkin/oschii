@@ -17,8 +17,8 @@ class BinarySensor : public Sensor {
     virtual bool getState() {};
 
   protected:
-    int _onValue, _offValue, _bounceFilter;
-    bool _invert;
+    int _onValue, _offValue, _bounceFilter, _holdOnFilter, _holdStarted;
+    bool _invert, _lastState, _holding;
 };
 
 #endif

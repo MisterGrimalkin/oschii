@@ -31,7 +31,8 @@ _A Binary Sensor reads an ON / OFF input and returns one of two integer values._
   "onValue": 100,
   "offValue": -1,
   "invert": false,
-  "bounceFilter": 0
+  "bounceFilter": 0,
+  "holdOnFilter": 0
 }
 ```
 
@@ -44,6 +45,8 @@ Set `invert` to `true` to swap the behaviour of ON / OFF.
 
 Once the value has changed, subsequent ON / OFF changes 
 are ignored for `bounceFilter` milliseconds.
+
+An ON reading will only be acted upon after being held for `holdOnFilter` milliseconds.
 
 ### Sensor Type `gpio`
 
@@ -73,7 +76,8 @@ When the button is released, the Sensor will do nothing.
   "onValue": 100,
   "offValue": -1,
   "invert": false,
-  "bounceFilter": 0
+  "bounceFilter": 0,
+  "holdOnFilter": 0
 }
 ```
 
@@ -110,7 +114,8 @@ Sensor will do nothing.
   "onValue": 100,
   "offValue": -1,
   "invert": false,
-  "bounceFilter": 0
+  "bounceFilter": 0,
+  "holdOnFilter": 0
 }
 ```
 
