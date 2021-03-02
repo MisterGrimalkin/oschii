@@ -10,9 +10,9 @@
 #include "AnalogSensor.h"
 #include "HCSRSensor.h"
 
-#define MAX_SENSORS 128
+#define MAX_SENSORS 512
 
-#define ECHO_SENSORS true;
+#define ECHO_SENSORS true
 
 class SensorRack {
   public:
