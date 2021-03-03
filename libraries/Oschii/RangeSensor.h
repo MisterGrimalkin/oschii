@@ -14,7 +14,6 @@
 class RangeSensor : public Sensor {
   public:
     RangeSensor() : Sensor() {};
-    RangeSensor(int index) : Sensor(index) {};
 
     virtual void readSensor();
     virtual int getReading() {};

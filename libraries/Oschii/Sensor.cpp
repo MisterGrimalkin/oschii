@@ -1,14 +1,9 @@
 #include "Sensor.h"
 
 Sensor::Sensor() {
-  Sensor(-1);
-}
-
-Sensor::Sensor(int index) {
-  _index = index;
-  _value = -1;
   _built = false;
   _changed = false;
+  _value = -1;
 
   _type = "uninitialized";
   _name = "uninitialized";
@@ -57,7 +52,7 @@ JsonObject Sensor::toJson() {
 }
 
 String Sensor::toString() {
-  return String(_index) + ":'" + _name + "' [" + _type + "]";
+  return "[" + _type + "] '" + _name + "'";
 }
 
 int Sensor::getValue() {

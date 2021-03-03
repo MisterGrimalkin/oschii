@@ -20,21 +20,9 @@ void setup() {
     json["name"] = "Knob";
     json["type"] = "analog";
     json["pin"] = 36;
-//    json["samples"] = 1;
-//    json["interleave"] = false;
-//    JsonArray readingRange = json.createNestedArray("readingRange");
-//    readingRange.add(0);
-//    readingRange.add(3300);
-//    JsonArray valueRange = json.createNestedArray("valueRange");
-//    valueRange.add(0);
-//    valueRange.add(100);
-//    json["flipRange"] = false;
-//    JsonArray bandPass = json.createNestedArray("bandPass");
-//    bandPass.add(0);
-//    bandPass.add(100);
-//    JsonArray bandCut = json.createNestedArray("bandCut");
-//    bandCut.add(-1);
-//    bandCut.add(-1);
+    JsonArray valueRange = json.createNestedArray("valueRange");
+    valueRange.add(0);
+    valueRange.add(255);
   }
 
   {
@@ -43,22 +31,6 @@ void setup() {
     json["type"] = "hc-sr04";
     json["trigPin"] = 13;
     json["echoPin"] = 12;
-//    json["discardOutliers"] = false;
-//    json["samples"] = 5;
-//    json["interleave"] = false;
-//    JsonArray readingRange = json.createNestedArray("readingRange");
-//    readingRange.add(400);
-//    readingRange.add(3000);
-//    JsonArray valueRange = json.createNestedArray("valueRange");
-//    valueRange.add(0);
-//    valueRange.add(10);
-//    json["flipRange"] = false;
-//    JsonArray bandPass = json.createNestedArray("bandPass");
-//    bandPass.add(0);
-//    bandPass.add(100);
-//    JsonArray bandCut = json.createNestedArray("bandCut");
-//    bandCut.add(-1);
-//    bandCut.add(-1);
   }
 
   {
@@ -70,8 +42,6 @@ void setup() {
     json["onValue"] = 101;
     json["offValue"] = 1;
     json["bounceFilter"] = 100;
-//    json["holdOnFilter"] = 1000;
-//    json["invert"] = false;
   }
 
   {
@@ -83,7 +53,7 @@ void setup() {
     json["onValue"] = 102;
     json["offValue"] = 2;
     json["bounceFilter"] = 100;
-//    json["invert"] = true;
+    json["invert"] = true;
   }
 
   {
@@ -95,7 +65,6 @@ void setup() {
     json["onValue"] = 103;
     json["offValue"] = 3;
     json["bounceFilter"] = 100;
-//    json["invert"] = true;
   }
 
   {
@@ -107,7 +76,7 @@ void setup() {
     json["onValue"] = 104;
     json["offValue"] = 4;
     json["bounceFilter"] = 100;
-//    json["invert"] = true;
+    json["invert"] = true;
   }
 
   {
@@ -136,7 +105,7 @@ void setup() {
 
   if ( error != "" ) Serial.println(error);
 
-  Serial.println(sensorRack.toPrettyJson());
+//  Serial.println(sensorRack.toPrettyJson());
 }
 
 void loop() {

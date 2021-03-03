@@ -6,7 +6,6 @@
 class GpioSensor : public BinarySensor {
   public:
     GpioSensor() : BinarySensor() {};
-    GpioSensor(int index) : BinarySensor(index) {};
 
     virtual bool getState();
 

@@ -25,7 +25,6 @@ bool GpioSensor::build(JsonObject json) {
 
   } else if ( _resistor == "up" ) {
     resistance = INPUT_PULLUP;
-    _invert = !_invert;
 
   } else if ( _resistor == "down" ) {
     // not supported for I2C

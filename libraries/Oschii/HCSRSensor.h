@@ -6,7 +6,6 @@
 class HCSRSensor : public RangeSensor {
   public:
     HCSRSensor() : RangeSensor() {};
-    HCSRSensor(int index) : RangeSensor(index) {};
 
     virtual int getReading();
 

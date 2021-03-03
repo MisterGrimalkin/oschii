@@ -6,7 +6,6 @@
 class TouchSensor : public BinarySensor {
   public:
     TouchSensor() : BinarySensor() {};
-    TouchSensor(int index) : BinarySensor(index) {};
 
     virtual bool getState();
 

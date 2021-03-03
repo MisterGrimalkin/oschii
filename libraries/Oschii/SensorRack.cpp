@@ -22,16 +22,16 @@ String SensorRack::buildSensor(JsonObject json) {
   String type = json["type"];
 
   if ( type == "gpio" ) {
-    sensor = new GpioSensor(_sensorIndex);
+    sensor = new GpioSensor();
 
   } else if ( type == "touch" ) {
-    sensor = new TouchSensor(_sensorIndex);
+    sensor = new TouchSensor();
 
   } else if ( type == "analog" ) {
-    sensor = new AnalogSensor(_sensorIndex);
+    sensor = new AnalogSensor();
 
   } else if ( type == "hc-sr04" ) {
-    sensor = new HCSRSensor(_sensorIndex);
+    sensor = new HCSRSensor();
 
   } else {
     return "RuleTwoError: No type of sensor called '" + type + "'\n";

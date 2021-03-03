@@ -7,7 +7,6 @@
 class Sensor {
   public:
     Sensor();
-    Sensor(int index);
 
     virtual void readSensor() {};
     virtual bool build(JsonObject json);
@@ -23,7 +22,7 @@ class Sensor {
     String getError();
 
   protected:
-    int _index, _value, _lastChanged;
+    int _value, _lastChanged;
     bool _built, _changed;
     String _name, _type, _error;
     StaticJsonDocument<512> _jsonRoot;

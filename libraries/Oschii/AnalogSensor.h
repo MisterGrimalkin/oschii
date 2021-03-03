@@ -6,7 +6,6 @@
 class AnalogSensor : public RangeSensor {
   public:
     AnalogSensor() : RangeSensor() {};
-    AnalogSensor(int index) : RangeSensor(index) {};
 
     virtual int getReading();
 

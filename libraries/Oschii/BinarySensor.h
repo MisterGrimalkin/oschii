@@ -6,7 +6,6 @@
 class BinarySensor : public Sensor {
   public:
     BinarySensor() : Sensor() {};
-    BinarySensor(int index) : Sensor(index) {};
 
     virtual void readSensor();
     virtual bool build(JsonObject json);
