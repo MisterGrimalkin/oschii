@@ -116,7 +116,7 @@ void setup() {
     json["type"] = "touch";
     json["pin"] = 4;
     json["onValue"] = 501;
-    json["offValue"] = 51;
+    json["offValue"] = 5;
     json["bounceFilter"] = 100;
     json["holdOnFilter"] = 150;
   }
@@ -134,15 +134,12 @@ void setup() {
 
   String error = sensorRack.buildSensors(sensorArray);
 
-  if ( error != "" ) {
-    Serial.println(error);
-  }
+  if ( error != "" ) Serial.println(error);
 
-//  Serial.println(sensorRack.toPrettyJson());
+  Serial.println(sensorRack.toPrettyJson());
 }
 
 void loop() {
   sensorRack.readSensors();
-//  sensorRack.printSensorValues();
   delay(1);
 }

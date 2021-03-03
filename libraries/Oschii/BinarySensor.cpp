@@ -10,32 +10,20 @@ void BinarySensor::readSensor() {
   if ( _invert ) state = !state;
 
   if ( _holdOnFilter > 0 ) {
-    if ( state ) {
-      if ( !_lastState ) {
-        if ( _holding ) {
-          if ( millis() - _holdStarted >= _holdOnFilter ) {
-            _holding = false;
-            _holdStarted = -1;
-          } else {
-            state = _lastState;
-          }
-        } else {
-          _holding = true;
-          _holdStarted = millis();
-          state = _lastState;
-        }
-      }
-    } else {
-      if ( _holding ) {
+    if ( state && !_lastState ) {
+      if ( _holdStarted > 0 ) {
         if ( millis() - _holdStarted >= _holdOnFilter ) {
-          _holding = false;
           _holdStarted = -1;
         } else {
           state = _lastState;
         }
+      } else {
+        _holdStarted = millis();
+        state = _lastState;
       }
+    } else {
+      _holdStarted = -1;
     }
-
   }
 
   _lastState = state;
@@ -50,9 +38,7 @@ void BinarySensor::readSensor() {
 }
 
 bool BinarySensor::build(JsonObject json) {
-  if ( !Sensor::build(json) ) {
-    return false;
-  }
+  if ( !Sensor::build(json) ) return false;
 
   _holding = false;
   _holdStarted = -1;

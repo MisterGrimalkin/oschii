@@ -13,7 +13,7 @@ The `name` must be unique, and the `type` must be one of:
   - `touch`
 - Range Sensors:
   - `analog`
-  - `hc-sr04`.
+  - `hc-sr04`
 
 
 ## Binary Sensors
