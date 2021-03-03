@@ -12,11 +12,26 @@ void setup() {
   Serial.begin(115200);
   Serial.println("\n - OSCHII -\n");
 
-  StaticJsonDocument<2096> root;
-  JsonArray sensorArray = root.createNestedArray("sensors");
+  JsonArray sensorArray = testSensors();
+  String error = sensorRack.buildSensors(sensorArray);
+  if ( error != "" ) Serial.println(error);
+//  Serial.println(sensorRack.toPrettyJson());
+
+
+}
+
+void loop() {
+  sensorRack.readSensors();
+  delay(1);
+}
+
+StaticJsonDocument<2096> root;
+
+JsonArray testSensors() {
+  JsonArray array = root.createNestedArray("sensors");
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Knob";
     json["type"] = "analog";
     json["pin"] = 36;
@@ -26,7 +41,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Ultrasonic";
     json["type"] = "hc-sr04";
     json["trigPin"] = 13;
@@ -34,7 +49,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Button 1";
     json["type"] = "gpio";
     json["resistor"] = "down";
@@ -45,7 +60,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Button 2";
     json["type"] = "gpio";
     json["resistor"] = "up";
@@ -57,7 +72,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Button 3";
     json["type"] = "gpio";
     json["resistor"] = "down";
@@ -68,7 +83,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Button 4";
     json["type"] = "gpio";
     json["resistor"] = "up";
@@ -80,7 +95,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Touch 1";
     json["type"] = "touch";
     json["pin"] = 4;
@@ -91,7 +106,7 @@ void setup() {
   }
 
   {
-    JsonObject json = sensorArray.createNestedObject();
+    JsonObject json = array.createNestedObject();
     json["name"] = "Touch 2";
     json["type"] = "touch";
     json["pin"] = 2;
@@ -101,14 +116,5 @@ void setup() {
     json["holdOnFilter"] = 150;
   }
 
-  String error = sensorRack.buildSensors(sensorArray);
-
-  if ( error != "" ) Serial.println(error);
-
-//  Serial.println(sensorRack.toPrettyJson());
-}
-
-void loop() {
-  sensorRack.readSensors();
-  delay(1);
+  return array;
 }

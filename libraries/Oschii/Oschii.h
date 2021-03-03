@@ -8,5 +8,6 @@
 #include "FileService.h"
 
 #include "SensorRack.h"
+#include "DriverRack.h"
 
 #endif
