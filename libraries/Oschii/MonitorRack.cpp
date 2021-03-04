@@ -7,15 +7,15 @@ MonitorRack::MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack) {
 }
 
 String MonitorRack::buildMonitors(JsonObject json) {
-  Serial.println("Building Monitors:");
+  Serial.println("== Building Monitors ==");
   for (JsonPair kv : json) {
     String name = kv.key().c_str();
     JsonObject monitorJson = kv.value().as<JsonObject>();
     buildMonitor(name, monitorJson);
   }
-  Serial.print("Found ");
+  Serial.print("== Found: ");
   Serial.println(_monitorIndex);
-  Serial.println();
+  Serial.println(" ==\n");
   return "";
 }
 

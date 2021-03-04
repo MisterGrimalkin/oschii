@@ -16,7 +16,7 @@
 
 class SensorRack {
   public:
-    SensorRack() {};
+    SensorRack();
     String buildSensors(JsonArray array);
     String buildSensor(JsonObject json);
     void readSensors();

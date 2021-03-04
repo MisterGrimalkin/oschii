@@ -1,7 +1,11 @@
 #include "DriverRack.h"
 
+DriverRack::DriverRack() {
+  _driverIndex = 0;
+}
+
 String DriverRack::buildDrivers(JsonArray array) {
-  Serial.println("Building Drivers:");
+  Serial.println("== Building Drivers ==");
 
   String errorBuffer = "";
   for ( int i = 0; i < array.size(); i++ ) {
@@ -9,9 +13,9 @@ String DriverRack::buildDrivers(JsonArray array) {
     errorBuffer += buildDriver(json);
   }
 
-  Serial.print("Found: ");
+  Serial.print("== Found: ");
   Serial.print(_driverIndex);
-  Serial.println("\n");
+  Serial.println(" ==\n");
 
   return errorBuffer;}
 

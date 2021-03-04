@@ -14,7 +14,7 @@
 
 class DriverRack {
   public:
-    DriverRack() {};
+    DriverRack();
     String buildDrivers(JsonArray array);
     String buildDriver(JsonObject json);
     JsonArray toJson();

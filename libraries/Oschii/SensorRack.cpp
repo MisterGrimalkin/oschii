@@ -1,7 +1,11 @@
 #include "SensorRack.h"
 
+SensorRack::SensorRack() {
+  _sensorIndex = 0;
+}
+
 String SensorRack::buildSensors(JsonArray array) {
-  Serial.println("Building Sensors:");
+  Serial.println("== Building Sensors ==");
 
   String errorBuffer = "";
   for ( int i = 0; i < array.size(); i++ ) {
@@ -9,9 +13,9 @@ String SensorRack::buildSensors(JsonArray array) {
     errorBuffer += buildSensor(json);
   }
 
-  Serial.print("Found: ");
+  Serial.print("== Found: ");
   Serial.print(_sensorIndex);
-  Serial.println("\n");
+  Serial.println(" ==\n");
 
   return errorBuffer;
 }

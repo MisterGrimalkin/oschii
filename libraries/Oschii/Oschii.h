@@ -12,5 +12,20 @@
 #include "RemoteRack.h"
 #include "MonitorRack.h"
 
+class Oschii {
+  public:
+    Oschii();
+
+    bool buildConfig(JsonObject json);
+    bool buildScene(JsonObject json);
+
+    void loop();
+
+  private:
+    SensorRack * _sensorRack;
+    DriverRack * _driverRack;
+    RemoteRack * _remoteRack;
+    MonitorRack * _monitorRack;
+};
 
 #endif

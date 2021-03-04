@@ -6,41 +6,32 @@
 
 #include <Oschii.h>
 
-SensorRack sensorRack;
-DriverRack driverRack;
-RemoteRack remoteRack(&driverRack);
-MonitorRack monitorRack(&sensorRack, &remoteRack);
+Oschii oschii;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("\n - OSCHII -\n");
 
-  JsonArray sensorArray = testSensors();
-  String error = sensorRack.buildSensors(sensorArray);
-  if ( error != "" ) Serial.println(error);
-
-  JsonArray driverArray = testDrivers();
-  error = driverRack.buildDrivers(driverArray);
-  if ( error != "" ) Serial.println(error);
-
-  JsonObject remoteObject = testRemotes();
-  remoteRack.buildRemotes(remoteObject);
-
-  JsonObject monitorObject = testMonitors();
-  monitorRack.buildMonitors(monitorObject);
+  oschii.buildConfig(testConfig());
+  oschii.buildScene(testScene());
 
   Serial.println("BUILT!\n");
 }
 
 void loop() {
-  monitorRack.loop();
+  oschii.loop();
   delay(1);
 }
 
-StaticJsonDocument<2096> root;
+StaticJsonDocument<2096> config;
+StaticJsonDocument<2096> scene;
+StaticJsonDocument<2096> sensors;
+StaticJsonDocument<2096> drivers;
+StaticJsonDocument<2096> remotes;
+StaticJsonDocument<2096> monitors;
 
 JsonObject testMonitors() {
-  JsonObject monitorJson = root.to<JsonObject>();
+  JsonObject monitorJson = monitors.to<JsonObject>();
   {
     JsonObject json = monitorJson.createNestedObject("Knob");
     json["onChange"] = true;
@@ -52,7 +43,7 @@ JsonObject testMonitors() {
 }
 
 JsonObject testRemotes() {
-  JsonObject remoteJson = root.to<JsonObject>();
+  JsonObject remoteJson = remotes.to<JsonObject>();
   {
     JsonObject json = remoteJson.createNestedObject("/test");
     JsonArray writeTo = json.createNestedArray("writeTo");
@@ -72,8 +63,23 @@ JsonObject testRemotes() {
   return remoteJson;
 }
 
+JsonObject testScene() {
+  JsonObject json = scene.to<JsonObject>();
+  json["sensorMonitors"] = testMonitors();
+  json["driverRemotes"] = testRemotes();
+  return json;
+}
+
+JsonObject testConfig() {
+  JsonObject json = config.to<JsonObject>();
+  json["sensors"] = testSensors();
+  json["drivers"] = testDrivers();
+//  Serial.println(serializeJson(json));
+  return json;
+}
+
 JsonArray testDrivers() {
-  JsonArray array = root.createNestedArray("drivers");
+  JsonArray array = drivers.createNestedArray("drivers");
 
   {
     JsonObject json = array.createNestedObject();
@@ -134,7 +140,7 @@ JsonArray testDrivers() {
 }
 
 JsonArray testSensors() {
-  JsonArray array = root.createNestedArray("sensors");
+  JsonArray array = sensors.createNestedArray("sensors");
 
   {
     JsonObject json = array.createNestedObject();

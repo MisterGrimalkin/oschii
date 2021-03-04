@@ -6,15 +6,16 @@ RemoteRack::RemoteRack(DriverRack * driverRack) {
 }
 
 String RemoteRack::buildRemotes(JsonObject json) {
-  Serial.println("Building Remotes:");
+  Serial.println("== Building Remotes ==");
   for (JsonPair kv : json) {
     String name = kv.key().c_str();
     JsonObject remoteJson = kv.value().as<JsonObject>();
     buildRemote(name, remoteJson);
   }
-  Serial.print("Found ");
-  Serial.println(_remoteIndex);
-  Serial.println();
+  Serial.print("== Found: ");
+  Serial.print(_remoteIndex);
+  Serial.println(" ==\n");
+  return "";
 }
 
 String RemoteRack::buildRemote(String name, JsonObject json) {
