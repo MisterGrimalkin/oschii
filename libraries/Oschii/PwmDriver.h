@@ -17,7 +17,8 @@ class PwmDriver : public Driver {
     virtual String toString();
 
   private:
-    int _pin;
+    int _pin, _channel;
+
 };
 
 #endif

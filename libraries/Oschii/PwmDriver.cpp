@@ -1,6 +1,13 @@
 #include "PwmDriver.h"
 
+static int _nextChannel;
+
 void PwmDriver::fire(int value) {
+  _value = value;
+
+  if ( value < 0 ) return;
+
+  ledcWrite(_channel, value);
 }
 
 bool PwmDriver::build(JsonObject json) {
@@ -15,7 +22,10 @@ bool PwmDriver::build(JsonObject json) {
     return false;
   }
 
-  pinMode(_pin, OUTPUT);
+  _channel = _nextChannel++;
+
+  ledcAttachPin(_pin, _channel);
+  ledcSetup(_channel, 4000, 8);
 
   fire(_initialValue);
 
@@ -32,5 +42,6 @@ JsonObject PwmDriver::toJson() {
 
 String PwmDriver::toString() {
   return Driver::toString()
-          + " pin:" + String(_pin);
+          + " pin:" + String(_pin)
+          + " channel:" + String(_channel);
 }

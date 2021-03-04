@@ -23,6 +23,9 @@ String DriverRack::buildDriver(JsonObject json) {
   if ( type == "gpio" ) {
     driver = new GpioDriver();
 
+  } else if ( type == "pwm" ) {
+    driver = new PwmDriver();
+
   } else {
     return "RuleTwoError: No type of driver called '" + type + "'\n";
   }

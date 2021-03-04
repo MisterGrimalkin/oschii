@@ -11,6 +11,8 @@ DriverRack driverRack;
 
 Sensor * testSensor1;
 Sensor * testSensor2;
+Sensor * knob;
+
 Driver * testDriver;
 
 void setup() {
@@ -30,11 +32,18 @@ void setup() {
 
   testSensor1 = sensorRack.getSensor("Button 1");
   testSensor2 = sensorRack.getSensor("Button 2");
+  knob = sensorRack.getSensor("Knob");
   testDriver = driverRack.getDriver("Red GPIO");
 }
 
 void loop() {
   sensorRack.readSensors();
+
+  if ( knob->hasChanged() ) {
+    driverRack.fireAll(knob->getValue());
+  }
+
+
   if ( testSensor1->hasChanged() ) {
 //    testDriver->fire(testSensor->getValue());
     driverRack.fireAll(testSensor1->getValue());
@@ -83,6 +92,27 @@ JsonArray testDrivers() {
     json["name"] = "Green PWM";
     json["type"] = "pwm",
     json["pin"] = 19;
+  }
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Blue PWM";
+    json["type"] = "pwm",
+    json["pin"] = 21;
+  }
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Indigo PWM";
+    json["type"] = "pwm",
+    json["pin"] = 22;
+  }
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Violet PWM";
+    json["type"] = "pwm",
+    json["pin"] = 23;
   }
 
   return array;

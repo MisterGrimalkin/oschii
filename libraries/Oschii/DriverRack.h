@@ -6,6 +6,7 @@
 
 #include "Driver.h"
 #include "GpioDriver.h"
+#include "PwmDriver.h"
 
 #define MAX_DRIVERS 512
 
