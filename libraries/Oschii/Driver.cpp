@@ -56,8 +56,8 @@ JsonObject Driver::toJson() {
 }
 
 String Driver::toString() {
-  return "[" + _type + "] '" + _name
-          + "' initial:" + String(_initialValue);
+  return "[" + _name + "] " + _type
+          + " initial:" + String(_initialValue);
 }
 
 int Driver::getValue() {

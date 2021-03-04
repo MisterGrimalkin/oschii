@@ -43,11 +43,10 @@ void Remote::receive(int value) {
 }
 
 String Remote::toString() {
-  String str = "Remote[" + _name + "] drivers("
-                + String(_driverIndex) + "):";
+  String str = "[" + _name + "] ~~>";
   for ( int i=0; i<_driverIndex; i++ ) {
     Driver * driver = _drivers[i];
-    str += driver->getName() + " ";
+    str += " (" + driver->getName() + ")";
   }
   return str;
 }

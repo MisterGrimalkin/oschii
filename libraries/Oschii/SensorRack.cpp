@@ -5,7 +5,9 @@ SensorRack::SensorRack() {
 }
 
 String SensorRack::buildSensors(JsonArray array) {
-  Serial.println("== Building Sensors ==");
+  _sensorIndex = 0;
+
+  Serial.println("== SENSORS ==");
 
   String errorBuffer = "";
   for ( int i = 0; i < array.size(); i++ ) {
@@ -44,7 +46,7 @@ String SensorRack::buildSensor(JsonObject json) {
   if ( sensor->build(json) ) {
     _sensors[_sensorIndex++] = sensor;
 
-    Serial.println(" " + sensor->toString());
+    Serial.println(" - " + sensor->toString());
     return "";
   } else {
     return sensor->getError() + "\n";

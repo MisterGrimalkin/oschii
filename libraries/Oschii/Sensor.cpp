@@ -52,7 +52,7 @@ JsonObject Sensor::toJson() {
 }
 
 String Sensor::toString() {
-  return "[" + _type + "] '" + _name + "'";
+  return "[" + _name + "] " + _type;
 }
 
 int Sensor::getValue() {

@@ -12,7 +12,7 @@
 
 #define MAX_SENSORS 512
 
-#define ECHO_SENSORS false
+#define ECHO_SENSORS true
 
 class SensorRack {
   public:

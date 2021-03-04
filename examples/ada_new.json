@@ -1,0 +1,108 @@
+{
+  "sensors": [
+    {
+      "name": "Knob",
+      "type": "analog",
+      "pin": 36
+    },
+    {
+      "name": "Ultrasonic",
+      "type": "hc-sr04",
+      "trigPin": 13,
+      "echoPin": 12,
+      "readingRange": [
+        300,
+        2500
+      ],
+      "discardOutliers": false
+    },
+    {
+      "name": "Button 1",
+      "type": "gpio",
+      "pin": 32,
+      "resistor": "down",
+      "onValue": 100,
+      "bounceFilter": 100
+    },
+    {
+      "name": "Button 2",
+      "type": "gpio",
+      "pin": 33,
+      "resistor": "up",
+      "onValue": 0,
+      "bounceFilter": 100,
+      "invert": true
+    },
+    {
+      "name": "Button 3",
+      "type": "gpio",
+      "pin": 25,
+      "resistor": "down",
+      "onValue": 100,
+      "offValue": 0,
+      "bounceFilter": 100
+    },
+    {
+      "name": "Button 4",
+      "type": "gpio",
+      "pin": 26,
+      "resistor": "up",
+      "onValue": 100,
+      "bounceFilter": 100,
+      "invert": true
+    },
+    {
+      "name": "Touch 1",
+      "type": "touch",
+      "pin": 4,
+      "onValue": 201,
+      "bounceFilter": 100,
+      "holdOnFilter": 150
+    },
+    {
+      "name": "Touch 2",
+      "type": "touch",
+      "pin": 2,
+      "onValue": 202,
+      "bounceFilter": 100,
+      "holdOnFilter": 150
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Red",
+      "type": "pwm",
+      "pin": 16
+    },
+    {
+      "name": "Orange",
+      "type": "pwm",
+      "pin": 17
+    },
+    {
+      "name": "Yellow",
+      "type": "pwm",
+      "pin": 18
+    },
+    {
+      "name": "Green",
+      "type": "pwm",
+      "pin": 19
+    },
+    {
+      "name": "Blue",
+      "type": "gpio",
+      "pin": 21
+    },
+    {
+      "name": "Indigo",
+      "type": "gpio",
+      "pin": 22
+    },
+    {
+      "name": "Violet",
+      "type": "pwm",
+      "pin": 23
+    }
+  ]
+}

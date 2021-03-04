@@ -6,26 +6,18 @@
 
 #include "SettingsService.h"
 #include "FileService.h"
-
-#include "SensorRack.h"
-#include "DriverRack.h"
-#include "RemoteRack.h"
-#include "MonitorRack.h"
+#include "Racks.h"
+#include "SerialAPI.h"
 
 class Oschii {
   public:
     Oschii();
-
-    bool buildConfig(JsonObject json);
-    bool buildScene(JsonObject json);
-
+    void start();
     void loop();
 
   private:
-    SensorRack * _sensorRack;
-    DriverRack * _driverRack;
-    RemoteRack * _remoteRack;
-    MonitorRack * _monitorRack;
+    Racks * _racks;
+    SerialAPI * _serial;
 };
 
 #endif

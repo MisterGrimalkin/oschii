@@ -42,5 +42,10 @@ void Monitor::update() {
 }
 
 String Monitor::toString() {
-  return "MONITOR[" + _sensor->getName() + "]";
+  String str = "(" + _sensor->getName() + ") -->";
+  for ( int i=0; i<_remoteIndex; i++ ) {
+    Remote * remote = _remotes[i];
+    str += " (" + remote->getName() + ")";
+  }
+  return str;
 }

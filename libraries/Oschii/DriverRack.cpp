@@ -5,7 +5,9 @@ DriverRack::DriverRack() {
 }
 
 String DriverRack::buildDrivers(JsonArray array) {
-  Serial.println("== Building Drivers ==");
+  _driverIndex = 0;
+
+  Serial.println("== DRIVERS ==");
 
   String errorBuffer = "";
   for ( int i = 0; i < array.size(); i++ ) {
@@ -37,7 +39,7 @@ String DriverRack::buildDriver(JsonObject json) {
   if ( driver->build(json) ) {
     _drivers[_driverIndex++] = driver;
 
-    Serial.println(" " + driver->toString());
+    Serial.println(" - " + driver->toString());
     return "";
   } else {
     return driver->getError() + "\n";
