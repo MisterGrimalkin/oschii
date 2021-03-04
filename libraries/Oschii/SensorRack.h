@@ -24,6 +24,8 @@ class SensorRack {
     JsonArray toJson();
     String toPrettyJson();
 
+    Sensor * getSensor(String name);
+
   private:
     Sensor * _sensors[MAX_SENSORS];
     int _sensorIndex;

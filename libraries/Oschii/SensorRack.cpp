@@ -107,3 +107,13 @@ String SensorRack::toPrettyJson() {
   serializeJsonPretty(toJson(), outputStr);
   return outputStr;
 }
+
+Sensor * SensorRack::getSensor(String name) {
+  for ( int i=0; i<_sensorIndex; i++ ) {
+    Sensor * sensor = _sensors[i];
+    if ( sensor->getName() == name ) {
+      return sensor;
+    }
+  }
+  return NULL;
+}

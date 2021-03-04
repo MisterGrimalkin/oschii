@@ -7,6 +7,11 @@
 #include <Oschii.h>
 
 SensorRack sensorRack;
+DriverRack driverRack;
+
+Sensor * testSensor1;
+Sensor * testSensor2;
+Driver * testDriver;
 
 void setup() {
   Serial.begin(115200);
@@ -15,17 +20,73 @@ void setup() {
   JsonArray sensorArray = testSensors();
   String error = sensorRack.buildSensors(sensorArray);
   if ( error != "" ) Serial.println(error);
+
+  JsonArray driverArray = testDrivers();
+  error = driverRack.buildDrivers(driverArray);
+  if ( error != "" ) Serial.println(error);
+
 //  Serial.println(sensorRack.toPrettyJson());
+//  Serial.println(driverRack.toPrettyJson());
 
-
+  testSensor1 = sensorRack.getSensor("Button 1");
+  testSensor2 = sensorRack.getSensor("Button 2");
+  testDriver = driverRack.getDriver("Red GPIO");
 }
 
 void loop() {
   sensorRack.readSensors();
+  if ( testSensor1->hasChanged() ) {
+//    testDriver->fire(testSensor->getValue());
+    driverRack.fireAll(testSensor1->getValue());
+  }
+  if ( testSensor2->hasChanged() ) {
+//    testDriver->fire(testSensor->getValue());
+    driverRack.fireAll(testSensor2->getValue());
+  }
   delay(1);
 }
 
 StaticJsonDocument<2096> root;
+
+JsonArray testDrivers() {
+  JsonArray array = root.createNestedArray("drivers");
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Red GPIO";
+    json["type"] = "gpio",
+    json["pin"] = 16;
+    json["thresholdValue"] = 50;
+    json["initialValue"] = 0;
+  }
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Orange GPIO";
+    json["type"] = "gpio",
+    json["pin"] = 17;
+    json["thresholdValue"] = 50;
+    json["initialValue"] = 0;
+  }
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Yellow GPIO";
+    json["type"] = "gpio",
+    json["pin"] = 18;
+    json["thresholdValue"] = 50;
+    json["initialValue"] = 0;
+  }
+
+  {
+    JsonObject json = array.createNestedObject();
+    json["name"] = "Green PWM";
+    json["type"] = "pwm",
+    json["pin"] = 19;
+  }
+
+  return array;
+}
 
 JsonArray testSensors() {
   JsonArray array = root.createNestedArray("sensors");
@@ -55,7 +116,7 @@ JsonArray testSensors() {
     json["resistor"] = "down";
     json["pin"] = 32;
     json["onValue"] = 101;
-    json["offValue"] = 1;
+    json["offValue"] = -1;
     json["bounceFilter"] = 100;
   }
 
@@ -99,6 +160,7 @@ JsonArray testSensors() {
     json["name"] = "Touch 1";
     json["type"] = "touch";
     json["pin"] = 4;
+    json["thresholdValue"] = 30;
     json["onValue"] = 501;
     json["offValue"] = 5;
     json["bounceFilter"] = 100;
@@ -110,6 +172,7 @@ JsonArray testSensors() {
     json["name"] = "Touch 2";
     json["type"] = "touch";
     json["pin"] = 2;
+    json["thresholdValue"] = 30;
     json["onValue"] = 601;
     json["offValue"] = 6;
     json["bounceFilter"] = 100;

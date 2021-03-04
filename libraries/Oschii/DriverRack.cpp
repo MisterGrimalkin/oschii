@@ -20,7 +20,8 @@ String DriverRack::buildDriver(JsonObject json) {
 
   String type = json["type"];
 
-  if ( false ) {
+  if ( type == "gpio" ) {
+    driver = new GpioDriver();
 
   } else {
     return "RuleTwoError: No type of driver called '" + type + "'\n";
@@ -33,6 +34,13 @@ String DriverRack::buildDriver(JsonObject json) {
     return "";
   } else {
     return driver->getError() + "\n";
+  }
+}
+
+void DriverRack::fireAll(int value) {
+  for ( int i=0; i<_driverIndex; i++ ) {
+    Driver * driver = _drivers[i];
+    driver->fire(value);
   }
 }
 
@@ -51,4 +59,14 @@ String DriverRack::toPrettyJson() {
   String outputStr = "";
   serializeJsonPretty(toJson(), outputStr);
   return outputStr;
+}
+
+Driver * DriverRack::getDriver(String name) {
+  for ( int i=0; i<_driverIndex; i++ ) {
+    Driver * driver = _drivers[i];
+    if ( driver->getName() == name ) {
+      return driver;
+    }
+  }
+  return NULL;
 }

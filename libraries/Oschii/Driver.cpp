@@ -29,10 +29,14 @@ bool Driver::build(JsonObject json) {
     return false;
   }
 
+  _initialValue = -1;
+
+  if ( json.containsKey("initialValue") ) _initialValue = json["initialValue"];
+
+  _value = _initialValue;
   _built = true;
 
   return true;
-
 }
 
 String Driver::toPrettyJson() {
@@ -44,14 +48,16 @@ String Driver::toPrettyJson() {
 JsonObject Driver::toJson() {
   JsonObject json = _jsonRoot.to<JsonObject>();
 
-  json["name"] = _name;
-  json["type"] = _type;
+  json["name"]         = _name;
+  json["type"]         = _type;
+  json["initialValue"] = _initialValue;
 
   return json;
 }
 
 String Driver::toString() {
-  return "[" + _type + "] '" + _name + "'";
+  return "[" + _type + "] '" + _name
+          + "' initial:" + String(_initialValue);
 }
 
 int Driver::getValue() {

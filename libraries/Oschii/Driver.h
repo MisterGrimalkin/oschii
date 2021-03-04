@@ -21,7 +21,7 @@ class Driver {
     String getError();
 
   protected:
-    int _value;
+    int _value, _initialValue;
     bool _built;
     String _name, _type, _error;
     StaticJsonDocument<512> _jsonRoot;
