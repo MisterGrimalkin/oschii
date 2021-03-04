@@ -8,12 +8,8 @@
 
 SensorRack sensorRack;
 DriverRack driverRack;
-
-Sensor * testSensor1;
-Sensor * testSensor2;
-Sensor * knob;
-
-Driver * testDriver;
+RemoteRack remoteRack(&driverRack);
+MonitorRack monitorRack(&sensorRack, &remoteRack);
 
 void setup() {
   Serial.begin(115200);
@@ -27,35 +23,54 @@ void setup() {
   error = driverRack.buildDrivers(driverArray);
   if ( error != "" ) Serial.println(error);
 
-//  Serial.println(sensorRack.toPrettyJson());
-//  Serial.println(driverRack.toPrettyJson());
+  JsonObject remoteObject = testRemotes();
+  remoteRack.buildRemotes(remoteObject);
 
-  testSensor1 = sensorRack.getSensor("Button 1");
-  testSensor2 = sensorRack.getSensor("Button 2");
-  knob = sensorRack.getSensor("Knob");
-  testDriver = driverRack.getDriver("Red GPIO");
+  JsonObject monitorObject = testMonitors();
+  monitorRack.buildMonitors(monitorObject);
+
+  Serial.println("BUILT!\n");
 }
 
 void loop() {
-  sensorRack.readSensors();
-
-  if ( knob->hasChanged() ) {
-    driverRack.fireAll(knob->getValue());
-  }
-
-
-  if ( testSensor1->hasChanged() ) {
-//    testDriver->fire(testSensor->getValue());
-    driverRack.fireAll(testSensor1->getValue());
-  }
-  if ( testSensor2->hasChanged() ) {
-//    testDriver->fire(testSensor->getValue());
-    driverRack.fireAll(testSensor2->getValue());
-  }
+  monitorRack.loop();
   delay(1);
 }
 
 StaticJsonDocument<2096> root;
+
+JsonObject testMonitors() {
+  JsonObject monitorJson = root.to<JsonObject>();
+  {
+    JsonObject json = monitorJson.createNestedObject("Knob");
+    json["onChange"] = true;
+    json["pollInterval"] = 0;
+    JsonArray array = json.createNestedArray("fireRemotes");
+    array.add("/test");
+  }
+  return monitorJson;
+}
+
+JsonObject testRemotes() {
+  JsonObject remoteJson = root.to<JsonObject>();
+  {
+    JsonObject json = remoteJson.createNestedObject("/test");
+    JsonArray writeTo = json.createNestedArray("writeTo");
+    {
+      JsonObject writeDriver = writeTo.createNestedObject();
+      writeDriver["driver"] = "Green PWM";
+      writeDriver["valueOffset"] = 0;
+      writeDriver["valueMultiplier"] = 0.5;
+    }
+    {
+      JsonObject writeDriver = writeTo.createNestedObject();
+      writeDriver["driver"] = "Blue PWM";
+      writeDriver["valueOffset"] = 0;
+      writeDriver["valueMultiplier"] = 1.0;
+    }
+  }
+  return remoteJson;
+}
 
 JsonArray testDrivers() {
   JsonArray array = root.createNestedArray("drivers");

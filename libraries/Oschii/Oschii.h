@@ -9,5 +9,8 @@
 
 #include "SensorRack.h"
 #include "DriverRack.h"
+#include "RemoteRack.h"
+#include "MonitorRack.h"
+
 
 #endif
