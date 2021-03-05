@@ -20,11 +20,15 @@ class MonitorRack {
 
     void loop();
 
+    JsonObject toJson();
+
   private:
     SensorRack * _sensorRack;
     RemoteRack * _remoteRack;
     Monitor * _monitors[MAX_MONITORS];
     int _monitorIndex;
+    StaticJsonDocument<512> _jsonRoot;
+
 };
 
 #endif

@@ -1,6 +1,9 @@
 #ifndef Oschii_h
 #define Oschii_h
 
+#define VERSION "0.0.2"
+#define BUILD_DATETIME __DATE__ " " __TIME__
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
@@ -16,8 +19,10 @@ class Oschii {
     void loop();
 
   private:
+    SettingsService * _settings;
+    FileService * _files;
     Racks * _racks;
-    SerialAPI * _serial;
+    SerialAPI * _serialAPI;
 };
 
 #endif

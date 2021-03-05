@@ -1,7 +1,9 @@
 #include "SerialAPI.h"
 
-SerialAPI::SerialAPI(Racks * racks) {
+SerialAPI::SerialAPI(SettingsService * settings, Racks * racks) { //}, NetworkService * network) {
+  _settings = settings;
   _racks = racks;
+//  _network = network;
 }
 
 void SerialAPI::start() {
@@ -10,14 +12,14 @@ void SerialAPI::start() {
   Serial.println("  ╔═╗┌─┐┌─┐┬ ┬┬┬");
   Serial.println("  ║ ║└─┐│  ├─┤││");
   Serial.println("  ╚═╝└─┘└─┘┴ ┴┴┴");
-//  Serial.print  ("  ");
-//  Serial.println(VERSION);
-//  Serial.println();
-//  Serial.print  ("  ");
-//  Serial.println(settings.getName());
-//  Serial.println();
-//  Serial.print  ("  Built on ");
-//  Serial.println(BUILD_DATETIME);
+  Serial.print  ("  ");
+  Serial.println(_settings->getVersion());
+  Serial.println();
+  Serial.print  ("  ");
+  Serial.println(_settings->getName());
+  Serial.println();
+  Serial.print  ("  Built on ");
+  Serial.println(_settings->getBuildDatetime());
   Serial.println();
 }
 
@@ -32,13 +34,34 @@ void SerialAPI::processInput(String input) {
   if ( input == "poke" ) {
     Serial.println("Tickles!");
 
-  } else if ( input == "set config" ) {
-    String jsonStr = prompt("Ready for config:");
-    _racks->buildConfig(jsonStr);
+  } else if ( input == "version" ) {
+    Serial.println(_settings->getVersion());
+    Serial.print("Built on ");
+    Serial.println(_settings->getBuildDatetime());
 
-  } else if ( input == "set scene" ) {
-    String jsonStr = prompt("Ready for scene:");
-    _racks->buildScene(jsonStr);
+  } else if ( input == "settings" ) {
+    Serial.println(_settings->toPrettyJson());
+
+  } else if ( input == "settings=" ) {
+    String settings = prompt("Enter new settings:");
+    _settings->set(settings);
+    Serial.println(_settings->toPrettyJson());
+
+  } else if ( input == "name" ) {
+    Serial.println(_settings->getName());
+
+  } else if ( input == "name=" ) {
+    String name = prompt("Enter new name:");
+    _settings->setName(name);
+    Serial.print("Name is now ");
+    Serial.println(_settings->getName());
+
+  } else if ( input == "config" ) {
+    Serial.println(_racks->toPrettyJson());
+
+  } else if ( input == "config=" ) {
+    String configStr = prompt("Enter new configuration:");
+    _racks->buildConfig(configStr);
 
   }
 }

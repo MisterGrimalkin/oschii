@@ -15,12 +15,15 @@ class RemoteRack {
     String buildRemotes(JsonObject json);
     String buildRemote(String name, JsonObject json);
 
+    JsonObject toJson();
+
     Remote * getRemote(String name);
 
   private:
     DriverRack * _driverRack;
     Remote * _remotes[MAX_REMOTES];
     int _remoteIndex;
+    StaticJsonDocument<512> _jsonRoot;
 };
 
 #endif

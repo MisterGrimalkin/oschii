@@ -3,8 +3,9 @@
   "network": {
     "wifiEnabled": true,
     "wifiName": "TotallyNotSkynet",
+    "wifiPassword": "CabinetPolicySkipFir3$",
     "wifiTimeout": 5000,
-    "ethernetPreferred": false,
+    "ethernetEnabled": false,
     "ethernetTimeout": 60000,
     "oscPort": 3333,
     "httpPort": 80

@@ -16,6 +16,7 @@ class Monitor {
     bool build(String sensorName, JsonObject json);
     void update();
 
+    String getSensorName();
     JsonObject toJson();
     String toString();
 
@@ -26,6 +27,7 @@ class Monitor {
     Remote * _remotes[MAX_MONITOR_REMOTES];
     int _remoteIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
+    StaticJsonDocument<512> _jsonRoot;
 };
 
 #endif

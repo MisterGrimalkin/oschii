@@ -1,83 +1,176 @@
 #include "SettingsService.h"
 
-SettingsService::SettingsService(FileService files, String filename) {
+SettingsService::SettingsService(FileService * files, String version, String buildDatetime) {
   _files = files;
-  _filename = filename;
+
+  _version = version;
+  _buildDatetime = buildDatetime;
 
   _name = "Oschii";
-  _wifiSsid = "";
+
+  _wifiEnabled = false;
+  _wifiTimeout = 5000;
+  _wifiName = "";
   _wifiPassword = "";
-  _preferEthernet = false;
+
+  _ethernetEnabled = false;
+  _ethernetTimeout = 120000;
+
+  _oscPort = 3333;
+  _httpPort = 80;
 }
 
 void SettingsService::load() {
-  String json = _files.readFile(_filename);
-  if (json==NULL ) {
+  String json = _files->readFile(SETTINGS_FILENAME);
+  if (json == NULL ) {
     save();
     load();
     return;
   }
-  fromJson(json);
+  build(json);
 }
+
 void SettingsService::save() {
-  String json = toJson();
-  _files.writeFile(_filename, json);
+  String json = toPrettyJson();
+  _files->writeFile(SETTINGS_FILENAME, json);
 }
 
+void SettingsService::set(String json) {
+  build(json);
+  save();
+  load();
+}
 
-void SettingsService::fromJson(String json) {
+void SettingsService::build(String json) {
   DynamicJsonDocument input(1024);
   DeserializationError error = deserializeJson(input, json.c_str());
   if (error) {
     Serial.println("Error parsing Settings JSON!");
   } else {
-    if (input.containsKey("name"))            _name = input["name"].as<String>();
-    if (input.containsKey("wifiSsid"))        _wifiSsid = input["wifiSsid"].as<String>();
-    if (input.containsKey("wifiPassword"))    _wifiPassword = input["wifiPassword"].as<String>();
-    if (input.containsKey("preferEthernet"))  _preferEthernet = input["preferEthernet"];
+    if (input.containsKey("name")) _name = input["name"].as<String>();
+
+    JsonObject networkJson = input["network"].as<JsonObject>();
+
+    if (networkJson.containsKey("wifiEnabled"))     _wifiEnabled     = networkJson["wifiEnabled"];
+    if (networkJson.containsKey("wifiTimeout"))     _wifiTimeout     = networkJson["wifiTimeout"];
+    if (networkJson.containsKey("wifiName"))        _wifiName        = networkJson["wifiName"].as<String>();
+    if (networkJson.containsKey("wifiPassword"))    _wifiPassword    = networkJson["wifiPassword"].as<String>();
+    if (networkJson.containsKey("ethernetEnabled")) _ethernetEnabled = networkJson["ethernetEnabled"];
+    if (networkJson.containsKey("ethernetTimeout")) _ethernetTimeout = networkJson["ethernetTimeout"];
+    if (networkJson.containsKey("oscPort"))         _oscPort         = networkJson["oscPort"];
+    if (networkJson.containsKey("httpPort"))        _httpPort        = networkJson["httpPort"];
   }
 }
-String SettingsService::toJson() {
+
+String SettingsService::toPrettyJson() {
   DynamicJsonDocument output(1024);
   output["name"] = _name;
-  output["wifiSsid"] = _wifiSsid;
-  output["wifiPassword"] = _wifiPassword;
-  output["preferEthernet"] = _preferEthernet;
+
+  JsonObject networkJson = output.createNestedObject("network");
+
+  networkJson["wifiEnabled"] = _wifiEnabled;
+  networkJson["wifiTimeout"] = _wifiTimeout;
+  networkJson["wifiName"] = _wifiName;
+  networkJson["ethernetEnabled"] = _ethernetEnabled;
+  networkJson["ethernetTimeout"] = _ethernetTimeout;
+  networkJson["oscPort"] = _oscPort;
+  networkJson["httpPort"] = _httpPort;
 
   String outputStr = "";
   serializeJsonPretty(output, outputStr);
   return outputStr;
 }
 
+String SettingsService::getVersion() {
+  return _version;
+}
+
+String SettingsService::getBuildDatetime() {
+  return _buildDatetime;
+}
+
+// Name
+
 String SettingsService::getName() {
   return _name;
 }
+
 void SettingsService::setName(String name) {
   _name = name;
   save();
 }
 
-String SettingsService::getWifiSsid() {
-  return _wifiSsid;
+// Wifi
+
+bool SettingsService::isWifiEnabled() {
+  return _wifiEnabled;
 }
-void SettingsService::setWifiSsid(String ssid) {
-  _wifiSsid = ssid;
-  save();
+
+int SettingsService::getWifiTimeout() {
+  return _wifiTimeout;
+}
+
+String SettingsService::getWifiName() {
+  return _wifiName;
 }
 
 String SettingsService::getWifiPassword() {
   return _wifiPassword;
 }
-void SettingsService::setWifiPassword(String password) {
+
+void SettingsService::setWifiEnabled(bool enabled) {
+  _wifiEnabled = enabled;
+  save();
+}
+
+void SettingsService::setWifiTimeout(int timeout) {
+  _wifiTimeout = timeout;
+  save();
+}
+
+void SettingsService::setWifiCredentials(String name, String password) {
+  _wifiName = name;
   _wifiPassword = password;
   save();
 }
 
-bool SettingsService::isEthernetPreferred() {
-  return _preferEthernet;
+// Ethernet
+
+bool SettingsService::isEthernetEnabled() {
+  return _ethernetEnabled;
 }
-void SettingsService::setEthernetPreferred(bool preferEthernet) {
-  _preferEthernet = preferEthernet;
+
+int SettingsService::getEthernetTimeout() {
+  return _ethernetTimeout;
+}
+
+void SettingsService::setEthernetEnabled(bool enabled) {
+  _ethernetEnabled = enabled;
+  save();
+}
+
+void SettingsService::setEthernetTimeout(int timeout) {
+  _ethernetTimeout = timeout;
+  save();
+}
+
+// Ports
+
+int SettingsService::getOscPort() {
+  return _oscPort;
+}
+
+int SettingsService::getHttpPort() {
+  return _httpPort;
+}
+
+void SettingsService::setOscPort(int port) {
+  _oscPort = port;
+  save();
+}
+
+void SettingsService::setHttpPort(int port) {
+  _httpPort = port;
   save();
 }
 

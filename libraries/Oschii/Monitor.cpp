@@ -41,6 +41,22 @@ void Monitor::update() {
   }
 }
 
+String Monitor::getSensorName() {
+  return _sensor->getName();
+}
+
+JsonObject Monitor::toJson() {
+  JsonObject json = _jsonRoot.createNestedObject(_sensor->getName());
+  json["onChange"] = _onChange;
+  json["pollInterval"] = _pollInterval;
+  JsonArray remoteArray = json.createNestedArray("fireRemotes");
+  for ( int i=0; i<_remoteIndex; i++ ) {
+    Remote * remote = _remotes[i];
+    remoteArray.add(remote->getName());
+  }
+  return json;
+}
+
 String Monitor::toString() {
   String str = "(" + _sensor->getName() + ") -->";
   for ( int i=0; i<_remoteIndex; i++ ) {

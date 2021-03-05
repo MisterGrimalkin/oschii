@@ -14,7 +14,7 @@
         300,
         2500
       ],
-      "discardOutliers": false
+      "discardOutliers": true
     },
     {
       "name": "Button 1",
@@ -104,5 +104,62 @@
       "type": "pwm",
       "pin": 23
     }
-  ]
+  ],
+  "driverRemotes": {
+    "/violet": {
+      "writeTo": [
+        {
+          "driver": "Violet"
+        }
+      ]
+    },
+    "/indigo": {
+      "writeTo": [
+        {
+          "driver": "Indigo"
+        }
+      ]
+    },
+    "/blue": {
+      "writeTo": [
+        {
+          "driver": "Blue"
+        }
+      ]
+    },
+    "/red": {
+      "writeTo": [
+        {
+          "driver": "Red"
+        }
+      ]
+    }
+  },
+  "sensorMonitors": {
+    "Knob": {
+      "fireRemotes": [
+        "/violet"
+      ]
+    },
+    "Button 1": {
+      "fireRemotes": [
+        "/indigo"
+      ]
+    },
+    "Button 2": {
+      "fireRemotes": [
+        "/indigo"
+      ]
+    },
+    "Button 3": {
+      "fireRemotes": [
+        "/blue"
+      ]
+    },
+    "Ultrasonic": {
+      "fireRemotes": [
+        "/red"
+      ]
+    }
+  }
 }

@@ -42,3 +42,13 @@ Remote * RemoteRack::getRemote(String name) {
   return NULL;
 }
 
+JsonObject RemoteRack::toJson() {
+  JsonObject json = _jsonRoot.createNestedObject("driverRemotes");
+  for ( int i=0;  i<_remoteIndex; i++ ) {
+    Remote * remote = _remotes[i];
+    String key = remote->getName();
+    json[key] = remote->toJson();
+  }
+  return json;
+}
+

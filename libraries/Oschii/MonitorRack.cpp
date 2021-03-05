@@ -39,3 +39,13 @@ void MonitorRack::loop() {
     monitor->update();
   }
 }
+
+JsonObject MonitorRack::toJson() {
+  JsonObject json = _jsonRoot.createNestedObject("sensorMonitors");
+  for ( int i=0; i<_monitorIndex; i++ ) {
+    Monitor * monitor = _monitors[i];
+    String key = monitor->getSensorName();
+    json[key] = monitor->toJson();
+  }
+  return json;
+}

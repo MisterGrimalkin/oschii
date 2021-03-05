@@ -16,7 +16,7 @@ class Remote {
     bool build(String name, JsonObject json);
     void receive(int value);
 
-//    JsonObject toJson();
+    JsonObject toJson();
     String toString();
 
     String getName();
@@ -28,6 +28,7 @@ class Remote {
     int _offsets[MAX_REMOTE_DRIVERS];
     double _multipliers[MAX_REMOTE_DRIVERS];
     Driver * _drivers[MAX_REMOTE_DRIVERS];
+    StaticJsonDocument<512> _jsonRoot;
 };
 
 #endif

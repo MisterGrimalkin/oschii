@@ -50,3 +50,16 @@ String Remote::toString() {
   }
   return str;
 }
+
+JsonObject Remote::toJson() {
+  JsonObject json = _jsonRoot.createNestedObject(_name);
+  JsonArray writeToArray = json.createNestedArray("writeTo");
+  for ( int i=0; i<_driverIndex; i++ ) {
+    Driver * driver = _drivers[i];
+    JsonObject driverJson = writeToArray.createNestedObject();
+    driverJson["driver"] = driver->getName();
+    driverJson["valueOffset"] = _offsets[i];
+    driverJson["valueMultiplier"] = _multipliers[i];
+  }
+  return json;
+}

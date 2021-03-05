@@ -18,8 +18,8 @@ class Racks {
     bool buildConfig(String jsonString);
     bool buildConfig(JsonObject json);
 
-    bool buildScene(String jsonString);
-    bool buildScene(JsonObject json);
+    JsonObject toJson();
+    String toPrettyJson();
 
     void start();
     void loop();
