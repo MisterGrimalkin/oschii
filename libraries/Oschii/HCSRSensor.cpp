@@ -7,10 +7,7 @@ int HCSRSensor::getReading() {
   digitalWrite(_trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(_trigPin, LOW);
-  int reading = pulseIn(_echoPin, HIGH, _readingRange[MAX]);
-  if ( reading == 0 ) {
-    reading = _readingRange[MAX] + 1;
-  }
+  int reading = pulseIn(_echoPin, HIGH);
   return reading;
 }
 
@@ -23,15 +20,6 @@ bool HCSRSensor::build(JsonObject json) {
 
   if ( !json.containsKey("interleave") ) {
     _interleave = true;
-  }
-
-  if ( !json.containsKey("readingRange") ) {
-    _readingRange[MIN] = 300;
-    _readingRange[MAX] = 5000;
-  }
-
-  if ( !json.containsKey("flipRange") ) {
-    _flipRange = true;
   }
 
   _trigPin = -1;

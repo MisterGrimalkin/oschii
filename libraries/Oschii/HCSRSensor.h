@@ -3,6 +3,8 @@
 
 #include "RangeSensor.h"
 
+#define ECHO_TIMEOUT 5000
+
 class HCSRSensor : public RangeSensor {
   public:
     HCSRSensor() : RangeSensor() {};

@@ -37,12 +37,17 @@ bool Monitor::build(JsonObject json) {
 
 void Monitor::update() {
   _sensor->readSensor();
-  if (    ( _onChange && _sensor->hasChanged() )
-       || ( millis() - _lastPolledAt >= _pollInterval)
-  ) {
+  if ( _onChange && _sensor->hasChanged() ) {
     for ( int i=0; i<_sendToIndex; i++ ) {
       MonitorSendTo * sendTo = _sendTos[i];
-      sendTo->send(_sensor->getValue());
+      int value = _sensor->getValue();
+      if ( ECHO_MONITOR_SENDS ) {
+        Serial.print("(");
+        Serial.print(_sensor->getName());
+        Serial.print(") --> ");
+        Serial.println(value);
+      }
+      sendTo->send(value);
     }
     _lastPolledAt = millis();
   }

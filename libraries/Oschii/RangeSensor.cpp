@@ -1,61 +1,40 @@
 #include "RangeSensor.h"
 
 void RangeSensor::readSensor() {
+  int tempValue = _value;
+
   _changed = false;
 
-  int tempValue = _value;
   if ( _samples > 1 ) {
     if ( _interleave ) {
       if ( _sampleCount < _samples ) {
-        _sampleBuffer[_sampleCount++] = mapToValue(capReading(getReading()));
+        _sampleBuffer[_sampleCount++] = applyTransform(getReading());
       } else {
         tempValue = getMedianValue(_sampleCount);
         _sampleCount = 0;
       }
     } else {
       for ( int i=0; i < _samples; i++ ) {
-        _sampleBuffer[i] = mapToValue(capReading(getReading()));
+        _sampleBuffer[i] = applyTransform(getReading());
       }
       tempValue = getMedianValue(_samples);
     }
   } else {
-    tempValue = mapToValue(capReading(getReading()));
+    tempValue = applyTransform(getReading());
   }
 
-  _changed = (   tempValue != _value
-              && (tempValue >= _bandPass[MIN] && tempValue <= _bandPass[MAX])
-              && !(tempValue >= _bandCut[MIN] && tempValue <= _bandCut[MAX])
-            );
+  _changed = (tempValue != _value);
+
   if ( _changed ) _lastChanged = millis();
+
   _value = tempValue;
 }
 
-int RangeSensor::capReading(int reading) {
-  int newReading = reading;
-
-  if ( reading < _readingRange[MIN] ) {
-    newReading = _discardOutliers ? _lastReading : _readingRange[MIN];
-
-  } else if ( reading > _readingRange[MAX] ) {
-    newReading = _discardOutliers ? _lastReading : _readingRange[MAX];
-  }
-
-  return _lastReading = newReading;
-}
-
-int RangeSensor::mapToValue(int reading) {
-  double readingWindowSize = _readingRange[MAX] - _readingRange[MIN];
-  double readingAmount = reading - _readingRange[MIN];
-
-  double readingFraction = readingAmount / readingWindowSize;
-
-  double valueWindowSize = _valueRange[MAX] - _valueRange[MIN];
-  double valueAmount = readingFraction * valueWindowSize;
-
-  if ( _flipRange ) {
-    return (int)(_valueRange[MAX] - valueAmount);
+int RangeSensor::applyTransform(int value) {
+  if ( _transform == NULL ) {
+    return value;
   } else {
-    return (int)(_valueRange[MIN] + valueAmount);
+    return _transform->apply(value);
   }
 }
 
@@ -75,76 +54,27 @@ int RangeSensor::getMedianValue(int samples) {
 bool RangeSensor::build(JsonObject json) {
   if ( !Sensor::build(json) ) return false;
 
+  _value = -1;
   _samples = 1;
   _sampleCount = 0;
   _interleave = false;
-
-  _readingRange[MIN] = 0;
-  _readingRange[MAX] = 3300;
-  _discardOutliers = true;
-
-  _valueRange[MIN] = 0;
-  _valueRange[MAX] = 100;
-  _flipRange = false;
-
-  _bandPass[MIN] = 0;
-  _bandPass[MAX] = 100;
-  _bandCut[MIN] = -1;
-  _bandCut[MAX] = -1;
+  _transform = NULL;
 
   if ( json.containsKey("samples") )     _samples    = json["samples"];
   if ( json.containsKey("interleave") )  _interleave = json["interleave"];
 
-  if ( json.containsKey("readingRange") ) {
-    JsonArray readingRange = json["readingRange"];
-    if ( readingRange[MAX] < readingRange[MIN] ) {
-      setError("Reading Range must be positive");
-      return false;
-    }
-    _readingRange[MIN] = readingRange[MIN];
-    _readingRange[MAX] = readingRange[MAX];
-  }
-
-  if ( json.containsKey("discardOutliers") ) _discardOutliers = json["discardOutliers"];
-
-  if ( json.containsKey("valueRange") ) {
-    JsonArray valueRange = json["valueRange"];
-    if ( valueRange[MAX] < valueRange[MIN] ) {
-      setError("Value Range must be positive");
-      return false;
-    }
-    _valueRange[MIN] = valueRange[MIN];
-    _valueRange[MAX] = valueRange[MAX];
-  }
-
-  if ( json.containsKey("flipRange") )  _flipRange = json["flipRange"];
-
-  if ( json.containsKey("bandPass") ) {
-    JsonArray bandPass = json["bandPass"];
-    if ( bandPass[MAX] < bandPass[MIN] ) {
-      setError("Band Pass must be positive");
-      return false;
-    }
-    _bandPass[MIN] = bandPass[MIN];
-    _bandPass[MAX] = bandPass[MAX];
-  } else {
-    _bandPass[MIN] = _valueRange[MIN];
-    _bandPass[MAX] = _valueRange[MAX];
-  }
-
-  if ( json.containsKey("bandCut") ) {
-    JsonArray bandCut = json["bandCut"];
-    if ( bandCut[MAX] < bandCut[MIN] ) {
-      setError("Band Cut must be positive");
-      return false;
-    }
-    _bandCut[MIN] = bandCut[MIN];
-    _bandCut[MAX] = bandCut[MAX];
-  }
-
   if ( _samples > MAX_SAMPLES ) {
     setError("Maximum samples is " + String(MAX_SAMPLES));
     return false;
+  }
+
+  if ( json.containsKey("valueTransform") ) {
+    JsonObject transformJson = json["valueTransform"];
+    _transform = new ValueTransform();
+    if ( !_transform->build(transformJson) ) {
+      setError("Transform is invalid");
+      return false;
+    }
   }
 
   return true;
@@ -156,37 +86,15 @@ JsonObject RangeSensor::toJson() {
   json["samples"] = _samples;
   json["interleave"] = _interleave;
 
-  JsonArray readingRange = json.createNestedArray("readingRange");
-  readingRange.add(_readingRange[MIN]);
-  readingRange.add(_readingRange[MAX]);
-
-  json["discardOutliers"] = _discardOutliers;
-
-  JsonArray valueRange = json.createNestedArray("valueRange");
-  valueRange.add(_valueRange[MIN]);
-  valueRange.add(_valueRange[MAX]);
-
-  json["flipRange"] = _flipRange;
-
-  JsonArray bandPass = json.createNestedArray("bandPass");
-  bandPass.add(_bandPass[MIN]);
-  bandPass.add(_bandPass[MAX]);
-
-  JsonArray bandCut = json.createNestedArray("bandCut");
-  bandCut.add(_bandCut[MIN]);
-  bandCut.add(_bandCut[MAX]);
+  if ( _transform != NULL ) {
+    json["valueTransform"] = _transform->toJson();
+  }
 
   return json;
 }
 
 String RangeSensor::toString() {
   return Sensor::toString()
-  + " samples:" + (_interleave ? "I:" : "B:") + String(_samples)
-  + " reading[" + String(_readingRange[MIN]) + "-" + String(_readingRange[MAX])
-  + "] discard:" + String(_discardOutliers)
-  + " value[" + String(_valueRange[MIN]) + "-" + String(_valueRange[MAX])
-  + "] flip:" + String(_flipRange)
-  + " pass[" + String(_bandPass[MIN]) + "-" + String(_bandPass[MAX])
-  + "] cut[" + String(_bandCut[MIN]) + "-" + String(_bandCut[MAX])
-  + String("]");
+          + " samples:" + String(_samples)
+          + " interleave:" + String(_interleave);
 }

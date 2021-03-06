@@ -257,28 +257,7 @@ The closest distance is returned as 100, the farthest as 0.
   "echoPin": 12,            # required
   
   "samples": 9, 
-  "interleave": true,
-  
-  "readingRange": [
-    300,
-    5000
-  ],
-  "discardOutliers": true,
-  
-  "valueRange": [
-    0,
-    100
-  ],
-  "flipRange": true,
-  
-  "bandPass": [
-    0,
-    100
-  ],
-  "bandCut": [
-    -1,
-    -1
-  ]
+  "interleave": true
 }
 ```
 

@@ -1,9 +1,7 @@
 #include "AnalogSensor.h"
 
 int AnalogSensor::getReading() {
-  int reading = analogRead(_pin);
-  double milliVolts = (reading / 4095.0) * 3300;
-  return (int)milliVolts;
+  return analogRead(_pin);
 }
 
 bool AnalogSensor::build(JsonObject json) {

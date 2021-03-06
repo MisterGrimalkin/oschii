@@ -29,12 +29,18 @@ class ValueTransform {
   private:
     int _lastInput;
     int _inputRange[2];
+
+    bool _discardAllOutliers;
     int _discardOutliers;
     int _outlierCount;
+    int _setOutliersTo;
+
     int _outputRange[2];
     bool _flipRange;
+
     int _bandPass[2];
     int _bandCut[2];
+
     StaticJsonDocument<4096> _jsonRoot;
 };
 

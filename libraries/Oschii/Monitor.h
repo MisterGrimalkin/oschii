@@ -8,6 +8,8 @@
 #include "RemoteRack.h"
 #include "MonitorSendTo.h"
 
+#define ECHO_MONITOR_SENDS false
+
 #define MAX_MONITOR_REMOTES 128
 
 class Monitor {

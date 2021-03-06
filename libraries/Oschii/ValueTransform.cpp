@@ -7,28 +7,45 @@ int ValueTransform::apply(int value) {
 int ValueTransform::capInput(int input) {
   int newInput = input;
 
-  if ( input < _inputRange[MIN] ) {
-    if ( _discardOutliers == -1 ) {
+  if ( input < _inputRange[MIN] || input > _inputRange[MAX] ) {
+    // Outlier
+
+    if ( _discardAllOutliers ) {
+      // Discard ALL
       newInput = _lastInput;
-    } else if ( _outlierCount >= _discardOutliers ) {
-      newInput = _inputRange[MIN];
-      _outlierCount = 0;
+
+    } else if ( _discardOutliers > 0 ) {
+      if ( _outlierCount < _discardOutliers ) {
+        // Discard this outlier
+        newInput = _lastInput;
+        _outlierCount++;
+      } else {
+        // Discarded enough outliers, cap to Input Range
+        if ( newInput < _inputRange[MIN] ) {
+          newInput = _inputRange[MIN];
+        } else {
+          newInput = _inputRange[MAX];
+        }
+        _outlierCount = 0;
+      }
+
+    } else if ( _setOutliersTo >= 0 ) {
+      // Override outlier value
+      newInput = _setOutliersTo;
+
     } else {
-      newInput = _lastInput;
-      _outlierCount++;
+      // Cap to range
+      if ( newInput < _inputRange[MIN] ) {
+        newInput = _inputRange[MIN];
+      } else {
+        newInput = _inputRange[MAX];
+      }
     }
 
-  } else if ( input > _inputRange[MAX] ) {
-    if ( _discardOutliers == -1 ) {
-      newInput = _lastInput;
-    } else if ( _outlierCount >= _discardOutliers ) {
-      newInput = _inputRange[MAX];
-      _outlierCount = 0;
-    } else {
-      newInput = _lastInput;
-      _outlierCount++;
-    }
-  }
+  } else {
+    // Within Range
+    _outlierCount = 0;
+   }
 
   return _lastInput = newInput;
 }
@@ -82,8 +99,11 @@ void ValueTransform::setBandCut(int min, int max) {
 bool ValueTransform::build(JsonObject json) {
   _inputRange[MIN] = 0;
   _inputRange[MAX] = 4095;
-  _discardOutliers = 0;
+
+  _discardAllOutliers = false;
+  _discardOutliers = -1;
   _outlierCount = 0;
+  _setOutliersTo = -1;
 
   _outputRange[MIN] = 0;
   _outputRange[MAX] = 100;
@@ -104,7 +124,9 @@ bool ValueTransform::build(JsonObject json) {
     _inputRange[MAX] = inputRange[MAX];
   }
 
-  if ( json.containsKey("discardOutliers") ) _discardOutliers = json["discardOutliers"];
+  if ( json.containsKey("discardAllOutliers") ) _discardAllOutliers = json["discardAllOutliers"];
+  if ( json.containsKey("discardOutliers") )    _discardOutliers    = json["discardOutliers"];
+  if ( json.containsKey("setOutliersTo") )      _setOutliersTo      = json["setOutliersTo"];
 
   if ( json.containsKey("outputRange") ) {
     JsonArray outputRange = json["outputRange"];
@@ -141,7 +163,7 @@ bool ValueTransform::build(JsonObject json) {
     _bandCut[MAX] = bandCut[MAX];
   }
 
-  return false;
+  return true;
 }
 
 JsonObject ValueTransform::toJson() {
@@ -152,7 +174,9 @@ JsonObject ValueTransform::toJson() {
   inputRange.add(_inputRange[MIN]);
   inputRange.add(_inputRange[MAX]);
 
-  json["discardOutliers"] = _discardOutliers;
+  json["discardAllOutliers"] = _discardAllOutliers;
+  json["discardOutliers"]    = _discardOutliers;
+  json["setOutliersTo"]      = _setOutliersTo;
 
   JsonArray outputRange = json.createNestedArray("outputRange");
   outputRange.add(_outputRange[MIN]);

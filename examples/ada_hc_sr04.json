@@ -10,6 +10,20 @@
           4095
         ]
       }
+    },
+    {
+      "name": "Ultrasonic",
+      "type": "hc-sr04",
+      "trigPin": 13,
+      "echoPin": 12,
+      "valueTransform": {
+        "inputRange": [
+          300,
+          3000
+        ],
+        "discardOutliers": 300,
+        "flipRange": true
+      }
     }
   ],
   "drivers": [
@@ -55,6 +69,14 @@
       "sendTo": [
         {
           "~": "/meter"
+        }
+      ]
+    },
+    {
+      "sensor": "Ultrasonic",
+      "sendTo": [
+        {
+          "~": "/tracker"
         }
       ]
     }
@@ -113,7 +135,7 @@
           "valueTransform": {
             "inputRange": [
               79,
-              87
+              88
             ]
           }
         },
@@ -124,6 +146,81 @@
               88,
               100
             ]
+          }
+        }
+      ]
+    },
+    {
+      "address": "/tracker",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "valueTransform": {
+            "inputRange": [
+              88,
+              100
+            ],
+            "setOutliersTo": 88
+          }
+        },
+        {
+          "driver": "Orange",
+          "valueTransform": {
+            "inputRange": [
+              79,
+              97
+            ],
+            "setOutliersTo": 79
+          }
+        },
+        {
+          "driver": "Yellow",
+          "valueTransform": {
+            "inputRange": [
+              64,
+              89
+            ],
+            "setOutliersTo": 64
+          }
+        },
+        {
+          "driver": "Green",
+          "valueTransform": {
+            "inputRange": [
+              50,
+              74
+            ],
+            "setOutliersTo": 50
+          }
+        },
+        {
+          "driver": "Blue",
+          "valueTransform": {
+            "inputRange": [
+              33,
+              60
+            ],
+            "setOutliersTo": 33
+          }
+        },
+        {
+          "driver": "Indigo",
+          "valueTransform": {
+            "inputRange": [
+              16,
+              43
+            ],
+            "setOutliersTo": 16
+          }
+        },
+        {
+          "driver": "Violet",
+          "valueTransform": {
+            "inputRange": [
+              0,
+              26
+            ],
+            "setOutliersTo": 0
           }
         }
       ]

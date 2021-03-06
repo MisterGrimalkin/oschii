@@ -14,7 +14,10 @@ as follows:
     0,
     4095
   ],
+
+  "discardAllOutliers": false,
   "discardOutliers": -1,
+  "setOutliersTo": -1,
   
   "outputRange": [
     0,
