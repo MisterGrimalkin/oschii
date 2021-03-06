@@ -6,18 +6,17 @@ a Cadence._
 
 ##### Configuration:
 ```
-"driverRemotes": {
-  "/remote1": {
+"driverRemotes": [
+  {
+    "address": "/remote1",
     "type": "osc",
     "writeTo": [
       {
         "driver": "Lamp 1",
-        "valueMultiplier": 1.0,
-        "valueOffset": 0
+        "envelope": [
+        ]
       }
-    ],
-    "cadence": [
     ]
   }
-}
+]
 ```

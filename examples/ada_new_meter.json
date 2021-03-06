@@ -1,10 +1,4 @@
 {
-  "receivers": [
-    {
-      "name": "Snooty",
-      "ip": "192.168.1.123"
-    }
-  ],
   "sensors": [
     {
       "name": "Knob",
@@ -128,26 +122,5 @@
         }
       ]
     }
-  ],
-  "i2c": {
-    "sdaPin": 4,
-    "sclPin": 5,
-    "modules": [
-      {
-        "name": "GPIO-A",
-        "type": "gpio",
-        "address": "0x20",
-        "chip": "MCP23017"
-      },
-      {
-        "name": "PWM-A",
-        "type": "pwm",
-        "address": "0x70",
-        "chip": "PCA9685"
-      }
-    ],
-    "clock": 400000,
-    "pwmFrequency": 1000,
-    "oscillatorFrequency": 23000000
-  }
+  ]
 }

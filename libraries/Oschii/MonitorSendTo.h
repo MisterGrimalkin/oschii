@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 
 #include "RemoteRack.h"
+#include "ValueTransform.h"
 
 class MonitorSendTo {
   public:
@@ -21,6 +22,7 @@ class MonitorSendTo {
     Remote * _remote;
     StaticJsonDocument<4096> _jsonRoot;
     String _address;
+    ValueTransform * _transform;
 };
 
 #endif

@@ -6,6 +6,7 @@
 
 #include "Driver.h"
 #include "DriverRack.h"
+#include "RemoteWriteTo.h"
 
 #define MAX_REMOTE_DRIVERS 128
 
@@ -24,10 +25,8 @@ class Remote {
   private:
     DriverRack * _driverRack;
     String _address;
-    int _driverIndex;
-    int _offsets[MAX_REMOTE_DRIVERS];
-    double _multipliers[MAX_REMOTE_DRIVERS];
-    Driver * _drivers[MAX_REMOTE_DRIVERS];
+    RemoteWriteTo * _writeTos[MAX_REMOTE_DRIVERS];
+    int _writeToIndex;
     StaticJsonDocument<4096> _jsonRoot;
 };
 
