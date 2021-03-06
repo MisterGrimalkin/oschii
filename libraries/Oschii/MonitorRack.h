@@ -15,12 +15,12 @@ class MonitorRack {
   public:
     MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack);
 
-    String buildMonitors(JsonObject json);
-    String buildMonitor(String sensorName, JsonObject json);
+    String buildMonitors(JsonArray array);
+    String buildMonitor(JsonObject json);
 
     void loop();
 
-    JsonObject toJson();
+    JsonArray toJson();
 
   private:
     SensorRack * _sensorRack;
@@ -28,7 +28,6 @@ class MonitorRack {
     Monitor * _monitors[MAX_MONITORS];
     int _monitorIndex;
     StaticJsonDocument<4096> _jsonRoot;
-
 };
 
 #endif

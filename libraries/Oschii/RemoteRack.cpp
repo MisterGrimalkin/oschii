@@ -5,15 +5,14 @@ RemoteRack::RemoteRack(DriverRack * driverRack) {
   _remoteIndex = 0;
 }
 
-String RemoteRack::buildRemotes(JsonObject json) {
+String RemoteRack::buildRemotes(JsonArray array) {
   _remoteIndex = 0;
 
   Serial.println("== REMOTES ==");
 
-  for (JsonPair kv : json) {
-    String name = kv.key().c_str();
-    JsonObject remoteJson = kv.value().as<JsonObject>();
-    buildRemote(name, remoteJson);
+  for ( int i = 0; i < array.size(); i++ ) {
+    JsonObject json = array[i];
+    buildRemote(json);
   }
 
   Serial.print("== Found: ");
@@ -23,33 +22,32 @@ String RemoteRack::buildRemotes(JsonObject json) {
   return "";
 }
 
-String RemoteRack::buildRemote(String name, JsonObject json) {
+String RemoteRack::buildRemote(JsonObject json) {
   Remote * remote = new Remote(_driverRack);
-  if ( remote->build(name, json) ) {
+  if ( remote->build(json) ) {
     Serial.println(" - " + remote->toString());
     _remotes[_remoteIndex++] = remote;
   }
   return "";
 }
 
-Remote * RemoteRack::getRemote(String name) {
+Remote * RemoteRack::getRemote(String address) {
   for ( int i=0;  i<_remoteIndex; i++ ) {
     Remote * remote = _remotes[i];
-    if ( remote->getName() == name ) {
+    if ( remote->getAddress() == address ) {
       return remote;
     }
   }
   return NULL;
 }
 
-JsonObject RemoteRack::toJson() {
+JsonArray RemoteRack::toJson() {
   _jsonRoot.clear();
-  JsonObject json = _jsonRoot.createNestedObject("driverRemotes");
+  JsonArray array= _jsonRoot.createNestedArray("driverRemotes");
   for ( int i=0;  i<_remoteIndex; i++ ) {
     Remote * remote = _remotes[i];
-    String key = remote->getName();
-    json[key] = remote->toJson();
+    array.add(remote->toJson());
   }
-  return json;
+  return array;
 }
 

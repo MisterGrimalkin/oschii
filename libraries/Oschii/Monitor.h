@@ -6,6 +6,7 @@
 
 #include "SensorRack.h"
 #include "RemoteRack.h"
+#include "MonitorSendTo.h"
 
 #define MAX_MONITOR_REMOTES 128
 
@@ -13,10 +14,9 @@ class Monitor {
   public:
     Monitor(SensorRack * sensorRack, RemoteRack * remoteRack);
 
-    bool build(String sensorName, JsonObject json);
+    bool build(JsonObject json);
     void update();
 
-    String getSensorName();
     JsonObject toJson();
     String toString();
 
@@ -24,8 +24,8 @@ class Monitor {
     SensorRack * _sensorRack;
     RemoteRack * _remoteRack;
     Sensor * _sensor;
-    Remote * _remotes[MAX_MONITOR_REMOTES];
-    int _remoteIndex, _pollInterval, _lastPolledAt;
+    MonitorSendTo * _sendTos[MAX_MONITOR_REMOTES];
+    int _sendToIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
     StaticJsonDocument<4096> _jsonRoot;
 };

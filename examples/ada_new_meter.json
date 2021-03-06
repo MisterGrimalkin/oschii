@@ -55,9 +55,6 @@
       "sendTo": [
         {
           "~": "/meter"
-        },
-        {
-          "*": "/oschii/sensor0"
         }
       ]
     }

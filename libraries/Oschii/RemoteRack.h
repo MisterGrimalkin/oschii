@@ -12,10 +12,10 @@
 class RemoteRack {
   public:
     RemoteRack(DriverRack * driverRack);
-    String buildRemotes(JsonObject json);
-    String buildRemote(String name, JsonObject json);
+    String buildRemotes(JsonArray array);
+    String buildRemote(JsonObject json);
 
-    JsonObject toJson();
+    JsonArray toJson();
 
     Remote * getRemote(String name);
 

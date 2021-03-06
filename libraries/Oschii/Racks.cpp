@@ -27,13 +27,13 @@ bool Racks::buildConfig(JsonObject json) {
 
   JsonArray sensorArray = json["sensors"];
   JsonArray driverArray = json["drivers"];
-  JsonObject remoteObject = json["driverRemotes"];
-  JsonObject monitorObject = json["sensorMonitors"];
+  JsonArray remoteArray = json["driverRemotes"];
+  JsonArray monitorArray = json["sensorMonitors"];
 
   _sensorRack->buildSensors(sensorArray);
   _driverRack->buildDrivers(driverArray);
-  _remoteRack->buildRemotes(remoteObject);
-  _monitorRack->buildMonitors(monitorObject);
+  _remoteRack->buildRemotes(remoteArray);
+  _monitorRack->buildMonitors(monitorArray);
 
   Serial.println("> OK\n");
 
@@ -42,7 +42,7 @@ bool Racks::buildConfig(JsonObject json) {
 
 JsonObject Racks::toJson() {
   _jsonDoc.clear();
-  JsonObject json = _jsonDoc.createNestedObject("boom");
+  JsonObject json = _jsonDoc.createNestedObject("config");
   json["sensors"] = _sensorRack->toJson();
   json["drivers"] = _driverRack->toJson();
   json["driverRemotes"] = _remoteRack->toJson();

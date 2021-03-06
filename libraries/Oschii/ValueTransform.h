@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#define MIN 0
+#define MAX 1
+
 class ValueTransform {
   public:
     ValueTransform() {};
@@ -33,6 +36,6 @@ class ValueTransform {
     int _bandPass[2];
     int _bandCut[2];
     StaticJsonDocument<4096> _jsonRoot;
-}
+};
 
 #endif

@@ -13,17 +13,17 @@ class Remote {
   public:
     Remote(DriverRack * driverRack);
 
-    bool build(String name, JsonObject json);
+    bool build(JsonObject json);
     void receive(int value);
 
     JsonObject toJson();
     String toString();
 
-    String getName();
+    String getAddress();
 
   private:
     DriverRack * _driverRack;
-    String _name;
+    String _address;
     int _driverIndex;
     int _offsets[MAX_REMOTE_DRIVERS];
     double _multipliers[MAX_REMOTE_DRIVERS];

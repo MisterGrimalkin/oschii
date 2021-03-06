@@ -5,8 +5,12 @@ Remote::Remote(DriverRack * driverRack) {
   _driverIndex = 0;
 }
 
-bool Remote::build(String name, JsonObject json) {
-  _name = name;
+bool Remote::build(JsonObject json) {
+  if ( json.containsKey("address") ) {
+    _address = json["address"].as<String>();
+  } else {
+    return false;
+  }
 
   JsonArray driverArray = json["writeTo"];
   if ( driverArray.size() > MAX_REMOTE_DRIVERS ) return false;
@@ -30,11 +34,6 @@ bool Remote::build(String name, JsonObject json) {
   return true;
 }
 
-
-String Remote::getName() {
-  return _name;
-}
-
 void Remote::receive(int value) {
   for ( int i=0; i<_driverIndex; i++ ) {
     Driver * driver = _drivers[i];
@@ -42,8 +41,12 @@ void Remote::receive(int value) {
   }
 }
 
+String Remote::getAddress() {
+  return _address;
+}
+
 String Remote::toString() {
-  String str = "[" + _name + "] ~~>";
+  String str = "[" + _address + "] ~~>";
   for ( int i=0; i<_driverIndex; i++ ) {
     Driver * driver = _drivers[i];
     str += " (" + driver->getName() + ")";
@@ -53,7 +56,10 @@ String Remote::toString() {
 
 JsonObject Remote::toJson() {
   _jsonRoot.clear();
-  JsonObject json = _jsonRoot.createNestedObject(_name);
+  JsonObject json = _jsonRoot.to<JsonObject>();
+
+  json["address"] = _address;
+
   JsonArray writeToArray = json.createNestedArray("writeTo");
   for ( int i=0; i<_driverIndex; i++ ) {
     Driver * driver = _drivers[i];
@@ -62,5 +68,6 @@ JsonObject Remote::toJson() {
     driverJson["valueOffset"] = _offsets[i];
     driverJson["valueMultiplier"] = _multipliers[i];
   }
+
   return json;
 }
