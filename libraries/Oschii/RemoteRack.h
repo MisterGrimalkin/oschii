@@ -23,7 +23,7 @@ class RemoteRack {
     DriverRack * _driverRack;
     Remote * _remotes[MAX_REMOTES];
     int _remoteIndex;
-    StaticJsonDocument<512> _jsonRoot;
+    StaticJsonDocument<4096> _jsonRoot;
 };
 
 #endif

@@ -25,7 +25,7 @@ class Sensor {
     int _value, _lastChanged;
     bool _built, _changed;
     String _name, _type, _error;
-    StaticJsonDocument<512> _jsonRoot;
+    StaticJsonDocument<4096> _jsonRoot;
 
     void setError(String error);
 };

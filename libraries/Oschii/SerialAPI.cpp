@@ -35,8 +35,8 @@ void SerialAPI::processInput(String input) {
     Serial.println("Tickles!");
 
   } else if ( input == "version" ) {
-    Serial.println(_settings->getVersion());
-    Serial.print("Built on ");
+    Serial.print(_settings->getVersion());
+    Serial.print(" - Built on ");
     Serial.println(_settings->getBuildDatetime());
 
   } else if ( input == "settings" ) {

@@ -25,6 +25,7 @@ class DriverRack {
     Driver * getDriver(String name);
 
   private:
+    StaticJsonDocument<4096> _jsonRoot;
     Driver * _drivers[MAX_DRIVERS];
     int _driverIndex;
 };

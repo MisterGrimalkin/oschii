@@ -1,0 +1,156 @@
+{
+  "receivers": [
+    {
+      "name": "Snooty",
+      "ip": "192.168.1.123"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "Knob",
+      "type": "analog",
+      "pin": 36
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Red",
+      "type": "pwm",
+      "pin": 16
+    },
+    {
+      "name": "Orange",
+      "type": "pwm",
+      "pin": 17
+    },
+    {
+      "name": "Yellow",
+      "type": "pwm",
+      "pin": 18
+    },
+    {
+      "name": "Green",
+      "type": "pwm",
+      "pin": 19
+    },
+    {
+      "name": "Blue",
+      "type": "pwm",
+      "pin": 21
+    },
+    {
+      "name": "Indigo",
+      "type": "pwm",
+      "pin": 22
+    },
+    {
+      "name": "Violet",
+      "type": "pwm",
+      "pin": 23
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Knob",
+      "sendTo": [
+        {
+          "~": "/meter"
+        },
+        {
+          "*": "/oschii/sensor0"
+        }
+      ]
+    }
+  ],
+  "driverRemotes": [
+    {
+      "address": "/meter",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "valueTransform": {
+            "inputRange": [
+              0,
+              16
+            ]
+          }
+        },
+        {
+          "driver": "Orange",
+          "valueTransform": {
+            "inputRange": [
+              17,
+              33
+            ]
+          }
+        },
+        {
+          "driver": "Yellow",
+          "valueTransform": {
+            "inputRange": [
+              34,
+              50
+            ]
+          }
+        },
+        {
+          "driver": "Green",
+          "valueTransform": {
+            "inputRange": [
+              51,
+              63
+            ]
+          }
+        },
+        {
+          "driver": "Blue",
+          "valueTransform": {
+            "inputRange": [
+              64,
+              80
+            ]
+          }
+        },
+        {
+          "driver": "Indigo",
+          "valueTransform": {
+            "inputRange": [
+              80,
+              90
+            ]
+          }
+        },
+        {
+          "driver": "Violet",
+          "valueTransform": {
+            "inputRange": [
+              91,
+              100
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "i2c": {
+    "sdaPin": 4,
+    "sclPin": 5,
+    "modules": [
+      {
+        "name": "GPIO-A",
+        "type": "gpio",
+        "address": "0x20",
+        "chip": "MCP23017"
+      },
+      {
+        "name": "PWM-A",
+        "type": "pwm",
+        "address": "0x70",
+        "chip": "PCA9685"
+      }
+    ],
+    "clock": 400000,
+    "pwmFrequency": 1000,
+    "oscillatorFrequency": 23000000
+  }
+}

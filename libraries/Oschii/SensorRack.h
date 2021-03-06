@@ -27,6 +27,7 @@ class SensorRack {
     Sensor * getSensor(String name);
 
   private:
+    StaticJsonDocument<4096> _jsonRoot;
     Sensor * _sensors[MAX_SENSORS];
     int _sensorIndex;
 };

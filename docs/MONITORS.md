@@ -7,23 +7,23 @@ defined Remotes._
 
 ##### Configuration:
 ```
-"sensorMonitors": {
-  "SENSOR NAME": {
+"sensorMonitors": [
+  {
+    "sensor": "Knob"
     "onChange": true,
     "pollInterval": 250,
-    "reportTo": [
+    "sendTo": [
       {
-        "receivers": [
-          "Ada", "Bob", ...
-        ],
-        "address": "/endpoint",
+        "MaxLaptop": "/oschii/knob",
         "type": "osc"
       },
-      ...
-    ],
-    "fireRemotes": [
-      "/remote1", "/remote2", ...
+      {
+        "~": "/local/remote"
+      },
+      {
+        "*": "/oschii/sensor0
+      }
     ]
   }
-}
+]
 ```

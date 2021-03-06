@@ -124,7 +124,7 @@ module Oschii
     def update_via_serial(name, ssid, password)
       purge_serial
       if name
-        if serial_query('set name') == 'Ready for name'
+        if serial_query('name=') == 'Enter new name:'
           puts serial_query(name)
         end
       end
@@ -149,9 +149,8 @@ module Oschii
 
     def purge_serial
       input = serial_port.read 100
-      print input
       until input == ''
-        input = serial_port.read 100
+        input += serial_port.read 100
         print input
       end
     end
@@ -162,7 +161,7 @@ module Oschii
       input = ''
       started = Time.now
       while input.empty? && (Time.now - started < 2)
-        input = serial_port.read 100
+        input = serial_port.read 8000
         sleep 0.2
       end
       puts input

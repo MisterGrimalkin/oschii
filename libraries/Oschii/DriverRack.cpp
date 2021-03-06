@@ -53,10 +53,9 @@ void DriverRack::fireAll(int value) {
   }
 }
 
-StaticJsonDocument<4096> doc3;
-
 JsonArray DriverRack::toJson() {
-  JsonArray array = doc3.createNestedArray("drivers");
+  _jsonRoot.clear();
+  JsonArray array = _jsonRoot.createNestedArray("drivers");
   for ( int i=0; i<_driverIndex; i++ ) {
     Driver * driver = _drivers[i];
     array.add(driver->toJson());

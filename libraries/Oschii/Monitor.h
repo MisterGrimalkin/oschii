@@ -27,7 +27,7 @@ class Monitor {
     Remote * _remotes[MAX_MONITOR_REMOTES];
     int _remoteIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
-    StaticJsonDocument<512> _jsonRoot;
+    StaticJsonDocument<4096> _jsonRoot;
 };
 
 #endif

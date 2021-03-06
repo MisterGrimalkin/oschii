@@ -11,7 +11,6 @@ void Racks::start() {
 }
 
 void Racks::loop() {
-//  _sensorRack->readSensors();
   _monitorRack->loop();
 }
 

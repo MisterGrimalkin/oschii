@@ -97,10 +97,9 @@ void SensorRack::printSensorValues() {
   }
 }
 
-StaticJsonDocument<4096> doc2;
-
 JsonArray SensorRack::toJson() {
-  JsonArray array = doc2.createNestedArray("sensors");
+  _jsonRoot.clear();
+  JsonArray array = _jsonRoot.createNestedArray("sensors");
   for ( int i=0; i<_sensorIndex; i++ ) {
     Sensor * sensor = _sensors[i];
     array.add(sensor->toJson());

@@ -24,7 +24,7 @@ class Driver {
     int _value, _initialValue;
     bool _built;
     String _name, _type, _error;
-    StaticJsonDocument<512> _jsonRoot;
+    StaticJsonDocument<4096> _jsonRoot;
 
     void setError(String error);
 };

@@ -91,12 +91,12 @@
     },
     {
       "name": "Blue",
-      "type": "gpio",
+      "type": "pwm",
       "pin": 21
     },
     {
       "name": "Indigo",
-      "type": "gpio",
+      "type": "pwm",
       "pin": 22
     },
     {
@@ -106,17 +106,31 @@
     }
   ],
   "driverRemotes": {
-    "/violet": {
+    "/red": {
       "writeTo": [
         {
-          "driver": "Violet"
+          "driver": "Red"
         }
       ]
     },
-    "/indigo": {
+    "/orange": {
       "writeTo": [
         {
-          "driver": "Indigo"
+          "driver": "Orange"
+        }
+      ]
+    },
+    "/yellow": {
+      "writeTo": [
+        {
+          "driver": "Yellow"
+        }
+      ]
+    },
+    "/green": {
+      "writeTo": [
+        {
+          "driver": "Green"
         }
       ]
     },
@@ -127,39 +141,59 @@
         }
       ]
     },
-    "/red": {
+    "/indigo": {
       "writeTo": [
         {
-          "driver": "Red"
+          "driver": "Indigo"
         }
       ]
-    }
+    },
+    "/violet": {
+      "writeTo": [
+        {
+          "driver": "Violet"
+        }
+      ]
+    },
+    "/all": [
+      {
+        "driver": "Red",
+        "valueMultiplier": 1.0
+      },
+      {
+        "driver": "Orange",
+        "valueMultiplier": 1.2
+      },
+      {
+        "driver": "Yellow",
+        "valueMultiplier": 1.4
+      },
+      {
+        "driver": "Green",
+        "valueMultiplier": 1.5
+      },
+      {
+        "driver": "Blue",
+        "valueMultiplier": 1.6
+      },
+      {
+        "driver": "Indigo",
+        "valueMultiplier": 1.8
+      },
+      {
+        "driver": "Violet",
+        "valueMultiplier": 2.0
+      }
+    ]
   },
   "sensorMonitors": {
-    "Knob": {
-      "fireRemotes": [
-        "/violet"
-      ]
-    },
-    "Button 1": {
-      "fireRemotes": [
-        "/indigo"
-      ]
-    },
-    "Button 2": {
-      "fireRemotes": [
-        "/indigo"
-      ]
-    },
-    "Button 3": {
-      "fireRemotes": [
-        "/blue"
-      ]
-    },
-    "Ultrasonic": {
-      "fireRemotes": [
-        "/red"
-      ]
-    }
+    "Knob": [
+      {
+        "~self": "/all"
+      },
+      {
+        "~all": "/oschii/sensor0"
+      }
+    ]
   }
 }

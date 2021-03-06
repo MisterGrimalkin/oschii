@@ -41,6 +41,7 @@ void MonitorRack::loop() {
 }
 
 JsonObject MonitorRack::toJson() {
+  _jsonRoot.clear();
   JsonObject json = _jsonRoot.createNestedObject("sensorMonitors");
   for ( int i=0; i<_monitorIndex; i++ ) {
     Monitor * monitor = _monitors[i];

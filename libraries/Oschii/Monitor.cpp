@@ -46,6 +46,7 @@ String Monitor::getSensorName() {
 }
 
 JsonObject Monitor::toJson() {
+  _jsonRoot.clear();
   JsonObject json = _jsonRoot.createNestedObject(_sensor->getName());
   json["onChange"] = _onChange;
   json["pollInterval"] = _pollInterval;

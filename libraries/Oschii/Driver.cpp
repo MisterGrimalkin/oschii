@@ -46,6 +46,7 @@ String Driver::toPrettyJson() {
 }
 
 JsonObject Driver::toJson() {
+  _jsonRoot.clear();
   JsonObject json = _jsonRoot.to<JsonObject>();
 
   json["name"]         = _name;

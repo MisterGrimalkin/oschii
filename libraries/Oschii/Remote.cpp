@@ -52,6 +52,7 @@ String Remote::toString() {
 }
 
 JsonObject Remote::toJson() {
+  _jsonRoot.clear();
   JsonObject json = _jsonRoot.createNestedObject(_name);
   JsonArray writeToArray = json.createNestedArray("writeTo");
   for ( int i=0; i<_driverIndex; i++ ) {

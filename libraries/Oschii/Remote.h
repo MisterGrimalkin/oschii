@@ -28,7 +28,7 @@ class Remote {
     int _offsets[MAX_REMOTE_DRIVERS];
     double _multipliers[MAX_REMOTE_DRIVERS];
     Driver * _drivers[MAX_REMOTE_DRIVERS];
-    StaticJsonDocument<512> _jsonRoot;
+    StaticJsonDocument<4096> _jsonRoot;
 };
 
 #endif
