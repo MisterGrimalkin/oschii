@@ -1,0 +1,54 @@
+{
+  "sensors": [
+    {
+      "name": "Knob",
+      "type": "analog",
+      "pin": 36,
+      "valueTransform": {
+        "inputRange": [
+          0,
+          4095
+        ]
+      }
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Red",
+      "type": "pwm",
+      "pin": 19
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Knob",
+      "sendTo": [
+        {
+          "~": "/meter"
+        }
+      ]
+    }
+  ],
+  "driverRemotes": [
+    {
+      "address": "/meter",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "valueTransform": {
+            "outputRange": [
+              0,
+              100
+            ],
+            "flipRange": false,
+            "mirrorRange": true,
+            "bandPass": [
+              0,
+              100
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

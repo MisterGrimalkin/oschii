@@ -24,6 +24,7 @@ as follows:
     100
   ],
   "flipRange": false,
+  "mirrorRange": false,
   
   "bandPass": [
     0,

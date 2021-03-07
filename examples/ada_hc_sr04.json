@@ -160,11 +160,7 @@
               83,
               100
             ],
-            "setOutliersTo": 83,
-            "outputRange": [
-              0,
-              100
-            ]
+            "setOutliersTo": 83
           }
         },
         {
@@ -172,14 +168,10 @@
           "valueTransform": {
             "inputRange": [
               66,
-              100
+              93
             ],
             "setOutliersTo": 66,
-            "outputRange": [
-              0,
-              100,
-              0
-            ]
+            "mirrorRange": true
           }
         },
         {
@@ -190,55 +182,40 @@
               83
             ],
             "setOutliersTo": 50,
-            "outputRange": [
-              0,
-              100,
-              0
-            ]
+            "mirrorRange": true
           }
         },
         {
           "driver": "Green",
           "valueTransform": {
             "inputRange": [
-              34,
-              64
+              33,
+              66
             ],
-            "setOutliersTo": 34,
-            "outputRange": [
-              0,
-              100
-            ]
+            "setOutliersTo": 33,
+            "mirrorRange": true
           }
         },
         {
           "driver": "Blue",
           "valueTransform": {
             "inputRange": [
-              20,
+              16,
               55
             ],
-            "setOutliersTo": 20,
-            "outputRange": [
-              0,
-              100,
-              0
-            ]
+            "setOutliersTo": 16,
+            "mirrorRange": true
           }
         },
         {
           "driver": "Indigo",
           "valueTransform": {
             "inputRange": [
-              10,
+              5,
               33
             ],
-            "setOutliersTo": 10,
-            "outputRange": [
-              0,
-              100,
-              0
-            ]
+            "setOutliersTo": 5,
+            "mirrorRange": true
           }
         },
         {
@@ -246,14 +223,10 @@
           "valueTransform": {
             "inputRange": [
               0,
-              25
+              33
             ],
             "setOutliersTo": 0,
-            "outputRange": [
-              0,
-              100,
-              0
-            ]
+            "mirrorRange": true
           }
         }
       ]

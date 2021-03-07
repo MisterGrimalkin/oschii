@@ -37,7 +37,7 @@ class ValueTransform {
     int _setOutliersTo;
 
     int _outputRange[3];
-    bool _flipRange;
+    bool _flipRange, _mirrorRange;
 
     int _bandPass[2];
     int _bandCut[2];
