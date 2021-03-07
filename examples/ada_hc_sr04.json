@@ -157,60 +157,88 @@
           "driver": "Red",
           "valueTransform": {
             "inputRange": [
-              88,
+              83,
               100
             ],
-            "setOutliersTo": 88
+            "setOutliersTo": 83,
+            "outputRange": [
+              0,
+              100
+            ]
           }
         },
         {
           "driver": "Orange",
           "valueTransform": {
             "inputRange": [
-              79,
-              97
+              66,
+              100
             ],
-            "setOutliersTo": 79
+            "setOutliersTo": 66,
+            "outputRange": [
+              0,
+              100,
+              0
+            ]
           }
         },
         {
           "driver": "Yellow",
           "valueTransform": {
             "inputRange": [
-              64,
-              89
+              50,
+              83
             ],
-            "setOutliersTo": 64
+            "setOutliersTo": 50,
+            "outputRange": [
+              0,
+              100,
+              0
+            ]
           }
         },
         {
           "driver": "Green",
           "valueTransform": {
             "inputRange": [
-              50,
-              74
+              34,
+              64
             ],
-            "setOutliersTo": 50
+            "setOutliersTo": 34,
+            "outputRange": [
+              0,
+              100
+            ]
           }
         },
         {
           "driver": "Blue",
           "valueTransform": {
             "inputRange": [
-              33,
-              60
+              20,
+              55
             ],
-            "setOutliersTo": 33
+            "setOutliersTo": 20,
+            "outputRange": [
+              0,
+              100,
+              0
+            ]
           }
         },
         {
           "driver": "Indigo",
           "valueTransform": {
             "inputRange": [
-              16,
-              43
+              10,
+              33
             ],
-            "setOutliersTo": 16
+            "setOutliersTo": 10,
+            "outputRange": [
+              0,
+              100,
+              0
+            ]
           }
         },
         {
@@ -218,9 +246,14 @@
           "valueTransform": {
             "inputRange": [
               0,
-              26
+              25
             ],
-            "setOutliersTo": 0
+            "setOutliersTo": 0,
+            "outputRange": [
+              0,
+              100,
+              0
+            ]
           }
         }
       ]

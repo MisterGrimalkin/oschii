@@ -52,18 +52,29 @@ int ValueTransform::capInput(int input) {
 
 int ValueTransform::mapToOutput(int input) {
   double inputWindowSize = _inputRange[MAX] - _inputRange[MIN];
-  double inputAmount = input - _inputRange[MIN];
+  double inputAmount = _flipRange ? _inputRange[MAX] - input : input - _inputRange[MIN];
 
-  double inputFraction = inputAmount / inputWindowSize;
-
-  double outputWindowSize = _outputRange[MAX] - _outputRange[MIN];
-  double outputAmount = inputFraction * outputWindowSize;
-
-  if ( _flipRange ) {
-    return (int)(_outputRange[MAX] - outputAmount);
+  int outputValue = 0;
+  if ( _outputRange[MID] >= 0 ) {
+    double midInputAmount = inputWindowSize / 2.0;
+    if ( inputAmount < midInputAmount ) {
+      double inputFraction = inputAmount / midInputAmount;
+      double outputWindowSize = _outputRange[MID] - _outputRange[MIN];
+      double outputAmount = inputFraction * outputWindowSize;
+      outputValue = (int)(_outputRange[MIN] + outputAmount);
+    } else {
+      double inputFraction = (_inputRange[MAX] - inputAmount) / midInputAmount;
+      double outputWindowSize = _outputRange[MID] - _outputRange[MAX];
+      double outputAmount = inputFraction * outputWindowSize;
+      outputValue = (int)(_outputRange[MIN] + outputAmount);
+    }
   } else {
-    return (int)(_outputRange[MIN] + outputAmount);
+    double inputFraction = inputAmount / inputWindowSize;
+    double outputWindowSize = _outputRange[MAX] - _outputRange[MIN];
+    double outputAmount = inputFraction * outputWindowSize;
+    outputValue = (int)(_outputRange[MIN] + outputAmount);
   }
+  return outputValue;
 }
 
 void ValueTransform::setInputRange(int min, int max) {
@@ -106,6 +117,7 @@ bool ValueTransform::build(JsonObject json) {
   _setOutliersTo = -1;
 
   _outputRange[MIN] = 0;
+  _outputRange[MID] = -1;
   _outputRange[MAX] = 100;
   _flipRange = false;
 
@@ -134,8 +146,14 @@ bool ValueTransform::build(JsonObject json) {
       Serial.println("Output range must be positive");
       return false;
     }
-    _outputRange[MIN] = outputRange[MIN];
-    _outputRange[MAX] = outputRange[MAX];
+    if ( outputRange.size() > 2 ) {
+      _outputRange[MIN] = outputRange[0];
+      _outputRange[MID] = outputRange[1];
+      _outputRange[MAX] = outputRange[2];
+    } else {
+      _outputRange[MIN] = outputRange[MIN];
+      _outputRange[MAX] = outputRange[MAX];
+    }
   }
 
   if ( json.containsKey("flipRange") )  _flipRange = json["flipRange"];
@@ -180,6 +198,9 @@ JsonObject ValueTransform::toJson() {
 
   JsonArray outputRange = json.createNestedArray("outputRange");
   outputRange.add(_outputRange[MIN]);
+  if ( _outputRange[MID] >= 0 ) {
+    outputRange.add(_outputRange[MID]);
+  }
   outputRange.add(_outputRange[MAX]);
 
   json["flipRange"] = _flipRange;

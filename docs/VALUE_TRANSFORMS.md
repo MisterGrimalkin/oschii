@@ -12,7 +12,7 @@ as follows:
 "valueTransform": {
   "inputRange": [
     0,
-    4095
+    100
   ],
 
   "discardAllOutliers": false,

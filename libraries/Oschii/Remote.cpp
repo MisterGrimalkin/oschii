@@ -37,10 +37,10 @@ String Remote::getAddress() {
 }
 
 String Remote::toString() {
-  String str = "[" + _address + "] ~~>";
+  String str = "<" + _address + "> ~~>";
   for ( int i=0; i<_writeToIndex; i++ ) {
     RemoteWriteTo * writeTo = _writeTos[i];
-    str += " (" + writeTo->getDriverName() + ")";
+    str += " [" + writeTo->getDriverName() + "]";
   }
   return str;
 }

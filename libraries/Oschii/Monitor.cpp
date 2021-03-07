@@ -71,10 +71,10 @@ JsonObject Monitor::toJson() {
 }
 
 String Monitor::toString() {
-  String str = "(" + _sensor->getName() + ") -->";
+  String str = "(" + _sensor->getName() + ") ~~>";
   for ( int i=0; i<_sendToIndex; i++ ) {
     MonitorSendTo * sendTo = _sendTos[i];
-    str += " (" + sendTo->getAddress() + ")";
+    str += " <" + sendTo->getAddress() + ">";
   }
   return str;
 }

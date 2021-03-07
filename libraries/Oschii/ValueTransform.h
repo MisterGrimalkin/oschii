@@ -6,6 +6,7 @@
 
 #define MIN 0
 #define MAX 1
+#define MID 2
 
 class ValueTransform {
   public:
@@ -35,7 +36,7 @@ class ValueTransform {
     int _outlierCount;
     int _setOutliersTo;
 
-    int _outputRange[2];
+    int _outputRange[3];
     bool _flipRange;
 
     int _bandPass[2];
