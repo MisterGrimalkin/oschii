@@ -25,6 +25,13 @@ bool Remote::build(JsonObject json) {
   return true;
 }
 
+void Remote::update() {
+  for ( int i=0; i<_writeToIndex; i++ ) {
+    RemoteWriteTo * writeTo = _writeTos[i];
+    writeTo->update();
+  }
+}
+
 void Remote::receive(int value) {
   for ( int i=0; i<_writeToIndex; i++ ) {
     RemoteWriteTo * writeTo = _writeTos[i];

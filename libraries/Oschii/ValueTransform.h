@@ -42,7 +42,7 @@ class ValueTransform {
     int _bandPass[2];
     int _bandCut[2];
 
-    StaticJsonDocument<4096> _jsonRoot;
+    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

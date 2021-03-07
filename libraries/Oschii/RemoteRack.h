@@ -19,11 +19,13 @@ class RemoteRack {
 
     Remote * getRemote(String name);
 
+    void loop();
+
   private:
     DriverRack * _driverRack;
     Remote * _remotes[MAX_REMOTES];
     int _remoteIndex;
-    StaticJsonDocument<4096> _jsonRoot;
+    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

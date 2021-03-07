@@ -1,0 +1,747 @@
+{
+  "sensors": [
+    {
+      "name": "Knob",
+      "type": "analog",
+      "pin": 36,
+      "valueTransform": {
+        "inputRange": [
+          0,
+          4095
+        ]
+      }
+    },
+    {
+      "name": "Ultrasonic",
+      "type": "hc-sr04",
+      "trigPin": 13,
+      "echoPin": 12,
+      "valueTransform": {
+        "inputRange": [
+          300,
+          3000
+        ],
+        "discardOutliers": 300,
+        "flipRange": true
+      }
+    },
+    {
+      "name": "Button 1",
+      "type": "gpio",
+      "pin": 32,
+      "resistor": "down",
+      "bounceFilter": 100
+    },
+    {
+      "name": "Button 2",
+      "type": "gpio",
+      "pin": 33,
+      "resistor": "up",
+      "bounceFilter": 100,
+      "invert": true
+    },
+    {
+      "name": "Button 3",
+      "type": "gpio",
+      "pin": 25,
+      "resistor": "down",
+      "onValue": 0,
+      "bounceFilter": 100
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Red",
+      "type": "pwm",
+      "pin": 16
+    },
+    {
+      "name": "Orange",
+      "type": "pwm",
+      "pin": 17
+    },
+    {
+      "name": "Yellow",
+      "type": "pwm",
+      "pin": 18
+    },
+    {
+      "name": "Green",
+      "type": "pwm",
+      "pin": 19
+    },
+    {
+      "name": "Blue",
+      "type": "pwm",
+      "pin": 21
+    },
+    {
+      "name": "Indigo",
+      "type": "pwm",
+      "pin": 22
+    },
+    {
+      "name": "Violet",
+      "type": "pwm",
+      "pin": 23
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Knob",
+      "sendTo": [
+        {
+          "~": "/meter"
+        }
+      ]
+    },
+    {
+      "sensor": "Ultrasonic",
+      "sendTo": [
+        {
+          "~": "/tracker"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 1",
+      "sendTo": [
+        {
+          "~": "/pattern1"
+        },
+        {
+          "~": "/pattern2",
+          "valueTransform": {
+            "flipRange": true
+          }
+        }
+      ]
+    },
+    {
+      "sensor": "Button 2",
+      "sendTo": [
+        {
+          "~": "/pattern1",
+          "valueTransform": {
+            "flipRange": true
+          }
+        },
+        {
+          "~": "/pattern2"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 3",
+      "sendTo": [
+        {
+          "~": "/pattern1"
+        },
+        {
+          "~": "/pattern2"
+        }
+      ]
+    }
+  ],
+  "driverRemotes": [
+    {
+      "address": "/meter",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "valueTransform": {
+            "inputRange": [
+              0,
+              16
+            ]
+          }
+        },
+        {
+          "driver": "Orange",
+          "valueTransform": {
+            "inputRange": [
+              16,
+              33
+            ]
+          }
+        },
+        {
+          "driver": "Yellow",
+          "valueTransform": {
+            "inputRange": [
+              33,
+              50
+            ]
+          }
+        },
+        {
+          "driver": "Green",
+          "valueTransform": {
+            "inputRange": [
+              50,
+              64
+            ]
+          }
+        },
+        {
+          "driver": "Blue",
+          "valueTransform": {
+            "inputRange": [
+              64,
+              79
+            ]
+          }
+        },
+        {
+          "driver": "Indigo",
+          "valueTransform": {
+            "inputRange": [
+              79,
+              88
+            ]
+          }
+        },
+        {
+          "driver": "Violet",
+          "valueTransform": {
+            "inputRange": [
+              88,
+              100
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "address": "/tracker",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "valueTransform": {
+            "inputRange": [
+              83,
+              100
+            ],
+            "setOutliersTo": 83
+          }
+        },
+        {
+          "driver": "Orange",
+          "valueTransform": {
+            "inputRange": [
+              66,
+              93
+            ],
+            "setOutliersTo": 66,
+            "mirrorRange": true
+          }
+        },
+        {
+          "driver": "Yellow",
+          "valueTransform": {
+            "inputRange": [
+              50,
+              83
+            ],
+            "setOutliersTo": 50,
+            "mirrorRange": true
+          }
+        },
+        {
+          "driver": "Green",
+          "valueTransform": {
+            "inputRange": [
+              33,
+              66
+            ],
+            "setOutliersTo": 33,
+            "mirrorRange": true
+          }
+        },
+        {
+          "driver": "Blue",
+          "valueTransform": {
+            "inputRange": [
+              16,
+              55
+            ],
+            "setOutliersTo": 16,
+            "mirrorRange": true
+          }
+        },
+        {
+          "driver": "Indigo",
+          "valueTransform": {
+            "inputRange": [
+              5,
+              33
+            ],
+            "setOutliersTo": 5,
+            "mirrorRange": true
+          }
+        },
+        {
+          "driver": "Violet",
+          "valueTransform": {
+            "inputRange": [
+              0,
+              33
+            ],
+            "setOutliersTo": 0,
+            "mirrorRange": true
+          }
+        }
+      ]
+    },
+    {
+      "address": "/pattern1",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "envelope": [
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 1000
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Orange",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 900
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Yellow",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 800
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Green",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 300
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 700
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Blue",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 400
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 600
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Indigo",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 500
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 500
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Violet",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 600
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 400
+            },
+            {
+              "loop": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "address": "/pattern2",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 300
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 0
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Orange",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Yellow",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Green",
+          "envelope": [
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 300
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Blue",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Indigo",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "loop": true
+            }
+          ]
+        },
+        {
+          "driver": "Violet",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 300
+            },
+            {
+              "amount": 100,
+              "time": 100
+            },
+            {
+              "amount": 75,
+              "time": 100
+            },
+            {
+              "amount": 50,
+              "time": 100
+            },
+            {
+              "amount": 25,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "time": 0
+            },
+            {
+              "loop": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

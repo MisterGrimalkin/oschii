@@ -9,7 +9,7 @@
 #include "RemoteRack.h"
 #include "MonitorRack.h"
 
-#define JSON_SIZE_LIMIT 8192
+#define JSON_SIZE_LIMIT 10000
 
 class Racks {
   public:

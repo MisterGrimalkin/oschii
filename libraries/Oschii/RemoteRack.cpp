@@ -22,6 +22,13 @@ String RemoteRack::buildRemotes(JsonArray array) {
   return "";
 }
 
+void RemoteRack::loop() {
+  for ( int i=0;  i<_remoteIndex; i++ ) {
+    Remote * remote = _remotes[i];
+    remote->update();
+  }
+}
+
 String RemoteRack::buildRemote(JsonObject json) {
   Remote * remote = new Remote(_driverRack);
   if ( remote->build(json) ) {

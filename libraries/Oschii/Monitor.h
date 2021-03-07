@@ -29,7 +29,7 @@ class Monitor {
     MonitorSendTo * _sendTos[MAX_MONITOR_REMOTES];
     int _sendToIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
-    StaticJsonDocument<4096> _jsonRoot;
+    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

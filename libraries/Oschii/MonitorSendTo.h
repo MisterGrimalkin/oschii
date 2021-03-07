@@ -20,7 +20,7 @@ class MonitorSendTo {
   private:
     RemoteRack * _remoteRack;
     Remote * _remote;
-    StaticJsonDocument<4096> _jsonRoot;
+    StaticJsonDocument<128> _jsonRoot;
     String _address;
     ValueTransform * _transform;
 };

@@ -12,6 +12,7 @@ void Racks::start() {
 
 void Racks::loop() {
   _monitorRack->loop();
+  _remoteRack->loop();
 }
 
 bool Racks::buildConfig(String jsonString) {
@@ -23,6 +24,8 @@ bool Racks::buildConfig(String jsonString) {
 }
 
 bool Racks::buildConfig(JsonObject json) {
+  int freeHeapSize = esp_get_free_heap_size();
+
   Serial.println("> Building CONFIGURATION....\n");
 
   JsonArray sensorArray = json["sensors"];
@@ -34,6 +37,12 @@ bool Racks::buildConfig(JsonObject json) {
   _driverRack->buildDrivers(driverArray);
   _remoteRack->buildRemotes(remoteArray);
   _monitorRack->buildMonitors(monitorArray);
+
+  Serial.print("Configuration used ");
+  Serial.print(freeHeapSize - esp_get_free_heap_size());
+  Serial.print(" bytes (free heap size: ");
+  Serial.print(esp_get_free_heap_size());
+  Serial.println(" bytes)\n");
 
   Serial.println("> OK\n");
 

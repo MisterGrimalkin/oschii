@@ -16,4 +16,5 @@ void Oschii::start() {
 void Oschii::loop() {
   _racks->loop();
   _serialAPI->loop();
+//  Serial.println(esp_get_free_heap_size());
 }

@@ -17,6 +17,8 @@ class Remote {
     bool build(JsonObject json);
     void receive(int value);
 
+    void update();
+
     JsonObject toJson();
     String toString();
 
@@ -27,7 +29,7 @@ class Remote {
     String _address;
     RemoteWriteTo * _writeTos[MAX_REMOTE_DRIVERS];
     int _writeToIndex;
-    StaticJsonDocument<4096> _jsonRoot;
+    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

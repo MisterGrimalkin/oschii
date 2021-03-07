@@ -55,24 +55,14 @@ int ValueTransform::mapToOutput(int input) {
   double inputAmount = _flipRange ? _inputRange[MAX] - input : input - _inputRange[MIN];
 
   int outputValue = 0;
-  if ( _mirrorRange ) {
-    double inputWindowSize = (_inputRange[MAX] - _inputRange[MIN]);
-    double inputFraction = inputAmount / inputWindowSize;
-
-    if ( inputFraction > 0.5 ) {
-      inputFraction = 1 - inputFraction;
-    }
-
-    double outputAmount = inputFraction * outputWindowSize;
-    outputValue = (int)(_outputRange[MIN] + outputAmount);
-
-  } else {
-    double inputWindowSize = _inputRange[MAX] - _inputRange[MIN];
-    double inputAmount = _flipRange ? _inputRange[MAX] - input : input - _inputRange[MIN];
-    double inputFraction = inputAmount / inputWindowSize;
-    double outputAmount = inputFraction * outputWindowSize;
-    outputValue = (int)(_outputRange[MIN] + outputAmount);
+  double inputWindowSize = (_inputRange[MAX] - _inputRange[MIN]);
+  double inputFraction = inputAmount / inputWindowSize;
+  if ( _mirrorRange && inputFraction > 0.5 ) {
+    inputFraction = 1 - inputFraction;
   }
+  double outputAmount = inputFraction * outputWindowSize;
+  outputValue = (int)(_outputRange[MIN] + outputAmount);
+
   return outputValue;
 }
 

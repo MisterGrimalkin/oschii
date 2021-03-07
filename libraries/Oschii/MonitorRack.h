@@ -27,7 +27,7 @@ class MonitorRack {
     RemoteRack * _remoteRack;
     Monitor * _monitors[MAX_MONITORS];
     int _monitorIndex;
-    StaticJsonDocument<4096> _jsonRoot;
+    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif
