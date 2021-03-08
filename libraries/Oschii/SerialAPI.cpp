@@ -43,7 +43,7 @@ void SerialAPI::processInput(String input) {
     Serial.println(_settings->toPrettyJson());
 
   } else if ( input == "settings=" ) {
-    String settings = prompt("Enter new settings:");
+    String settings = prompt(">> Enter new settings <<\n");
     _settings->set(settings);
     Serial.println(_settings->toPrettyJson());
 
@@ -51,7 +51,7 @@ void SerialAPI::processInput(String input) {
     Serial.println(_settings->getName());
 
   } else if ( input == "name=" ) {
-    String name = prompt("Enter new name:");
+    String name = prompt(">> Enter new name <<\n");
     _settings->setName(name);
     Serial.print("Name is now ");
     Serial.println(_settings->getName());
@@ -60,7 +60,7 @@ void SerialAPI::processInput(String input) {
     Serial.println(_racks->toPrettyJson());
 
   } else if ( input == "config=" ) {
-    String configStr = prompt("Enter new configuration:");
+    String configStr = prompt(">> Enter new configuration <<\n");
     _racks->buildConfig(configStr);
 
   }

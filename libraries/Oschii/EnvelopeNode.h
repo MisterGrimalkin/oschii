@@ -10,13 +10,18 @@ class EnvelopeNode {
 
     bool build(JsonObject json);
 
-    int getAmount();
-    int getTime();
+    int getAmount(int value);
+    int getFadeToAmount(int value);
+    int getTime(int value);
+    String getInterpolation();
 
     JsonObject toJson();
 
   private:
-    int _amount, _time;
+    int _amount, _fadeToAmount, _time;
+    int _amountFrom, _fadeToAmountFrom, _timeFrom;
+    String _interpolation;
+
     StaticJsonDocument<64> _jsonRoot;
 };
 

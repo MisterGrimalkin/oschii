@@ -43,14 +43,16 @@ void RemoteWriteTo::write(int value, bool fromEnvelope) {
   if ( _transform != NULL ) {
     writeValue = _transform->apply(value);
   }
+  bool skipDriver = false;
   if ( !fromEnvelope && _envelope != NULL ) {
     if ( writeValue==0 ) {
       _envelope->stop();
-    } else {
+    } else if ( writeValue > 0 ) {
+      skipDriver = true;
       _envelope->start(writeValue);
     }
   }
-  if ( _driver != NULL ) {
+  if ( !skipDriver && _driver != NULL ) {
     _driver->fire(writeValue);
   }
 }

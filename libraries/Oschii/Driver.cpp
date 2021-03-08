@@ -29,7 +29,7 @@ bool Driver::build(JsonObject json) {
     return false;
   }
 
-  _initialValue = -1;
+  _initialValue = 0;
 
   if ( json.containsKey("initialValue") ) _initialValue = json["initialValue"];
 

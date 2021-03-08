@@ -1,0 +1,314 @@
+{
+  "sensors": [
+    {
+      "name": "Knob",
+      "type": "analog",
+      "pin": 36,
+      "valueTransform": {
+        "inputRange": [
+          0,
+          4095
+        ],
+        "outputRange": [
+          1,
+          100
+        ]
+      }
+    },
+    {
+      "name": "Button 1",
+      "type": "gpio",
+      "pin": 32,
+      "resistor": "down",
+      "onValue": 101,
+      "bounceFilter": 100
+    },
+    {
+      "name": "Button 2",
+      "type": "gpio",
+      "pin": 33,
+      "resistor": "up",
+      "bounceFilter": 100,
+      "invert": true
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Red",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 16
+    },
+    {
+      "name": "Orange",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 17
+    },
+    {
+      "name": "Yellow",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 18
+    },
+    {
+      "name": "Green",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 19
+    },
+    {
+      "name": "Blue",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 21
+    },
+    {
+      "name": "Indigo",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 22
+    },
+    {
+      "name": "Violet",
+      "type": "pwm",
+      "initialValue": 0,
+      "pin": 23
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Knob",
+      "sendTo": [
+        {
+          "~": "/pattern"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 1",
+      "sendTo": [
+        {
+          "~": "/pattern"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 2",
+      "sendTo": [
+        {
+          "~": "/pattern",
+          "valueTransform": {
+            "flipRange": true
+          }
+        }
+      ]
+    }
+  ],
+  "driverRemotes": [
+    {
+      "address": "/pattern",
+      "writeTo": [
+        {
+          "driver": "Red",
+          "envelope": [
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 700
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        },
+        {
+          "driver": "Orange",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 600
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        },
+        {
+          "driver": "Yellow",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 500
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        },
+        {
+          "driver": "Green",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 300
+            },
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 400
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        },
+        {
+          "driver": "Blue",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 400
+            },
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 300
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        },
+        {
+          "driver": "Indigo",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 500
+            },
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 200
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        },
+        {
+          "driver": "Violet",
+          "envelope": [
+            {
+              "amount": 0,
+              "time": 600
+            },
+            {
+              "amount": 0,
+              "getFadeToAmountFrom": 0,
+              "time": 50,
+              "interpolation": "cosine"
+            },
+            {
+              "getAmountFrom": 0,
+              "fadeToAmount": 0,
+              "time": 500,
+              "interpolation": "cosine"
+            },
+            {
+              "amount": 0,
+              "time": 100
+            },
+            {
+              "loop": true,
+              "triggerValue": 101
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

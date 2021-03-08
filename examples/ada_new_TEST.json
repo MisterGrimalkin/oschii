@@ -21,7 +21,7 @@
           300,
           3000
         ],
-        "discardOutliers": 300,
+        "discardAllOutliers": true,
         "flipRange": true
       }
     },
@@ -45,7 +45,6 @@
       "type": "gpio",
       "pin": 25,
       "resistor": "down",
-      "onValue": 0,
       "bounceFilter": 100
     }
   ],
@@ -100,6 +99,16 @@
       "sendTo": [
         {
           "~": "/tracker"
+        },
+        {
+          "~": "/pattern1",
+          "valueTransform": {
+            "outputRange": [
+              50,
+              2500
+            ],
+            "flipRange": true
+          }
         }
       ]
     },
@@ -107,7 +116,13 @@
       "sensor": "Button 1",
       "sendTo": [
         {
-          "~": "/pattern1"
+          "~": "/pattern1",
+          "valueTransform": {
+            "outputRange": [
+              0,
+              1
+            ]
+          }
         },
         {
           "~": "/pattern2",
@@ -135,10 +150,16 @@
       "sensor": "Button 3",
       "sendTo": [
         {
-          "~": "/pattern1"
+          "~": "/pattern1",
+          "valueTransform": {
+            "flipRange": true
+          }
         },
         {
-          "~": "/pattern2"
+          "~": "/pattern2",
+          "valueTransform": {
+            "flipRange": true
+          }
         }
       ]
     }
@@ -301,26 +322,16 @@
           "envelope": [
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
               "amount": 0,
-              "time": 1000
+              "time": 600
             },
             {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         },
@@ -333,26 +344,16 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
               "amount": 0,
-              "time": 900
+              "time": 500
             },
             {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         },
@@ -365,26 +366,16 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
               "amount": 0,
-              "time": 800
+              "time": 400
             },
             {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         },
@@ -397,26 +388,16 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
               "amount": 0,
-              "time": 700
+              "time": 300
             },
             {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         },
@@ -429,26 +410,16 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
               "amount": 0,
-              "time": 600
+              "time": 200
             },
             {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         },
@@ -461,26 +432,16 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
               "amount": 0,
-              "time": 500
+              "time": 100
             },
             {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         },
@@ -493,26 +454,12 @@
             },
             {
               "amount": 100,
-              "time": 100
+              "fadeToAmount": 0,
+              "getTimeFrom": 0
             },
             {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
-            },
-            {
-              "amount": 0,
-              "time": 400
-            },
-            {
-              "loop": true
+              "loop": true,
+              "triggerValue": 1
             }
           ]
         }
@@ -530,19 +477,8 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "amount": 0,
@@ -562,19 +498,8 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "amount": 0,
@@ -594,19 +519,8 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "amount": 0,
@@ -622,19 +536,8 @@
           "envelope": [
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "amount": 0,
@@ -654,19 +557,8 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "amount": 0,
@@ -686,19 +578,8 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "amount": 0,
@@ -718,23 +599,8 @@
             },
             {
               "amount": 100,
-              "time": 100
-            },
-            {
-              "amount": 75,
-              "time": 100
-            },
-            {
-              "amount": 50,
-              "time": 100
-            },
-            {
-              "amount": 25,
-              "time": 100
-            },
-            {
-              "amount": 0,
-              "time": 0
+              "fadeToAmount": 0,
+              "time": 400
             },
             {
               "loop": true

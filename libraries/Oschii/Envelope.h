@@ -17,7 +17,7 @@ class Envelope {
 
     int get();
 
-    void start(int value);
+    bool start(int value);
     void stop();
 
     bool isRunning();
@@ -26,7 +26,7 @@ class Envelope {
 
   private:
     EnvelopeNode * _nodes[MAX_ENVELOPE_NODES];
-    int _nodeIndex, _startedAt;
+    int _nodeIndex, _triggerValue, _startedAt;
     bool _loop;
     int _value;
     StaticJsonDocument<64> _jsonRoot;
