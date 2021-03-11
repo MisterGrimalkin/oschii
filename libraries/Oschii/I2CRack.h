@@ -7,6 +7,7 @@
 #include "I2C.h"
 #include "I2CModule.h"
 #include "I2CGpioModule.h"
+#include "I2CPwmModule.h"
 
 class I2CRack {
   public:

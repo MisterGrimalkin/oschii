@@ -33,6 +33,7 @@ bool Racks::buildConfig(JsonObject json) {
     JsonObject i2cJson = json["i2c"];
     _i2cRack->build(i2cJson);
   }
+
   JsonArray sensorArray = json["sensors"];
   JsonArray driverArray = json["drivers"];
   JsonArray remoteArray = json["driverRemotes"];
@@ -43,9 +44,9 @@ bool Racks::buildConfig(JsonObject json) {
   _remoteRack->buildRemotes(remoteArray);
   _monitorRack->buildMonitors(monitorArray);
 
-  Serial.print("Configuration used ");
+  Serial.print("Configuration uses ");
   Serial.print(freeHeapSize - esp_get_free_heap_size());
-  Serial.print(" bytes (free heap size: ");
+  Serial.print(" bytes (free space: ");
   Serial.print(esp_get_free_heap_size());
   Serial.println(" bytes)\n");
 

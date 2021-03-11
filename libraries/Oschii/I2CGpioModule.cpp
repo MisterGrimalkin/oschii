@@ -39,7 +39,6 @@ bool I2CGpioModule::read(int pin) {
 
   pull(port);
   int value = BIT_CHECK(in[port], pin);
-//  Serial.println(value);
   return value;
 }
 

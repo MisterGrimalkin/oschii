@@ -36,6 +36,10 @@ bool I2CRack::build(JsonObject json) {
         String type = moduleJson["type"].as<String>();
         if ( type=="gpio" ) {
           module = new I2CGpioModule(_i2c);
+
+        } else if ( type=="pwm" ) {
+          module = new I2CPwmModule(_i2c);
+
         } else {
           Serial.println("Unknown I2C Module type");
           return false;
