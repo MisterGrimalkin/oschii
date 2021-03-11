@@ -481,10 +481,6 @@
               "time": 400
             },
             {
-              "amount": 0,
-              "time": 0
-            },
-            {
               "loop": true
             }
           ]

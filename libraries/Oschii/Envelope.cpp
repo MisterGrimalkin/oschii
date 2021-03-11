@@ -63,7 +63,7 @@ int Envelope::get() {
             }
           }
         }
-        counter += node->getTime(_value);
+        counter += time;
       }
     }
   }
@@ -73,6 +73,7 @@ int Envelope::get() {
 bool Envelope::isRunning() {
   return _startedAt >= 0;
 }
+
 int Envelope::getTotalTime() {
   int time = 0;
   for ( int i=0; i<_nodeIndex; i++ ) {
@@ -83,6 +84,7 @@ int Envelope::getTotalTime() {
 }
 
 bool Envelope::build(JsonArray array) {
+  _startedAt = -1;
   _nodeIndex = 0;
   _triggerValue = -1;
   _loop = false;
