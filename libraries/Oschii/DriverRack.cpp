@@ -1,6 +1,7 @@
 #include "DriverRack.h"
 
-DriverRack::DriverRack() {
+DriverRack::DriverRack(I2CRack * i2cRack) {
+  _i2cRack = i2cRack;
   _driverIndex = 0;
 }
 
@@ -27,10 +28,10 @@ String DriverRack::buildDriver(JsonObject json) {
   String type = json["type"];
 
   if ( type == "gpio" ) {
-    driver = new GpioDriver();
+    driver = new GpioDriver(_i2cRack);
 
   } else if ( type == "pwm" ) {
-    driver = new PwmDriver();
+    driver = new PwmDriver(_i2cRack);
 
   } else {
     return "RuleTwoError: No type of driver called '" + type + "'\n";

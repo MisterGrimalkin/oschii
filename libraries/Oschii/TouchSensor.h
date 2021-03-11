@@ -2,10 +2,11 @@
 #define TouchSensor_h
 
 #include "BinarySensor.h"
+#include "I2CRack.h"
 
 class TouchSensor : public BinarySensor {
   public:
-    TouchSensor() : BinarySensor() {};
+    TouchSensor(I2CRack * i2cRack) : BinarySensor(i2cRack) {};
 
     virtual bool getState();
 

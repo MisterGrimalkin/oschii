@@ -11,6 +11,7 @@
 #include "FileService.h"
 #include "Racks.h"
 #include "SerialAPI.h"
+#include "I2CRack.h"
 
 class Oschii {
   public:

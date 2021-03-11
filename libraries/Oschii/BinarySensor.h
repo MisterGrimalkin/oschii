@@ -2,10 +2,11 @@
 #define BinarySensor_h
 
 #include "Sensor.h"
+#include "I2CRack.h"
 
 class BinarySensor : public Sensor {
   public:
-    BinarySensor() : Sensor() {};
+    BinarySensor(I2CRack * i2cRack) : Sensor(i2cRack) {};
 
     virtual void readSensor();
     virtual bool build(JsonObject json);

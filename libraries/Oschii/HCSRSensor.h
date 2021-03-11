@@ -2,12 +2,13 @@
 #define HCSRSensor_h
 
 #include "RangeSensor.h"
+#include "I2CRack.h"
 
 #define ECHO_TIMEOUT 5000
 
 class HCSRSensor : public RangeSensor {
   public:
-    HCSRSensor() : RangeSensor() {};
+    HCSRSensor(I2CRack * i2cRack) : RangeSensor(i2cRack) {};
 
     virtual int getReading();
 

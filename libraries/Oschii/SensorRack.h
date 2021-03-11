@@ -9,6 +9,7 @@
 #include "TouchSensor.h"
 #include "AnalogSensor.h"
 #include "HCSRSensor.h"
+#include "I2CRack.h"
 
 #define MAX_SENSORS 512
 
@@ -16,7 +17,7 @@
 
 class SensorRack {
   public:
-    SensorRack();
+    SensorRack(I2CRack * i2cRack);
     String buildSensors(JsonArray array);
     String buildSensor(JsonObject json);
     void readSensors();
@@ -29,6 +30,7 @@ class SensorRack {
   private:
     StaticJsonDocument<128> _jsonRoot;
     Sensor * _sensors[MAX_SENSORS];
+    I2CRack * _i2cRack;
     int _sensorIndex;
 };
 

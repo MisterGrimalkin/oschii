@@ -4,9 +4,11 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#include "I2CRack.h"
+
 class Driver {
   public:
-    Driver();
+    Driver(I2CRack * i2cRack);
 
     virtual void fire(int value) {};
     virtual bool build(JsonObject json);
@@ -21,6 +23,9 @@ class Driver {
     String getError();
 
   protected:
+    I2CRack * _i2cRack;
+    I2CModule * _i2cModule;
+
     int _value, _initialValue;
     bool _built;
     String _name, _type, _error;

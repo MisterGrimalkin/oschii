@@ -1,6 +1,7 @@
 #include "SensorRack.h"
 
-SensorRack::SensorRack() {
+SensorRack::SensorRack(I2CRack * i2cRack) {
+  _i2cRack = i2cRack;
   _sensorIndex = 0;
 }
 
@@ -14,6 +15,7 @@ String SensorRack::buildSensors(JsonArray array) {
     JsonObject json = array[i];
     errorBuffer += buildSensor(json);
   }
+  Serial.println(errorBuffer);
 
   Serial.print("== Found: ");
   Serial.print(_sensorIndex);
@@ -28,16 +30,16 @@ String SensorRack::buildSensor(JsonObject json) {
   String type = json["type"];
 
   if ( type == "gpio" ) {
-    sensor = new GpioSensor();
+    sensor = new GpioSensor(_i2cRack);
 
   } else if ( type == "touch" ) {
-    sensor = new TouchSensor();
+    sensor = new TouchSensor(_i2cRack);
 
   } else if ( type == "analog" ) {
-    sensor = new AnalogSensor();
+    sensor = new AnalogSensor(_i2cRack);
 
   } else if ( type == "hc-sr04" ) {
-    sensor = new HCSRSensor();
+    sensor = new HCSRSensor(_i2cRack);
 
   } else {
     return "RuleTwoError: No type of sensor called '" + type + "'\n";

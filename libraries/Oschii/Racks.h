@@ -4,12 +4,13 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#include "I2CRack.h"
 #include "SensorRack.h"
 #include "DriverRack.h"
 #include "RemoteRack.h"
 #include "MonitorRack.h"
 
-#define JSON_SIZE_LIMIT 10000
+#define JSON_SIZE_LIMIT 15000
 
 class Racks {
   public:
@@ -25,6 +26,7 @@ class Racks {
     void loop();
 
   private:
+    I2CRack * _i2cRack;
     SensorRack * _sensorRack;
     DriverRack * _driverRack;
     RemoteRack * _remoteRack;

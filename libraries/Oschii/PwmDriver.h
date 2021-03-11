@@ -5,10 +5,11 @@
 #include <ArduinoJson.h>
 
 #include "Driver.h"
+#include "I2CRack.h"
 
 class PwmDriver : public Driver {
   public:
-    PwmDriver() : Driver() {};
+    PwmDriver(I2CRack * i2cRack) : Driver(i2cRack) {};
 
     virtual void fire(int value);
     virtual bool build(JsonObject json);
@@ -17,6 +18,9 @@ class PwmDriver : public Driver {
     virtual String toString();
 
   private:
+    I2CRack * _i2cRack;
+    I2CModule * _i2cModule;
+
     int _pin, _channel;
 
 };

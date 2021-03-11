@@ -6,12 +6,13 @@
 
 #include "Sensor.h"
 #include "ValueTransform.h"
+#include "I2CRack.h"
 
 #define MAX_SAMPLES 100
 
 class RangeSensor : public Sensor {
   public:
-    RangeSensor() : Sensor() {};
+    RangeSensor(I2CRack * i2cRack) : Sensor(i2cRack) {};
 
     virtual void readSensor();
     virtual int getReading() {};

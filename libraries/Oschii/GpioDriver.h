@@ -5,10 +5,11 @@
 #include <ArduinoJson.h>
 
 #include "Driver.h"
+#include "I2CRack.h"
 
 class GpioDriver : public Driver {
   public:
-    GpioDriver() : Driver() {};
+    GpioDriver(I2CRack * i2cRack) : Driver(i2cRack) {};
 
     virtual void fire(int value);
     virtual bool build(JsonObject json);
@@ -17,6 +18,7 @@ class GpioDriver : public Driver {
     virtual String toString();
 
   private:
+    I2CGpioModule * _i2cGpioModule;
     int _pin, _thresholdValue;
     bool _thresholdHighPass, _invert;
 };

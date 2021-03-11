@@ -2,10 +2,12 @@
 #define GpioSensor_h
 
 #include "BinarySensor.h"
+#include "I2CRack.h"
+#include "I2CGpioModule.h"
 
 class GpioSensor : public BinarySensor {
   public:
-    GpioSensor() : BinarySensor() {};
+    GpioSensor(I2CRack * i2cRack) : BinarySensor(i2cRack) {};
 
     virtual bool getState();
 
@@ -15,6 +17,7 @@ class GpioSensor : public BinarySensor {
     virtual String toString();
 
   protected:
+    I2CGpioModule * _i2cGpioModule;
     int _pin;
     String _resistor;
 };

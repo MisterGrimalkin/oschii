@@ -7,6 +7,7 @@
 #include "Driver.h"
 #include "GpioDriver.h"
 #include "PwmDriver.h"
+#include "I2CRack.h"
 
 #define MAX_DRIVERS 512
 
@@ -14,7 +15,7 @@
 
 class DriverRack {
   public:
-    DriverRack();
+    DriverRack(I2CRack * i2cRack);
     String buildDrivers(JsonArray array);
     String buildDriver(JsonObject json);
     JsonArray toJson();
@@ -28,6 +29,7 @@ class DriverRack {
     StaticJsonDocument<128> _jsonRoot;
     Driver * _drivers[MAX_DRIVERS];
     int _driverIndex;
+    I2CRack * _i2cRack;
 };
 
 #endif

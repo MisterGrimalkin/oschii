@@ -4,9 +4,13 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#include "I2C.h"
+#include "I2CRack.h"
+#include "I2CModule.h"
+
 class Sensor {
   public:
-    Sensor();
+    Sensor(I2CRack * i2cRack);
 
     virtual void readSensor() {};
     virtual bool build(JsonObject json);
@@ -22,6 +26,9 @@ class Sensor {
     String getError();
 
   protected:
+    I2CRack * _i2cRack;
+    I2CModule * _i2cModule;
+
     int _value, _lastChanged;
     bool _built, _changed;
     String _name, _type, _error;

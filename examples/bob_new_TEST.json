@@ -1,0 +1,102 @@
+{
+  "i2c": {
+    "sdaPin": 4,
+    "sclPin": 5,
+    "modules": [
+      {
+        "name": "GPIO-A",
+        "type": "gpio",
+        "address": "0x20"
+      }
+    ]
+  },
+  "sensors": [
+    {
+      "name": "Button 1",
+      "type": "gpio",
+      "module": "GPIO-A",
+      "pin": 7,
+      "resistor": "up",
+      "offValue": 0,
+      "bounceFilter": 100,
+      "invert": true
+    },
+    {
+      "name": "Button 2",
+      "type": "gpio",
+      "module": "GPIO-A",
+      "pin": 8,
+      "resistor": "up",
+      "offValue": 0,
+      "bounceFilter": 100,
+      "invert": true
+    }
+  ],
+  "drivers": [
+    {
+      "name": "Green",
+      "type": "gpio",
+      "module": "GPIO-A",
+      "pin": 13
+    },
+    {
+      "name": "Blue",
+      "type": "gpio",
+      "module": "GPIO-A",
+      "pin": 1
+    },
+    {
+      "name": "Red",
+      "type": "gpio",
+      "module": "GPIO-A",
+      "pin": 0
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Button 1",
+      "sendTo": [
+        {
+          "~": "/green"
+        },
+        {
+          "~": "/blue"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 2",
+      "sendTo": [
+        {
+          "~": "/red"
+        }
+      ]
+    }
+  ],
+  "driverRemotes": [
+    {
+      "address": "/green",
+      "writeTo": [
+        {
+          "driver": "Green"
+        }
+      ]
+    },
+    {
+      "address": "/blue",
+      "writeTo": [
+        {
+          "driver": "Blue"
+        }
+      ]
+    },
+    {
+      "address": "/red",
+      "writeTo": [
+        {
+          "driver": "Red"
+        }
+      ]
+    }
+  ]
+}

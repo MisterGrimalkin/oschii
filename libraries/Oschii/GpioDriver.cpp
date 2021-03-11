@@ -10,12 +10,17 @@ void GpioDriver::fire(int value) {
 
   if ( _invert ) high = !high;
 
-  digitalWrite(_pin, high);
+  if ( _i2cGpioModule==NULL ) {
+    digitalWrite(_pin, high);
+  } else {
+    _i2cGpioModule->write(_pin, high);
+  }
 }
 
 bool GpioDriver::build(JsonObject json) {
   if ( !Driver::build(json) ) return false;
 
+  _i2cGpioModule = NULL;
   _pin = -1;
   _thresholdValue = 1;
   _thresholdHighPass = true;
@@ -32,7 +37,12 @@ bool GpioDriver::build(JsonObject json) {
   if ( json.containsKey("thresholdHighPass") ) _thresholdHighPass = json["thresholdHighPass"];
   if ( json.containsKey("invert") )            _invert            = json["invert"];
 
-  pinMode(_pin, OUTPUT);
+  if ( _i2cModule == NULL ) {
+    pinMode(_pin, OUTPUT);
+  } else {
+    _i2cGpioModule = (I2CGpioModule*)_i2cModule;
+    _i2cGpioModule->setMode(_pin, true);
+  }
 
   fire(_initialValue);
 

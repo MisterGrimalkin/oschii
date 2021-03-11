@@ -1,6 +1,9 @@
 #include "Sensor.h"
 
-Sensor::Sensor() {
+Sensor::Sensor(I2CRack * i2cRack) {
+  _i2cRack = i2cRack;
+  _i2cModule = NULL;
+
   _built = false;
   _changed = false;
   _value = -1;
@@ -28,6 +31,15 @@ bool Sensor::build(JsonObject json) {
   } else {
     setError("No value given for 'type'");
     return false;
+  }
+
+  if ( json.containsKey("module") ) {
+    String moduleName = json["module"].as<String>();
+    _i2cModule = _i2cRack->getModule(moduleName);
+    if ( _i2cModule==NULL ) {
+      setError("No I2C module named '" + moduleName + "'");
+      return false;
+    }
   }
 
   _built = true;

@@ -2,10 +2,11 @@
 #define AnalogSensor_h
 
 #include "RangeSensor.h"
+#include "I2CRack.h"
 
 class AnalogSensor : public RangeSensor {
   public:
-    AnalogSensor() : RangeSensor() {};
+    AnalogSensor(I2CRack * i2cRack) : RangeSensor(i2cRack) {};
 
     virtual int getReading();
 

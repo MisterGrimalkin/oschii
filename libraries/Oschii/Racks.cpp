@@ -1,8 +1,9 @@
 #include "Racks.h"
 
 Racks::Racks() {
-  _sensorRack = new SensorRack();
-  _driverRack = new DriverRack();
+  _i2cRack = new I2CRack();
+  _sensorRack = new SensorRack(_i2cRack);
+  _driverRack = new DriverRack(_i2cRack);
   _remoteRack = new RemoteRack(_driverRack);
   _monitorRack = new MonitorRack(_sensorRack, _remoteRack);
 }
@@ -28,6 +29,10 @@ bool Racks::buildConfig(JsonObject json) {
 
   Serial.println("> Building CONFIGURATION....\n");
 
+  if ( json.containsKey("i2c") ) {
+    JsonObject i2cJson = json["i2c"];
+    _i2cRack->build(i2cJson);
+  }
   JsonArray sensorArray = json["sensors"];
   JsonArray driverArray = json["drivers"];
   JsonArray remoteArray = json["driverRemotes"];

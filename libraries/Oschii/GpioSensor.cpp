@@ -1,12 +1,19 @@
 #include "GpioSensor.h"
 
 bool GpioSensor::getState() {
-  return digitalRead(_pin);
+  bool value = false;
+  if ( _i2cGpioModule==NULL ) {
+    value = digitalRead(_pin);
+  } else {
+    value = _i2cGpioModule->read(_pin);
+  }
+  return value;
 }
 
 bool GpioSensor::build(JsonObject json) {
   if ( !BinarySensor::build(json) ) return false;
 
+  _i2cGpioModule = NULL;
   _pin = -1;
   _resistor = "off";
 
@@ -27,24 +34,40 @@ bool GpioSensor::build(JsonObject json) {
     resistance = INPUT_PULLUP;
 
   } else if ( _resistor == "down" ) {
-    // not supported for I2C
-    resistance = INPUT_PULLDOWN;
+    if ( _i2cModule == NULL ) {
+      resistance = INPUT_PULLDOWN;
+    } else {
+      setError("Pull-down resistor not available with I2C");
+      return false;
+    }
 
   } else {
     setError("Invalid resistor mode '" + _resistor + "'");
     return false;
   }
 
-  if ( _pin == 0 && _resistor != "up" ) {
-    setError("GPIO 0 is fixed to PULL-UP");
-    return false;
+  if ( _i2cModule == NULL ) {
+    if ( _pin == 0 && _resistor != "up" ) {
+      setError("GPIO 0 is fixed to PULL-UP");
+      return false;
 
-  } else if ( _pin == 1 || _pin == 3 || ( _pin >= 6 && _pin <= 12 ) ) {
-    setError("GPIOs 1, 3, 6-12 not recommended for use an inputs");
-    return false;
+    } else if ( _pin == 1 || _pin == 3 || ( _pin >= 6 && _pin <= 12 ) ) {
+      setError("GPIOs 1, 3, 6-12 not recommended for use an inputs");
+      return false;
+    }
+
+    pinMode(_pin, resistance);
+
+  } else {
+    _i2cGpioModule = (I2CGpioModule*)_i2cModule;
+
+    if ( _pin > 15 ) {
+      setError("I2C GPIO 'pin' must be 0-15");
+    }
+
+    _i2cGpioModule->setMode(_pin, false);
+    _i2cGpioModule->setResistance(_pin, resistance==INPUT_PULLUP);
   }
-
-  pinMode(_pin, resistance);
 
   return true;
 }
