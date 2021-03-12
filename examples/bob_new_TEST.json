@@ -7,6 +7,11 @@
         "name": "GPIO-A",
         "type": "gpio",
         "address": "0x20"
+      },
+      {
+        "name": "PWM-A",
+        "type": "pwm",
+        "address": "0x40"
       }
     ]
   },
@@ -14,7 +19,7 @@
     {
       "name": "Button 1",
       "type": "gpio",
-      "module": "GPIO-A",
+      "i2cModule": "GPIO-A",
       "pin": 7,
       "resistor": "up",
       "offValue": 0,
@@ -24,7 +29,7 @@
     {
       "name": "Button 2",
       "type": "gpio",
-      "module": "GPIO-A",
+      "i2cModule": "GPIO-A",
       "pin": 8,
       "resistor": "up",
       "offValue": 0,
@@ -35,20 +40,32 @@
   "drivers": [
     {
       "name": "Green",
-      "type": "gpio",
-      "module": "GPIO-A",
-      "pin": 13
+      "type": "pwm",
+      "i2cModule": "PWM-A",
+      "pin": 1,
+      "valueTransform": {
+        "outputRange": [
+          0,
+          4095
+        ]
+      }
     },
     {
       "name": "Blue",
-      "type": "gpio",
-      "module": "GPIO-A",
-      "pin": 1
+      "type": "pwm",
+      "i2cModule": "PWM-A",
+      "pin": 0,
+      "valueTransform": {
+        "outputRange": [
+          0,
+          4095
+        ]
+      }
     },
     {
       "name": "Red",
       "type": "gpio",
-      "module": "GPIO-A",
+      "i2cModule": "GPIO-A",
       "pin": 0
     }
   ],
@@ -78,7 +95,21 @@
       "address": "/green",
       "writeTo": [
         {
-          "driver": "Green"
+          "driver": "Green",
+          "envelope": [
+            {
+              "amount": 100,
+              "time": 250
+            },
+            {
+              "amount": 100,
+              "fadeToAmount": 0,
+              "time": 250
+            },
+            {
+              "loop": true
+            }
+          ]
         }
       ]
     },
@@ -86,7 +117,22 @@
       "address": "/blue",
       "writeTo": [
         {
-          "driver": "Blue"
+          "driver": "Blue",
+          "envelope": [
+            {
+              "amount": 100,
+              "fadeToAmount": 0,
+              "time": 250
+            },
+            {
+              "amount": 100,
+              "time": 250
+            },
+            {
+              "loop": true
+            }
+          ]
+
         }
       ]
     },

@@ -72,7 +72,7 @@ bool RangeSensor::build(JsonObject json) {
     JsonObject transformJson = json["valueTransform"];
     _transform = new ValueTransform();
     if ( !_transform->build(transformJson) ) {
-      setError("Transform is invalid");
+      setError(_transform->getError());
       return false;
     }
   }

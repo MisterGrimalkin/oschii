@@ -15,6 +15,8 @@ class I2CPwmModule : public I2CModule {
     virtual bool open(int address);
     virtual bool build(JsonObject json);
 
+    void write(int pin, int value, bool invert);
+
    private:
      Adafruit_PWMServoDriver * _pwm;
 

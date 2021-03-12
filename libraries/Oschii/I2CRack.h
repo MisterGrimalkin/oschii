@@ -9,6 +9,8 @@
 #include "I2CGpioModule.h"
 #include "I2CPwmModule.h"
 
+#define MAX_MODULES 64
+
 class I2CRack {
   public:
     I2CRack() {};
@@ -21,7 +23,7 @@ class I2CRack {
 
   private:
     I2C * _i2c;
-    I2CModule * _modules[];
+    I2CModule * _modules[MAX_MODULES];
     int _moduleIndex;
 
 };

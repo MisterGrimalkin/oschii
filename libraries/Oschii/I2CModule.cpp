@@ -55,3 +55,7 @@ bool I2CModule::build(JsonObject json) {
 String I2CModule::getName() {
   return _name;
 }
+
+String I2CModule::getType() {
+  return _type;
+}

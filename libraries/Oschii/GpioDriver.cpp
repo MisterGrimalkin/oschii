@@ -18,13 +18,17 @@ void GpioDriver::fire(int value) {
 }
 
 bool GpioDriver::build(JsonObject json) {
+  if ( json.containsKey("valueTransform") ) {
+    setError("GPIO Drivers do not support Value Transforms");
+    return false;
+  }
+
   if ( !Driver::build(json) ) return false;
 
   _i2cGpioModule = NULL;
   _pin = -1;
   _thresholdValue = 1;
   _thresholdHighPass = true;
-  _invert = false;
 
   if ( json.containsKey("pin") ) {
     _pin = json["pin"];
@@ -35,7 +39,6 @@ bool GpioDriver::build(JsonObject json) {
 
   if ( json.containsKey("thresholdValue") )    _thresholdValue    = json["thresholdValue"];
   if ( json.containsKey("thresholdHighPass") ) _thresholdHighPass = json["thresholdHighPass"];
-  if ( json.containsKey("invert") )            _invert            = json["invert"];
 
   if ( _i2cModule == NULL ) {
     pinMode(_pin, OUTPUT);
@@ -55,7 +58,6 @@ JsonObject GpioDriver::toJson() {
   json["pin"]               = _pin;
   json["thresholdValue"]    = _thresholdValue;
   json["thresholdHighPass"] = _thresholdHighPass;
-  json["invert"]            = _invert;
 
   return json;
 }
@@ -64,6 +66,5 @@ String GpioDriver::toString() {
   return Driver::toString()
           + " pin:" + String(_pin)
           + " threshold:" + String(_thresholdValue)
-          + " highPass:" + String(_thresholdHighPass)
-          + " invert:" + String(_invert);
+          + " highPass:" + String(_thresholdHighPass);
 }

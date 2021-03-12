@@ -40,6 +40,11 @@ bool Sensor::build(JsonObject json) {
       setError("No I2C module named '" + moduleName + "'");
       return false;
     }
+    if ( _i2cModule->getType() != _type ) {
+      setError("Wrong module type");
+      return false;
+    }
+    Serial.println(moduleName);
   }
 
   _built = true;
@@ -69,7 +74,8 @@ JsonObject Sensor::toJson() {
 }
 
 String Sensor::toString() {
-  return "(" + _name + ") " + _type;
+  return "(" + _name + ") " + _type + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName());
+;
 }
 
 int Sensor::getValue() {
@@ -94,4 +100,5 @@ String Sensor::getError() {
 
 void Sensor::setError(String error) {
   _error = "ERROR! Sensor '" + _name + "': " + error;
+  Serial.println(_error);
 }

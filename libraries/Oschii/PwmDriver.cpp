@@ -3,16 +3,21 @@
 static int _nextChannel;
 
 void PwmDriver::fire(int value) {
-  _value = value;
+  _value = applyTransform(value);
 
   if ( value < 0 ) return;
 
-  ledcWrite(_channel, value);
+  if ( _i2cPwmModule == NULL ) {
+    ledcWrite(_channel, _value);
+  } else {
+    _i2cPwmModule->write(_pin, _value, _invert);
+  }
 }
 
 bool PwmDriver::build(JsonObject json) {
   if ( !Driver::build(json) ) return false;
 
+  _i2cPwmModule = NULL;
   _pin = -1;
 
   if ( json.containsKey("pin") ) {
@@ -24,8 +29,12 @@ bool PwmDriver::build(JsonObject json) {
 
   _channel = _nextChannel++;
 
-  ledcAttachPin(_pin, _channel);
-  ledcSetup(_channel, 4000, 8);
+  if ( _i2cModule == NULL ) {
+    ledcAttachPin(_pin, _channel);
+    ledcSetup(_channel, 4000, 8);
+  } else {
+    _i2cPwmModule = (I2CPwmModule*)_i2cModule;
+  }
 
   fire(_initialValue);
 

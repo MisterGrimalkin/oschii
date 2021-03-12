@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#include "ValueTransform.h"
 #include "I2CRack.h"
 
 class Driver {
@@ -25,12 +26,14 @@ class Driver {
   protected:
     I2CRack * _i2cRack;
     I2CModule * _i2cModule;
+    ValueTransform * _transform;
 
     int _value, _initialValue;
-    bool _built;
+    bool _built, _invert;
     String _name, _type, _error;
     StaticJsonDocument<128> _jsonRoot;
 
+    int applyTransform(int value);
     void setError(String error);
 };
 

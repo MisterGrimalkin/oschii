@@ -20,6 +20,7 @@ class I2CModule {
 
     virtual bool build(JsonObject json);
     String getName();
+    String getType();
 
   protected:
     I2C * _i2c;

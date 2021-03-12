@@ -14,10 +14,12 @@ The `name` must be unique, and the `type` must be one of:
 {
   "name": "....",
   "type": "....",
+  "i2cModule": "....",    # only for I2C
   
   ...
   
-  "initialValue": -1
+  "initialValue": 0,
+  "invert": false
 }
 ```
 
@@ -28,29 +30,18 @@ if it is `>= 0`.
 
 _Sets HIGH or LOW voltage on a GPIO pin._
 
-##### Minimal Configuration:
 ```
 {
-  "name": "Lamp 1",
-  "type": "gpio",
-  "pin": 16
-}
-```
+  "name": "Lamp 1",       # required
+  "type": "gpio",         # required
+  "i2cModule": "....",    # only for I2C
 
-**Default behaviour**: Output voltage will be set HIGH when the incoming
-value is `> 0`, and LOW when the value is `== 0`.
-
-##### Full configuration (showing defaults for non-required fields):
-```
-{
-  "name": "Lamp 1",   # required
-  "type": "gpio",     # required
-  "initialValue": -1,
-  "pin": 16,          # required
+  "pin": 16,              # required
+  
+  "initialValue": 0,
   
   "thresholdValue": 1,
   "thresholdHighPass": true,
-  
   "invert": false
 }
 ```
@@ -64,15 +55,17 @@ Set `invert` to `true` to swap HIGH and LOW voltages.
 
 _Outputs PWM wave on a GPIO pin._
 
-##### Minimal Configuration:
 ```
 {
-  "name": "Lamp 2",
-  "type": "pwm",
-  "pin": 19
+  "name": "Lamp 2",       # required
+  "type": "pwm",          # required
+  "i2cModule": "....",    # only for I2C
+
+  "valueTransform": {},
+
+  "pin": 19,              # required
+  
+  "initialValue": 0,
+  "invert": false         # only for I2C
 }
 ```
-
-Yeah that's pretty much it.
-
-

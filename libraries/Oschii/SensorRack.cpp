@@ -15,8 +15,6 @@ String SensorRack::buildSensors(JsonArray array) {
     JsonObject json = array[i];
     errorBuffer += buildSensor(json);
   }
-  Serial.println(errorBuffer);
-
   Serial.print("== Found: ");
   Serial.print(_sensorIndex);
   Serial.println(" ==\n");

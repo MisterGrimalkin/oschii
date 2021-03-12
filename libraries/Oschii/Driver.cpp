@@ -31,23 +31,46 @@ bool Driver::build(JsonObject json) {
     return false;
   }
 
-  if ( json.containsKey("module") ) {
-    String moduleName = json["module"].as<String>();
+  if ( json.containsKey("valueTransform") ) {
+    JsonObject transformJson = json["valueTransform"];
+    _transform = new ValueTransform();
+    if ( !_transform->build(transformJson) ) {
+      setError(_transform->getError());
+      return false;
+    }
+  }
+
+  if ( json.containsKey("i2cModule") ) {
+    String moduleName = json["i2cModule"].as<String>();
     _i2cModule = _i2cRack->getModule(moduleName);
     if ( _i2cModule==NULL ) {
       setError("No I2C module named '" + moduleName + "'");
       return false;
     }
+    if ( _i2cModule->getType() != _type ) {
+      setError("Wrong module type");
+      return false;
+    }
   }
 
   _initialValue = 0;
+  _invert = false;
 
   if ( json.containsKey("initialValue") ) _initialValue = json["initialValue"];
+  if ( json.containsKey("invert") )       _invert       = json["invert"];
 
   _value = _initialValue;
   _built = true;
 
   return true;
+}
+
+int Driver::applyTransform(int value) {
+  if ( _transform == NULL ) {
+    return value;
+  } else {
+    return _transform->apply(value);
+  }
 }
 
 String Driver::toPrettyJson() {
@@ -63,13 +86,20 @@ JsonObject Driver::toJson() {
   json["name"]         = _name;
   json["type"]         = _type;
   json["initialValue"] = _initialValue;
+  json["invert"]       = _invert;
+
+  if ( _i2cModule != NULL ) {
+    json["i2cModule"] = _i2cModule->getName();
+  }
 
   return json;
 }
 
 String Driver::toString() {
   return "[" + _name + "] " + _type
-          + " initial:" + String(_initialValue);
+          + " initial:" + String(_initialValue)
+          + " invert:" + String(_invert)
+          + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName());
 }
 
 int Driver::getValue() {
@@ -90,4 +120,5 @@ String Driver::getError() {
 
 void Driver::setError(String error) {
   _error = "ERROR! Driver '" + _name + "': " + error;
+  Serial.println(_error);
 }

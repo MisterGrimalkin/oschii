@@ -97,6 +97,8 @@ void ValueTransform::setBandCut(int min, int max) {
 }
 
 bool ValueTransform::build(JsonObject json) {
+  _error = "";
+
   _inputRange[MIN] = 0;
   _inputRange[MAX] = 100;
 
@@ -119,7 +121,7 @@ bool ValueTransform::build(JsonObject json) {
   if ( json.containsKey("inputRange") ) {
     JsonArray inputRange = json["inputRange"];
     if ( inputRange[MAX] < inputRange[MIN] ) {
-      Serial.println("Input range must be positive");
+      setError("Input range must be positive");
       return false;
     }
     _inputRange[MIN] = inputRange[MIN];
@@ -133,7 +135,7 @@ bool ValueTransform::build(JsonObject json) {
   if ( json.containsKey("outputRange") ) {
     JsonArray outputRange = json["outputRange"];
     if ( outputRange[MAX] < outputRange[MIN] ) {
-      Serial.println("Output range must be positive");
+      setError("Output range must be positive");
       return false;
     }
     _outputRange[MIN] = outputRange[MIN];
@@ -146,7 +148,7 @@ bool ValueTransform::build(JsonObject json) {
   if ( json.containsKey("bandPass") ) {
     JsonArray bandPass = json["bandPass"];
     if ( bandPass[MAX] < bandPass[MIN] ) {
-      Serial.println("Band Pass must be positive");
+      setError("Band Pass must be positive");
       return false;
     }
     _bandPass[MIN] = bandPass[MIN];
@@ -159,7 +161,7 @@ bool ValueTransform::build(JsonObject json) {
   if ( json.containsKey("bandCut") ) {
     JsonArray bandCut = json["bandCut"];
     if ( bandCut[MAX] < bandCut[MIN] ) {
-      Serial.println("Band Cut must be positive");
+      setError("Band Cut must be positive");
       return false;
     }
     _bandCut[MIN] = bandCut[MIN];
@@ -197,4 +199,12 @@ JsonObject ValueTransform::toJson() {
   bandCut.add(_bandCut[MAX]);
   
   return json;
+}
+
+String ValueTransform::getError() {
+  return _error;
+}
+
+void ValueTransform::setError(String error) {
+  _error = "Bad ValueTransform: " + error;
 }

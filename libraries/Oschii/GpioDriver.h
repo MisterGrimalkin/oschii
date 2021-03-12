@@ -20,7 +20,7 @@ class GpioDriver : public Driver {
   private:
     I2CGpioModule * _i2cGpioModule;
     int _pin, _thresholdValue;
-    bool _thresholdHighPass, _invert;
+    bool _thresholdHighPass;
 };
 
 #endif

@@ -55,6 +55,11 @@ bool BinarySensor::build(JsonObject json) {
   if ( json.containsKey("bounceFilter") ) _bounceFilter = json["bounceFilter"];
   if ( json.containsKey("holdOnFilter") ) _holdOnFilter = json["holdOnFilter"];
 
+  if ( json.containsKey("valueTransform") ) {
+    setError("Binary Sensors do not support Value Transforms");
+    return false;
+  }
+
   return true;
 }
 

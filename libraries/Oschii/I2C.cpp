@@ -4,6 +4,7 @@ void I2C::start(int sdaPin, int sclPin) {
   Wire.begin(sdaPin, sclPin);
   _sdaPin = sdaPin;
   _sclPin = sclPin;
+  scan();
 }
 
 int I2C::readRegister(int deviceAddress, int registerAddress) {
@@ -25,7 +26,7 @@ bool I2C::ping(int address) {
   Wire.begin();
   Wire.beginTransmission(address);
   if ( Wire.endTransmission() == 0 ) {
-    Serial.print("Connected to I2C Module [");
+    Serial.print(" - Connected to I2C Module [");
     Serial.print(address);
     Serial.println("]");
     return true;
@@ -55,7 +56,7 @@ void I2C::scan() {
       count++;
     }
   }
-  Serial.print("== Found ");
+  Serial.print("== Found: ");
   Serial.println(count);
   Serial.println();
 }

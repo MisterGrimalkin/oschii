@@ -27,6 +27,9 @@ class ValueTransform {
     bool build(JsonObject json);
     JsonObject toJson();
 
+    String getError();
+    void setError(String error);
+
   private:
     int _lastInput;
     int _inputRange[2];
@@ -42,7 +45,9 @@ class ValueTransform {
     int _bandPass[2];
     int _bandCut[2];
 
-    StaticJsonDocument<128> _jsonRoot;
+    StaticJsonDocument<256> _jsonRoot;
+
+    String _error;
 };
 
 #endif

@@ -6,6 +6,7 @@
 
 #include "Driver.h"
 #include "I2CRack.h"
+#include "I2CPwmModule.h"
 
 class PwmDriver : public Driver {
   public:
@@ -18,11 +19,8 @@ class PwmDriver : public Driver {
     virtual String toString();
 
   private:
-    I2CRack * _i2cRack;
-    I2CModule * _i2cModule;
-
     int _pin, _channel;
-
+    I2CPwmModule * _i2cPwmModule;
 };
 
 #endif

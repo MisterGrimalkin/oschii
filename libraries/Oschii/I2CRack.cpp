@@ -1,7 +1,7 @@
 #include "I2CRack.h"
 
 bool I2CRack::build(JsonObject json) {
-  Serial.println("\n== Building I2C Modules");
+  Serial.println("== Building I2C Modules");
 
   _i2c = new I2C();
 
@@ -44,6 +44,7 @@ bool I2CRack::build(JsonObject json) {
           Serial.println("Unknown I2C Module type");
           return false;
         }
+
         if ( module->build(moduleJson) ) {
           _modules[_moduleIndex++] = module;
         } else {
@@ -56,6 +57,10 @@ bool I2CRack::build(JsonObject json) {
       }
     }
   }
+
+  Serial.print("== Found:");
+  Serial.print(_moduleIndex);
+  Serial.println("\n");
 
   return true;
 }

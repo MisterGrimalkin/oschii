@@ -20,13 +20,11 @@ The `name` must be unique, and the `type` must be one of:
 
 _A Binary Sensor reads an ON / OFF input and returns one of two integer values._
 
-##### General configuration:
 ```
 {
   "name": "....",
   "type": "...."
-
-  "i2cModule": "....",    # optional
+  "i2cModule": "....",
 
   ...
   
@@ -54,28 +52,15 @@ An ON reading will only be acted upon after being held for `holdOnFilter` millis
 
 _Measures HIGH or LOW voltage on a GPIO pin._
 
-##### Minimal Configuration:
-```
-{
-  "name": "Button 1",
-  "type": "gpio",
-  "pin": 7
-}
-```
-
-**Default behaviour**: When the button (or similar) on GPIO `pin` is pressed, 
-the Sensor will send a "Changed" message with the value `100`. 
-When the button is released, the Sensor will do nothing.
-
-##### Full Configuration (showing defaults for non-required fields):
 ```
 {
   "name": "Button 1",     # required
   "type": "gpio",         # required
+  "i2cModule": "....",    # only for I2C
+
   "pin": 7,               # required
-  "resistor": "off",      # "off" | "up" | "down"
   
-  "i2cModule": "....",    # optional
+  "resistor": "off",      # "off" | "up" | "down"
   
   "onValue": 100,
   "offValue": -1,
@@ -92,27 +77,13 @@ available on some GPIO pins.
 
 _Measures a capacitive touch sensor._
 
-##### Minimal Configuration:
 ```
 {
-  "name": "Pad 1",
-  "type": "touch",
-  "pin": 2
-}
-```
+  "name": "Pad 1",          # required
+  "type": "touch",          # required
+  "i2cModule": "....",      # NOT CURRENTLY SUPPORTED
 
-**Default behaviour**: When the conductive material connected to GPIO `pin` is touched by a human, the Sensor
-will send a "Changed" message with the value `100`. When the touch is released, the
-Sensor will do nothing.
-
-##### Full Configuration (showing defaults for non-required fields):
-```
-{
-  "name": "Pad 1",        # required
-  "type": "touch",        # required
-  "pin": 2,               # required
-  
-  "i2cModule": "....",    # NOT CURRENTLY SUPPORTED
+  "pin": 2,                 # required
   
   "triggerThreshold": 15,
   "triggerHighPass": false,
@@ -141,9 +112,10 @@ The value can be from a single reading, or the median value from a number of sam
 {
   "name": "....",
   "type": "...."
+  "i2cModule": "....",
   
-  "i2cModule": "....",    # optional
-  
+  "valueTransform": {},
+
   ...
   
   "samples": 1, 
@@ -159,48 +131,18 @@ value once it has collected `samples` readings.
 
 _Measures the analog voltage on an ADC pin._
 
-##### Minimal configuration:
-```
-{
-  "name": "Rotary 1",
-  "type": "analog",
-  "pin": 36
-}
-```
-
-This will return the voltage on the specified native GPIO pin in the range (**0 - 3.3V**), 
-scaled to a value in the range (**0 - 100**).
-
-##### Full Configuration (showing defaults for non-required fields):
 ```
 {
   "name": "Rotary 1",       # required
   "type": "analog",         # required
+  "i2cModule": "....",      # NOT CURRENTLY SUPPORTED
+
   "pin": 36,                # required
   
+  "valueTransform": {},
+
   "samples": 1,
   "interleave": false,
-  
-  "readingRange": [
-    0,
-    3300
-  ],
-  "discardOutliers": true,
-  
-  "valueRange": [
-    0,
-    100
-  ],
-  "flipRange": false,
-  
-  "bandPass": [
-    0,
-    100
-  ],
-  "bandCut": [
-    -1,
-    -1
-  ],
 }
 ```
 
@@ -209,24 +151,8 @@ scaled to a value in the range (**0 - 100**).
 _Measures the distance to an object with 
 the **Adafruit HC-SR04** ultrasonic distance sensor._ 
 
-The TRIG and ECHO pins on the device should be wired to native GPIO pins.
+Requires TRIG and ECHO to be connected.
 
-##### Minimal configuration:
-```
-{
-  "name": "Ultrasonic 1",
-  "type": "hc-sr04",
-  "trigPin": 13,
-  "echoPin": 12
-}
-```
-
-This will return the distance to a (flat and smooth) object 
-in the (very approximate) range (**3cm - 90cm**), 
-scaled to a value in the range (**0 - 100**).
-The closest distance is returned as 100, the farthest as 0.
-
-##### Full Configuration (showing defaults for non-required fields):
 ```
 {
   "name": "Ultrasonic 1",   # required
@@ -234,47 +160,9 @@ The closest distance is returned as 100, the farthest as 0.
   "trigPin": 13,            # required
   "echoPin": 12,            # required
   
+  "valueTransform": {},
+
   "samples": 9, 
   "interleave": true
 }
 ```
-
-## Range conversion example
-
-Imagine a sensor which returns a value in the range (0 - 10), but is only accurate in the range (2 - 6).
-We take four readings, two of which are outside the stable range:
-
-```
-               0   1   2   3   4   5   6   7   8   9   10
- Stable Range          |||||||||||||||||
-     READINGS      A           B   C                   D
-```
-
-We can cap the erratic readings by setting `readingRange` to `[2, 6]`:
-
-```
-               0   1   2   3   4   5   6   7   8   9   10
-readingRange           [---------------]
-                   *-->A       B   C   D<--------------* 
-```
-
-To return the value as a percentage of the stable range we set `valueRange` to `[0, 100]`:
-
-```
-              0   10   20   30   40   50   60   70   80   90   100
-  valueRange  [--------------------------------------------------]
-              A                       B            C             D
-              
-```
-
-We can map the highest reading to the lowest value by setting `flipRange` to `true`:
-
-```
-              0   10   20   30   40   50   60   70   80   90   100
-  valueRange  [--------------------------------------------------]
-  (flipped)   D           C           B                          A
-              
-```
-
-We can ignore readings that are outside `readingRange` (`A` and `D`) by
-setting `discardOutliers` to `true`.

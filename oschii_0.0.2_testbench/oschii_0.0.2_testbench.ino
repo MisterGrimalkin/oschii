@@ -7,8 +7,6 @@ void setup() {
   oschii.start();
 }
 
-bool on = false;
-
 void loop() {
   oschii.loop();
 }

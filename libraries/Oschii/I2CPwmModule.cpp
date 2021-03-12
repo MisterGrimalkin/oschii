@@ -1,5 +1,13 @@
 #include "I2CPwmModule.h"
 
+void I2CPwmModule::write(int pin, int value, bool invert) {
+  if ( invert ) {
+    _pwm->setPWM(pin, value, (value == 0 ? 4095 : 0));
+  } else {
+    _pwm->setPWM(pin, 0, value);
+  }
+}
+
 bool I2CPwmModule::open(int address) {
   if ( !I2CModule::open(address) ) return false;
 
