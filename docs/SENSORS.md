@@ -25,7 +25,9 @@ _A Binary Sensor reads an ON / OFF input and returns one of two integer values._
 {
   "name": "....",
   "type": "...."
-  
+
+  "i2cModule": "....",    # optional
+
   ...
   
   "onValue": 100,
@@ -73,6 +75,8 @@ When the button is released, the Sensor will do nothing.
   "pin": 7,               # required
   "resistor": "off",      # "off" | "up" | "down"
   
+  "i2cModule": "....",    # optional
+  
   "onValue": 100,
   "offValue": -1,
   "invert": false,
@@ -108,6 +112,8 @@ Sensor will do nothing.
   "type": "touch",        # required
   "pin": 2,               # required
   
+  "i2cModule": "....",    # NOT CURRENTLY SUPPORTED
+  
   "triggerThreshold": 15,
   "triggerHighPass": false,
   
@@ -136,46 +142,18 @@ The value can be from a single reading, or the median value from a number of sam
   "name": "....",
   "type": "...."
   
+  "i2cModule": "....",    # optional
+  
   ...
   
   "samples": 1, 
   "interleave": false,
-  
-  "readingRange": [
-    0,
-    3300
-  ],
-  "discardOutliers": true,
-  
-  "valueRange": [
-    0,
-    100
-  ],
-  "flipRange": false,
-  
-  "bandPass": [
-    0,
-    100
-  ],
-  "bandCut": [
-    -1,
-    -1
-  ]
 }
 ```
 
 If `interleave` is `false` then Oschii will take `samples` readings from the Sensor on each scan cycle and
 return the median value. If `true`, Oschii will take one sample per scan cycle and only return the median
 value once it has collected `samples` readings.
-
-Use `readingRange`, `discardOutliers`, `valueRange`, and `flipRange` to convert the possible range
-of physical sensor readings to the required range of Sensor values (see the example
-at the bottom of the page).
-
-Use `bandPass` and/or `bandCut` to specify the range of values that will cause the 
-Sensor to fire a "Changed" event when the value changes. 
-If not specified, `bandPass` will default to `valueRange`, 
-and `bandCut` will be disabled.
 
 ### Sensor Type `analog`
 

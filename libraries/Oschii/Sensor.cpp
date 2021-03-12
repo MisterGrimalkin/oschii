@@ -33,8 +33,8 @@ bool Sensor::build(JsonObject json) {
     return false;
   }
 
-  if ( json.containsKey("module") ) {
-    String moduleName = json["module"].as<String>();
+  if ( json.containsKey("i2cModule") ) {
+    String moduleName = json["i2cModule"].as<String>();
     _i2cModule = _i2cRack->getModule(moduleName);
     if ( _i2cModule==NULL ) {
       setError("No I2C module named '" + moduleName + "'");
@@ -60,6 +60,10 @@ JsonObject Sensor::toJson() {
 
   json["name"] = _name;
   json["type"] = _type;
+
+  if ( _i2cModule != NULL ) {
+    json["i2cModule"] = _i2cModule->getName();
+  }
 
   return json;
 }
