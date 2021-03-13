@@ -14,22 +14,24 @@ class Remote {
   public:
     Remote(DriverRack * driverRack);
 
-    bool build(JsonObject json);
     void receive(int value);
 
     void update();
 
-    JsonObject toJson();
+    bool build(JsonObject json);
+
     String toString();
 
     String getAddress();
+
+//    JsonObject toJson();
 
   private:
     DriverRack * _driverRack;
     String _address;
     RemoteWriteTo * _writeTos[MAX_REMOTE_DRIVERS];
     int _writeToIndex;
-    StaticJsonDocument<128> _jsonRoot;
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

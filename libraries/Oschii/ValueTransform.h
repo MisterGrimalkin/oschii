@@ -25,10 +25,11 @@ class ValueTransform {
     void setBandCut(int min, int max);
 
     bool build(JsonObject json);
-    JsonObject toJson();
 
     String getError();
     void setError(String error);
+
+//    JsonObject toJson();
 
   private:
     int _lastInput;
@@ -45,9 +46,9 @@ class ValueTransform {
     int _bandPass[2];
     int _bandCut[2];
 
-    StaticJsonDocument<256> _jsonRoot;
-
     String _error;
+
+//    StaticJsonDocument<256> _jsonRoot;
 };
 
 #endif

@@ -16,14 +16,16 @@
 class DriverRack {
   public:
     DriverRack(I2CRack * i2cRack);
+
     String buildDrivers(JsonArray array);
     String buildDriver(JsonObject json);
-    JsonArray toJson();
-    String toPrettyJson();
 
     void fireAll(int value);
 
     Driver * getDriver(String name);
+
+//    JsonArray toJson();
+//    String toPrettyJson();
 
   private:
     StaticJsonDocument<128> _jsonRoot;

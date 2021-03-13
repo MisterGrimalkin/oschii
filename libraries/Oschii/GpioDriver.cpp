@@ -52,19 +52,19 @@ bool GpioDriver::build(JsonObject json) {
   return true;
 }
 
-JsonObject GpioDriver::toJson() {
-  JsonObject json = Driver::toJson();
-
-  json["pin"]               = _pin;
-  json["thresholdValue"]    = _thresholdValue;
-  json["thresholdHighPass"] = _thresholdHighPass;
-
-  return json;
-}
-
 String GpioDriver::toString() {
   return Driver::toString()
           + " pin:" + String(_pin)
           + " threshold:" + String(_thresholdValue)
           + " highPass:" + String(_thresholdHighPass);
 }
+
+//JsonObject GpioDriver::toJson() {
+//  JsonObject json = Driver::toJson();
+//
+//  json["pin"]               = _pin;
+//  json["thresholdValue"]    = _thresholdValue;
+//  json["thresholdHighPass"] = _thresholdHighPass;
+//
+//  return json;
+//}

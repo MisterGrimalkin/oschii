@@ -13,8 +13,9 @@ class GpioSensor : public BinarySensor {
 
     virtual bool build(JsonObject json);
 
-    virtual JsonObject toJson();
     virtual String toString();
+
+//    virtual JsonObject toJson();
 
   protected:
     I2CGpioModule * _i2cGpioModule;

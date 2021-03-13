@@ -41,16 +41,16 @@ bool PwmDriver::build(JsonObject json) {
   return true;
 }
 
-JsonObject PwmDriver::toJson() {
-  JsonObject json = Driver::toJson();
-
-  json["pin"] = _pin;
-
-  return json;
-}
-
 String PwmDriver::toString() {
   return Driver::toString()
           + " pin:" + String(_pin)
           + " channel:" + String(_channel);
 }
+
+//JsonObject PwmDriver::toJson() {
+//  JsonObject json = Driver::toJson();
+//
+//  json["pin"] = _pin;
+//
+//  return json;
+//}

@@ -11,8 +11,10 @@ class AnalogSensor : public RangeSensor {
     virtual int getReading();
 
     virtual bool build(JsonObject json);
-    virtual JsonObject toJson();
+
     virtual String toString();
+
+//    virtual JsonObject toJson();
 
   private:
     int _pin;

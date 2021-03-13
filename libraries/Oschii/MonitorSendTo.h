@@ -11,18 +11,20 @@ class MonitorSendTo {
   public:
     MonitorSendTo(RemoteRack * remoteRack);
 
-    bool build(JsonObject json);
     void send(int value);
 
-    JsonObject toJson();
+    bool build(JsonObject json);
+
     String getAddress();
+
+//    JsonObject toJson();
 
   private:
     RemoteRack * _remoteRack;
     Remote * _remote;
-    StaticJsonDocument<128> _jsonRoot;
     String _address;
     ValueTransform * _transform;
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

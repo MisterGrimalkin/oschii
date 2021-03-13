@@ -67,22 +67,21 @@ String RemoteWriteTo::getDriverName() {
   return _driver->getName();
 }
 
-JsonObject RemoteWriteTo::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  if ( _driver != NULL ) {
-    json["driver"] = _driver->getName();
-  }
-
-  if ( _transform != NULL ) {
-    json["valueTransform"] = _transform->toJson();
-  }
-
-  if ( _envelope != NULL ) {
-    json["envelope"] = _envelope->toJson();
-  }
-
-  return json;
-}
-
+//JsonObject RemoteWriteTo::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  if ( _driver != NULL ) {
+//    json["driver"] = _driver->getName();
+//  }
+//
+//  if ( _transform != NULL ) {
+//    json["valueTransform"] = _transform->toJson();
+//  }
+//
+//  if ( _envelope != NULL ) {
+//    json["envelope"] = _envelope->toJson();
+//  }
+//
+//  return json;
+//}

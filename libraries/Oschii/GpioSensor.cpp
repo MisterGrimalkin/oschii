@@ -72,17 +72,17 @@ bool GpioSensor::build(JsonObject json) {
   return true;
 }
 
-JsonObject GpioSensor::toJson() {
-  JsonObject json = BinarySensor::toJson();
-
-  json["pin"]       = _pin;
-  json["resistor"]  = _resistor;
-
-  return json;
-}
-
 String GpioSensor::toString() {
   return BinarySensor::toString()
           + " pin:" + String(_pin)
           + " resistor:" + _resistor;
 }
+
+//JsonObject GpioSensor::toJson() {
+//  JsonObject json = BinarySensor::toJson();
+//
+//  json["pin"]       = _pin;
+//  json["resistor"]  = _resistor;
+//
+//  return json;
+//}

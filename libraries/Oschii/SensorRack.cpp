@@ -67,52 +67,6 @@ void SensorRack::readSensors() {
   }
 }
 
-int printCount = 0;
-
-void SensorRack::printSensorValues() {
-  String headerRow = " - ";
-  String valueRow = "";
-  for ( int i=0; i<_sensorIndex; i++ ) {
-    Sensor * sensor = _sensors[i];
-    if ( printCount == 0 ) {
-      headerRow += sensor->getName() + " - ";
-    }
-    if ( sensor->hasChanged() ) {
-      valueRow += " - *";
-    } else {
-      valueRow += " -  ";
-    }
-    valueRow += String(sensor->getValue());
-  }
-  if ( printCount == 0 ) {
-    Serial.println();
-    Serial.println(headerRow);
-    Serial.println();
-  }
-  Serial.println(valueRow);
-  if ( printCount > 30 ) {
-    printCount = 0;
-  } else {
-    printCount++;
-  }
-}
-
-JsonArray SensorRack::toJson() {
-  _jsonRoot.clear();
-  JsonArray array = _jsonRoot.createNestedArray("sensors");
-  for ( int i=0; i<_sensorIndex; i++ ) {
-    Sensor * sensor = _sensors[i];
-    array.add(sensor->toJson());
-  }
-  return array;
-}
-
-String SensorRack::toPrettyJson() {
-  String outputStr = "";
-  serializeJsonPretty(toJson(), outputStr);
-  return outputStr;
-}
-
 Sensor * SensorRack::getSensor(String name) {
   for ( int i=0; i<_sensorIndex; i++ ) {
     Sensor * sensor = _sensors[i];
@@ -122,3 +76,19 @@ Sensor * SensorRack::getSensor(String name) {
   }
   return NULL;
 }
+
+//JsonArray SensorRack::toJson() {
+//  _jsonRoot.clear();
+//  JsonArray array = _jsonRoot.createNestedArray("sensors");
+//  for ( int i=0; i<_sensorIndex; i++ ) {
+//    Sensor * sensor = _sensors[i];
+//    array.add(sensor->toJson());
+//  }
+//  return array;
+//}
+//
+//String SensorRack::toPrettyJson() {
+//  String outputStr = "";
+//  serializeJsonPretty(toJson(), outputStr);
+//  return outputStr;
+//}

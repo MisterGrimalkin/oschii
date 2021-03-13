@@ -18,20 +18,22 @@
 class SensorRack {
   public:
     SensorRack(I2CRack * i2cRack);
+
     String buildSensors(JsonArray array);
     String buildSensor(JsonObject json);
+
     void readSensors();
-    void printSensorValues();
-    JsonArray toJson();
-    String toPrettyJson();
 
     Sensor * getSensor(String name);
 
+//    JsonArray toJson();
+//    String toPrettyJson();
+
   private:
-    StaticJsonDocument<128> _jsonRoot;
     Sensor * _sensors[MAX_SENSORS];
     I2CRack * _i2cRack;
     int _sensorIndex;
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

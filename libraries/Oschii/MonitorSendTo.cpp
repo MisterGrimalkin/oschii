@@ -6,6 +6,16 @@ MonitorSendTo::MonitorSendTo(RemoteRack * remoteRack) {
   _transform = NULL;
 }
 
+void MonitorSendTo::send(int value) {
+  int sendValue = value;
+  if ( _transform != NULL ) {
+    sendValue = _transform->apply(value);
+  }
+  if ( _remote != NULL ) {
+    _remote->receive(sendValue);
+  }
+}
+
 bool MonitorSendTo::build(JsonObject json) {
   _address = "";
 
@@ -25,27 +35,17 @@ String MonitorSendTo::getAddress() {
   return _address;
 }
 
-void MonitorSendTo::send(int value) {
-  int sendValue = value;
-  if ( _transform != NULL ) {
-    sendValue = _transform->apply(value);
-  }
-  if ( _remote != NULL ) {
-    _remote->receive(sendValue);
-  }
-}
-
-JsonObject MonitorSendTo::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  if ( _remote != NULL ) {
-    json["~"] = _address;
-  }
-
-  if ( _transform != NULL ) {
-    json["valueTransform"] = _transform->toJson();
-  }
-
-  return json;
-}
+//JsonObject MonitorSendTo::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  if ( _remote != NULL ) {
+//    json["~"] = _address;
+//  }
+//
+//  if ( _transform != NULL ) {
+//    json["valueTransform"] = _transform->toJson();
+//  }
+//
+//  return json;
+//}

@@ -52,26 +52,6 @@ bool Sensor::build(JsonObject json) {
   return true;
 }
 
-String Sensor::toPrettyJson() {
-  String outputStr = "";
-  serializeJsonPretty(toJson(), outputStr);
-  return outputStr;
-}
-
-JsonObject Sensor::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  json["name"] = _name;
-  json["type"] = _type;
-
-  if ( _i2cModule != NULL ) {
-    json["i2cModule"] = _i2cModule->getName();
-  }
-
-  return json;
-}
-
 String Sensor::toString() {
   return "(" + _name + ") " + _type + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName());
 ;
@@ -101,3 +81,23 @@ void Sensor::setError(String error) {
   _error = "ERROR! Sensor '" + _name + "': " + error;
   Serial.println(_error);
 }
+
+//JsonObject Sensor::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  json["name"] = _name;
+//  json["type"] = _type;
+//
+//  if ( _i2cModule != NULL ) {
+//    json["i2cModule"] = _i2cModule->getName();
+//  }
+//
+//  return json;
+//}
+
+//String Sensor::toPrettyJson() {
+//  String outputStr = "";
+//  serializeJsonPretty(toJson(), outputStr);
+//  return outputStr;
+//}

@@ -44,13 +44,13 @@ bool HCSRSensor::build(JsonObject json) {
   return true;
 }
 
-JsonObject HCSRSensor::toJson() {
-  JsonObject json = RangeSensor::toJson();
-  json["trigPin"] = _trigPin;
-  json["echoPin"] = _echoPin;
-  return json;
-}
-
 String HCSRSensor::toString() {
   return RangeSensor::toString() + " trigPin:" + String(_trigPin) + " echoPin:" + String(_echoPin);
 }
+
+//JsonObject HCSRSensor::toJson() {
+//  JsonObject json = RangeSensor::toJson();
+//  json["trigPin"] = _trigPin;
+//  json["echoPin"] = _echoPin;
+//  return json;
+//}

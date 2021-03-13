@@ -5,6 +5,20 @@ Remote::Remote(DriverRack * driverRack) {
   _writeToIndex = 0;
 }
 
+void Remote::receive(int value) {
+  for ( int i=0; i<_writeToIndex; i++ ) {
+    RemoteWriteTo * writeTo = _writeTos[i];
+    writeTo->write(value);
+  }
+}
+
+void Remote::update() {
+  for ( int i=0; i<_writeToIndex; i++ ) {
+    RemoteWriteTo * writeTo = _writeTos[i];
+    writeTo->update();
+  }
+}
+
 bool Remote::build(JsonObject json) {
   if ( json.containsKey("address") ) {
     _address = json["address"].as<String>();
@@ -25,20 +39,6 @@ bool Remote::build(JsonObject json) {
   return true;
 }
 
-void Remote::update() {
-  for ( int i=0; i<_writeToIndex; i++ ) {
-    RemoteWriteTo * writeTo = _writeTos[i];
-    writeTo->update();
-  }
-}
-
-void Remote::receive(int value) {
-  for ( int i=0; i<_writeToIndex; i++ ) {
-    RemoteWriteTo * writeTo = _writeTos[i];
-    writeTo->write(value);
-  }
-}
-
 String Remote::getAddress() {
   return _address;
 }
@@ -52,17 +52,17 @@ String Remote::toString() {
   return str;
 }
 
-JsonObject Remote::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  json["address"] = _address;
-
-  JsonArray writeToArray = json.createNestedArray("writeTo");
-  for ( int i=0; i<_writeToIndex; i++ ) {
-    RemoteWriteTo * writeTo = _writeTos[i];
-    writeToArray.add(writeTo->toJson());
-  }
-
-  return json;
-}
+//JsonObject Remote::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  json["address"] = _address;
+//
+//  JsonArray writeToArray = json.createNestedArray("writeTo");
+//  for ( int i=0; i<_writeToIndex; i++ ) {
+//    RemoteWriteTo * writeTo = _writeTos[i];
+//    writeToArray.add(writeTo->toJson());
+//  }
+//
+//  return json;
+//}

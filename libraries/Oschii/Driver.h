@@ -12,16 +12,18 @@ class Driver {
     Driver(I2CRack * i2cRack);
 
     virtual void fire(int value) {};
+
     virtual bool build(JsonObject json);
 
-    String toPrettyJson();
-    virtual JsonObject toJson();
     virtual String toString();
 
     int getValue();
     String getType();
     String getName();
     String getError();
+
+//    String toPrettyJson();
+//    virtual JsonObject toJson();
 
   protected:
     I2CRack * _i2cRack;
@@ -31,10 +33,11 @@ class Driver {
     int _value, _initialValue;
     bool _built, _invert;
     String _name, _type, _error;
-    StaticJsonDocument<128> _jsonRoot;
 
     int applyTransform(int value);
     void setError(String error);
+
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

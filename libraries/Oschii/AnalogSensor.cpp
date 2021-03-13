@@ -5,9 +5,7 @@ int AnalogSensor::getReading() {
 }
 
 bool AnalogSensor::build(JsonObject json) {
-  if ( !RangeSensor::build(json) ) {
-    return false;
-  }
+  if ( !RangeSensor::build(json) ) return false;
 
   _pin = -1;
 
@@ -23,15 +21,15 @@ bool AnalogSensor::build(JsonObject json) {
   return true;
 }
 
-JsonObject AnalogSensor::toJson() {
-  JsonObject json = RangeSensor::toJson();
-
-  json["pin"] = _pin;
-
-  return json;
-}
-
 String AnalogSensor::toString() {
   return RangeSensor::toString()
           + " pin:" + String(_pin);
 }
+
+//JsonObject AnalogSensor::toJson() {
+//  JsonObject json = RangeSensor::toJson();
+//
+//  json["pin"] = _pin;
+//
+//  return json;
+//}

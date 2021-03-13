@@ -37,19 +37,19 @@ bool TouchSensor::build(JsonObject json) {
   }
 }
 
-JsonObject TouchSensor::toJson() {
-  JsonObject json = BinarySensor::toJson();
-
-  json["pin"]              = _pin;
-  json["triggerThreshold"] = _triggerThreshold;
-  json["triggerHighPass"]  = _triggerHighPass;
-
-  return json;
-}
-
 String TouchSensor::toString() {
   return BinarySensor::toString()
           + " pin:" + String(_pin)
           + " threshold:" + String(_triggerThreshold)
           + " highPass:" + String(_triggerHighPass);
 }
+
+//JsonObject TouchSensor::toJson() {
+//  JsonObject json = BinarySensor::toJson();
+//
+//  json["pin"]              = _pin;
+//  json["triggerThreshold"] = _triggerThreshold;
+//  json["triggerHighPass"]  = _triggerHighPass;
+//
+//  return json;
+//}

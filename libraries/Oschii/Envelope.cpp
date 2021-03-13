@@ -115,16 +115,16 @@ bool Envelope::build(JsonArray array) {
   return true;
 }
 
-JsonArray Envelope::toJson() {
-  _jsonRoot.clear();
-  JsonArray array = _jsonRoot.createNestedArray("envelope");
-  for ( int i=0; i<_nodeIndex; i++ ) {
-    EnvelopeNode * node = _nodes[i];
-    array.add(node->toJson());
-  }
-  JsonObject config = _jsonRoot2.to<JsonObject>();
-  config["loop"] = _loop;
-  array.add(config);
-
-  return array;
-}
+//JsonArray Envelope::toJson() {
+//  _jsonRoot.clear();
+//  JsonArray array = _jsonRoot.createNestedArray("envelope");
+//  for ( int i=0; i<_nodeIndex; i++ ) {
+//    EnvelopeNode * node = _nodes[i];
+//    array.add(node->toJson());
+//  }
+//  JsonObject config = _jsonRoot2.to<JsonObject>();
+//  config["loop"] = _loop;
+//  array.add(config);
+//
+//  return array;
+//}

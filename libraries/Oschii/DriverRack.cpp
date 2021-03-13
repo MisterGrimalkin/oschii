@@ -54,22 +54,6 @@ void DriverRack::fireAll(int value) {
   }
 }
 
-JsonArray DriverRack::toJson() {
-  _jsonRoot.clear();
-  JsonArray array = _jsonRoot.createNestedArray("drivers");
-  for ( int i=0; i<_driverIndex; i++ ) {
-    Driver * driver = _drivers[i];
-    array.add(driver->toJson());
-  }
-  return array;
-}
-
-String DriverRack::toPrettyJson() {
-  String outputStr = "";
-  serializeJsonPretty(toJson(), outputStr);
-  return outputStr;
-}
-
 Driver * DriverRack::getDriver(String name) {
   for ( int i=0; i<_driverIndex; i++ ) {
     Driver * driver = _drivers[i];
@@ -79,3 +63,19 @@ Driver * DriverRack::getDriver(String name) {
   }
   return NULL;
 }
+
+//JsonArray DriverRack::toJson() {
+//  _jsonRoot.clear();
+//  JsonArray array = _jsonRoot.createNestedArray("drivers");
+//  for ( int i=0; i<_driverIndex; i++ ) {
+//    Driver * driver = _drivers[i];
+//    array.add(driver->toJson());
+//  }
+//  return array;
+//}
+//
+//String DriverRack::toPrettyJson() {
+//  String outputStr = "";
+//  serializeJsonPretty(toJson(), outputStr);
+//  return outputStr;
+//}

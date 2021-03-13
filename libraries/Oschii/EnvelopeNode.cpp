@@ -24,16 +24,6 @@ bool EnvelopeNode::build(JsonObject json) {
   return true;
 }
 
-JsonObject EnvelopeNode::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  json["amount"] = _amount;
-  json["time"] = _time;
-
-  return json;
-}
-
 int EnvelopeNode::getAmount(int value) {
   if ( _amountFrom == 0 ) {
     return value;
@@ -62,3 +52,13 @@ int EnvelopeNode::getTime(int value) {
 String EnvelopeNode::getInterpolation() {
   return _interpolation;
 }
+
+//JsonObject EnvelopeNode::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  json["amount"] = _amount;
+//  json["time"] = _time;
+//
+//  return json;
+//}

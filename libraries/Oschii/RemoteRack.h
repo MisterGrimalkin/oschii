@@ -12,20 +12,21 @@
 class RemoteRack {
   public:
     RemoteRack(DriverRack * driverRack);
+
     String buildRemotes(JsonArray array);
     String buildRemote(JsonObject json);
 
-    JsonArray toJson();
+    void loop();
 
     Remote * getRemote(String name);
 
-    void loop();
+//    JsonArray toJson();
 
   private:
     DriverRack * _driverRack;
     Remote * _remotes[MAX_REMOTES];
     int _remoteIndex;
-    StaticJsonDocument<128> _jsonRoot;
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

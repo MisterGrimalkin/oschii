@@ -171,36 +171,6 @@ bool ValueTransform::build(JsonObject json) {
   return true;
 }
 
-JsonObject ValueTransform::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  JsonArray inputRange = json.createNestedArray("inputRange");
-  inputRange.add(_inputRange[MIN]);
-  inputRange.add(_inputRange[MAX]);
-
-  json["discardAllOutliers"] = _discardAllOutliers;
-  json["discardOutliers"]    = _discardOutliers;
-  json["setOutliersTo"]      = _setOutliersTo;
-
-  JsonArray outputRange = json.createNestedArray("outputRange");
-  outputRange.add(_outputRange[MIN]);
-  outputRange.add(_outputRange[MAX]);
-
-  json["flipRange"] = _flipRange;
-  json["mirrorRange"] = _mirrorRange;
-
-  JsonArray bandPass = json.createNestedArray("bandPass");
-  bandPass.add(_bandPass[MIN]);
-  bandPass.add(_bandPass[MAX]);
-
-  JsonArray bandCut = json.createNestedArray("bandCut");
-  bandCut.add(_bandCut[MIN]);
-  bandCut.add(_bandCut[MAX]);
-  
-  return json;
-}
-
 String ValueTransform::getError() {
   return _error;
 }
@@ -208,3 +178,33 @@ String ValueTransform::getError() {
 void ValueTransform::setError(String error) {
   _error = "Bad ValueTransform: " + error;
 }
+
+//JsonObject ValueTransform::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  JsonArray inputRange = json.createNestedArray("inputRange");
+//  inputRange.add(_inputRange[MIN]);
+//  inputRange.add(_inputRange[MAX]);
+//
+//  json["discardAllOutliers"] = _discardAllOutliers;
+//  json["discardOutliers"]    = _discardOutliers;
+//  json["setOutliersTo"]      = _setOutliersTo;
+//
+//  JsonArray outputRange = json.createNestedArray("outputRange");
+//  outputRange.add(_outputRange[MIN]);
+//  outputRange.add(_outputRange[MAX]);
+//
+//  json["flipRange"] = _flipRange;
+//  json["mirrorRange"] = _mirrorRange;
+//
+//  JsonArray bandPass = json.createNestedArray("bandPass");
+//  bandPass.add(_bandPass[MIN]);
+//  bandPass.add(_bandPass[MAX]);
+//
+//  JsonArray bandCut = json.createNestedArray("bandCut");
+//  bandCut.add(_bandCut[MIN]);
+//  bandCut.add(_bandCut[MAX]);
+//
+//  return json;
+//}

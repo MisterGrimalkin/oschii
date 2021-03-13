@@ -12,10 +12,12 @@ class GpioDriver : public Driver {
     GpioDriver(I2CRack * i2cRack) : Driver(i2cRack) {};
 
     virtual void fire(int value);
+
     virtual bool build(JsonObject json);
 
-    virtual JsonObject toJson();
     virtual String toString();
+
+//    virtual JsonObject toJson();
 
   private:
     I2CGpioModule * _i2cGpioModule;

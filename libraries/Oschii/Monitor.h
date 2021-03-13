@@ -16,11 +16,13 @@ class Monitor {
   public:
     Monitor(SensorRack * sensorRack, RemoteRack * remoteRack);
 
-    bool build(JsonObject json);
     void update();
 
-    JsonObject toJson();
+    bool build(JsonObject json);
+
     String toString();
+
+//    JsonObject toJson();
 
   private:
     SensorRack * _sensorRack;
@@ -29,7 +31,7 @@ class Monitor {
     MonitorSendTo * _sendTos[MAX_MONITOR_REMOTES];
     int _sendToIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
-    StaticJsonDocument<128> _jsonRoot;
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

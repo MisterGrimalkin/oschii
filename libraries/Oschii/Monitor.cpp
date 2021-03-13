@@ -7,6 +7,24 @@ Monitor::Monitor(SensorRack * sensorRack, RemoteRack * remoteRack) {
   _sendToIndex = 0;
 }
 
+void Monitor::update() {
+  _sensor->readSensor();
+  if ( _onChange && _sensor->hasChanged() ) {
+    for ( int i=0; i<_sendToIndex; i++ ) {
+      MonitorSendTo * sendTo = _sendTos[i];
+      int value = _sensor->getValue();
+      if ( ECHO_MONITOR_SENDS ) {
+        Serial.print("(");
+        Serial.print(_sensor->getName());
+        Serial.print(") --> ");
+        Serial.println(value);
+      }
+      sendTo->send(value);
+    }
+    _lastPolledAt = millis();
+  }
+}
+
 bool Monitor::build(JsonObject json) {
   _onChange = true;
   _pollInterval = 0;
@@ -35,41 +53,6 @@ bool Monitor::build(JsonObject json) {
   return true;
 }
 
-void Monitor::update() {
-  _sensor->readSensor();
-  if ( _onChange && _sensor->hasChanged() ) {
-    for ( int i=0; i<_sendToIndex; i++ ) {
-      MonitorSendTo * sendTo = _sendTos[i];
-      int value = _sensor->getValue();
-      if ( ECHO_MONITOR_SENDS ) {
-        Serial.print("(");
-        Serial.print(_sensor->getName());
-        Serial.print(") --> ");
-        Serial.println(value);
-      }
-      sendTo->send(value);
-    }
-    _lastPolledAt = millis();
-  }
-}
-
-JsonObject Monitor::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  json["sensor"] = _sensor->getName();
-  json["onChange"] = _onChange;
-  json["pollInterval"] = _pollInterval;
-
-  JsonArray sendToArray = json.createNestedArray("sendTo");
-  for ( int i=0; i<_sendToIndex; i++ ) {
-    MonitorSendTo * sendTo = _sendTos[i];
-    sendToArray.add(sendTo->toJson());
-  }
-
-  return json;
-}
-
 String Monitor::toString() {
   String str = "(" + _sensor->getName() + ") ~~>";
   for ( int i=0; i<_sendToIndex; i++ ) {
@@ -78,3 +61,20 @@ String Monitor::toString() {
   }
   return str;
 }
+
+//JsonObject Monitor::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  json["sensor"] = _sensor->getName();
+//  json["onChange"] = _onChange;
+//  json["pollInterval"] = _pollInterval;
+//
+//  JsonArray sendToArray = json.createNestedArray("sendTo");
+//  for ( int i=0; i<_sendToIndex; i++ ) {
+//    MonitorSendTo * sendTo = _sendTos[i];
+//    sendToArray.add(sendTo->toJson());
+//  }
+//
+//  return json;
+//}

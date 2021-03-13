@@ -13,10 +13,9 @@ class Sensor {
     Sensor(I2CRack * i2cRack);
 
     virtual void readSensor() {};
+
     virtual bool build(JsonObject json);
 
-    String toPrettyJson();
-    virtual JsonObject toJson();
     virtual String toString();
 
     int getValue();
@@ -25,6 +24,9 @@ class Sensor {
     String getName();
     String getError();
 
+//    String toPrettyJson();
+//    virtual JsonObject toJson();
+
   protected:
     I2CRack * _i2cRack;
     I2CModule * _i2cModule;
@@ -32,9 +34,10 @@ class Sensor {
     int _value, _lastChanged;
     bool _built, _changed;
     String _name, _type, _error;
-    StaticJsonDocument<128> _jsonRoot;
 
     void setError(String error);
+
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

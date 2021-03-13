@@ -55,18 +55,18 @@ bool Racks::buildConfig(JsonObject json) {
   return true;
 }
 
-JsonObject Racks::toJson() {
-  _jsonDoc.clear();
-  JsonObject json = _jsonDoc.createNestedObject("config");
-  json["sensors"] = _sensorRack->toJson();
-  json["drivers"] = _driverRack->toJson();
-  json["driverRemotes"] = _remoteRack->toJson();
-  json["sensorMonitors"] = _monitorRack->toJson();
-  return json;
-}
-
-String Racks::toPrettyJson() {
-  String outputStr = "";
-  serializeJsonPretty(toJson(), outputStr);
-  return outputStr;
-}
+//JsonObject Racks::toJson() {
+//  _jsonDoc.clear();
+//  JsonObject json = _jsonDoc.createNestedObject("config");
+//  json["sensors"] = _sensorRack->toJson();
+//  json["drivers"] = _driverRack->toJson();
+//  json["driverRemotes"] = _remoteRack->toJson();
+//  json["sensorMonitors"] = _monitorRack->toJson();
+//  return json;
+//}
+//
+//String Racks::toPrettyJson() {
+//  String outputStr = "";
+//  serializeJsonPretty(toJson(), outputStr);
+//  return outputStr;
+//}

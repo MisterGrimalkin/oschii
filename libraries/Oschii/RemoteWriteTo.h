@@ -18,17 +18,19 @@ class RemoteWriteTo {
 
     void update();
 
-    JsonObject toJson();
     String toString();
 
     String getDriverName();
+
+//    JsonObject toJson();
 
   private:
     DriverRack * _driverRack;
     Driver * _driver;
     Envelope * _envelope;
-    StaticJsonDocument<128> _jsonRoot;
     ValueTransform * _transform;
+
+//    StaticJsonDocument<128> _jsonRoot;
 };
 
 #endif

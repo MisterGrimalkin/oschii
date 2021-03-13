@@ -15,14 +15,14 @@ class EnvelopeNode {
     int getTime(int value);
     String getInterpolation();
 
-    JsonObject toJson();
+//    JsonObject toJson();
 
   private:
     int _amount, _fadeToAmount, _time;
     int _amountFrom, _fadeToAmountFrom, _timeFrom;
     String _interpolation;
 
-    StaticJsonDocument<64> _jsonRoot;
+//    StaticJsonDocument<64> _jsonRoot;
 };
 
 #endif

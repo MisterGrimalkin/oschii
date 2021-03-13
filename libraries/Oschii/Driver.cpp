@@ -74,28 +74,6 @@ int Driver::applyTransform(int value) {
   }
 }
 
-String Driver::toPrettyJson() {
-  String outputStr = "";
-  serializeJsonPretty(toJson(), outputStr);
-  return outputStr;
-}
-
-JsonObject Driver::toJson() {
-  _jsonRoot.clear();
-  JsonObject json = _jsonRoot.to<JsonObject>();
-
-  json["name"]         = _name;
-  json["type"]         = _type;
-  json["initialValue"] = _initialValue;
-  json["invert"]       = _invert;
-
-  if ( _i2cModule != NULL ) {
-    json["i2cModule"] = _i2cModule->getName();
-  }
-
-  return json;
-}
-
 String Driver::toString() {
   return "[" + _name + "] " + _type
           + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName())
@@ -123,3 +101,25 @@ void Driver::setError(String error) {
   _error = "ERROR! Driver '" + _name + "': " + error;
   Serial.println(_error);
 }
+
+//String Driver::toPrettyJson() {
+//  String outputStr = "";
+//  serializeJsonPretty(toJson(), outputStr);
+//  return outputStr;
+//}
+//
+//JsonObject Driver::toJson() {
+//  _jsonRoot.clear();
+//  JsonObject json = _jsonRoot.to<JsonObject>();
+//
+//  json["name"]         = _name;
+//  json["type"]         = _type;
+//  json["initialValue"] = _initialValue;
+//  json["invert"]       = _invert;
+//
+//  if ( _i2cModule != NULL ) {
+//    json["i2cModule"] = _i2cModule->getName();
+//  }
+//
+//  return json;
+//}

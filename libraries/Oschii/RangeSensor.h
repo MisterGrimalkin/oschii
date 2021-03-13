@@ -14,13 +14,15 @@ class RangeSensor : public Sensor {
   public:
     RangeSensor(I2CRack * i2cRack) : Sensor(i2cRack) {};
 
-    virtual void readSensor();
     virtual int getReading() {};
+
+    virtual void readSensor();
 
     virtual bool build(JsonObject json);
 
-    virtual JsonObject toJson();
     virtual String toString();
+
+//    virtual JsonObject toJson();
 
   protected:
     int _sampleBuffer[MAX_SAMPLES];
@@ -28,8 +30,8 @@ class RangeSensor : public Sensor {
     bool _interleave;
     ValueTransform * _transform;
 
-    int getMedianValue(int samples);
     int applyTransform(int value);
+    int getMedianValue(int samples);
 };
 
 #endif

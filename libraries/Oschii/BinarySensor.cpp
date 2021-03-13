@@ -63,18 +63,6 @@ bool BinarySensor::build(JsonObject json) {
   return true;
 }
 
-JsonObject BinarySensor::toJson() {
-  JsonObject json = Sensor::toJson();
-
-  json["onValue"]       = _onValue;
-  json["offValue"]      = _offValue;
-  json["invert"]        = _invert;
-  json["bounceFilter"]  = _bounceFilter;
-  json["holdOnFilter"]  = _holdOnFilter;
-
-  return json;
-}
-
 String BinarySensor::toString() {
   return Sensor::toString()
           + " on:" +      String(_onValue)
@@ -83,3 +71,15 @@ String BinarySensor::toString() {
           + " bounce:" +  String(_bounceFilter)
           + " hold:" +  String(_holdOnFilter);
 }
+
+//JsonObject BinarySensor::toJson() {
+//  JsonObject json = Sensor::toJson();
+//
+//  json["onValue"]       = _onValue;
+//  json["offValue"]      = _offValue;
+//  json["invert"]        = _invert;
+//  json["bounceFilter"]  = _bounceFilter;
+//  json["holdOnFilter"]  = _holdOnFilter;
+//
+//  return json;
+//}

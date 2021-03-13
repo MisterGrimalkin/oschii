@@ -19,11 +19,11 @@ class Racks {
     bool buildConfig(String jsonString);
     bool buildConfig(JsonObject json);
 
-    JsonObject toJson();
-    String toPrettyJson();
-
     void start();
     void loop();
+
+//    JsonObject toJson();
+//    String toPrettyJson();
 
   private:
     I2CRack * _i2cRack;

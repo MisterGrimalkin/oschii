@@ -80,21 +80,21 @@ bool RangeSensor::build(JsonObject json) {
   return true;
 }
 
-JsonObject RangeSensor::toJson() {
-  JsonObject json = Sensor::toJson();
-
-  json["samples"] = _samples;
-  json["interleave"] = _interleave;
-
-  if ( _transform != NULL ) {
-    json["valueTransform"] = _transform->toJson();
-  }
-
-  return json;
-}
-
 String RangeSensor::toString() {
   return Sensor::toString()
           + " samples:" + String(_samples)
           + " interleave:" + String(_interleave);
 }
+
+//JsonObject RangeSensor::toJson() {
+//  JsonObject json = Sensor::toJson();
+//
+//  json["samples"] = _samples;
+//  json["interleave"] = _interleave;
+//
+//  if ( _transform != NULL ) {
+//    json["valueTransform"] = _transform->toJson();
+//  }
+//
+//  return json;
+//}

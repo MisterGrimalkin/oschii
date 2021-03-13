@@ -39,12 +39,12 @@ void MonitorRack::loop() {
   }
 }
 
-JsonArray MonitorRack::toJson() {
-  _jsonRoot.clear();
-  JsonArray array= _jsonRoot.createNestedArray("sensorMonitors");
-  for ( int i=0; i<_monitorIndex; i++ ) {
-    Monitor * monitor = _monitors[i];
-    array.add(monitor->toJson());
-  }
-  return array;
-}
+//JsonArray MonitorRack::toJson() {
+//  _jsonRoot.clear();
+//  JsonArray array= _jsonRoot.createNestedArray("sensorMonitors");
+//  for ( int i=0; i<_monitorIndex; i++ ) {
+//    Monitor * monitor = _monitors[i];
+//    array.add(monitor->toJson());
+//  }
+//  return array;
+//}
