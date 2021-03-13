@@ -44,7 +44,6 @@ bool Sensor::build(JsonObject json) {
       setError("Wrong module type");
       return false;
     }
-    Serial.println(moduleName);
   }
 
   _built = true;

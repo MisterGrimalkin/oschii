@@ -3,6 +3,7 @@
 Driver::Driver(I2CRack * i2cRack) {
   _i2cRack = i2cRack;
   _i2cModule = NULL;
+  _transform = NULL;
   _built = false;
   _value = -1;
 
@@ -97,9 +98,9 @@ JsonObject Driver::toJson() {
 
 String Driver::toString() {
   return "[" + _name + "] " + _type
+          + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName())
           + " initial:" + String(_initialValue)
-          + " invert:" + String(_invert)
-          + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName());
+          + " invert:" + String(_invert);
 }
 
 int Driver::getValue() {
