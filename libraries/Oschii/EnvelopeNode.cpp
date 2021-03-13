@@ -54,7 +54,6 @@ String EnvelopeNode::getInterpolation() {
 
 void EnvelopeNode::setError(String error) {
   _error = "Bad Envelope Node: " + error;
-  Serial.println(_error);
 }
 
 String EnvelopeNode::getError() {

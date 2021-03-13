@@ -6,7 +6,7 @@ DriverRack::DriverRack(I2CRack * i2cRack) {
 }
 
 
-String DriverRack::buildDrivers(JsonArray array) {
+bool DriverRack::buildDrivers(JsonArray array) {
   _driverIndex = 0;
 
   Serial.println("== DRIVERS ==");
@@ -24,9 +24,10 @@ String DriverRack::buildDrivers(JsonArray array) {
   if ( errorBuffer != "" ) {
     Serial.println("Errors:");
     Serial.println(errorBuffer);
+    return false;
   }
 
-  return errorBuffer;
+  return true;
 }
 
 String DriverRack::buildDriver(JsonObject json) {

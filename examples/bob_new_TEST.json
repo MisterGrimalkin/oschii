@@ -69,27 +69,6 @@
       "pin": 0
     }
   ],
-  "sensorMonitors": [
-    {
-      "sensor": "Button 1",
-      "sendTo": [
-        {
-          "~": "/green"
-        },
-        {
-          "~": "/blue"
-        }
-      ]
-    },
-    {
-      "sensor": "Button 2",
-      "sendTo": [
-        {
-          "~": "/red"
-        }
-      ]
-    }
-  ],
   "driverRemotes": [
     {
       "address": "/green",
@@ -132,7 +111,6 @@
               "loop": true
             }
           ]
-
         }
       ]
     },
@@ -141,6 +119,27 @@
       "writeTo": [
         {
           "driver": "Red"
+        }
+      ]
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Button 1",
+      "sendTo": [
+        {
+          "~": "/green"
+        },
+        {
+          "~": "/blue"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 2",
+      "sendTo": [
+        {
+          "~": "/red"
         }
       ]
     }

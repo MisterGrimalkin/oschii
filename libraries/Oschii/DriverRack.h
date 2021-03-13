@@ -18,7 +18,7 @@ class DriverRack {
     DriverRack(I2CRack * i2cRack);
     ~DriverRack();
 
-    String buildDrivers(JsonArray array);
+    bool buildDrivers(JsonArray array);
     String buildDriver(JsonObject json);
 
     void fireAll(int value);

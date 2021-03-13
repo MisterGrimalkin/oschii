@@ -103,7 +103,6 @@ String Driver::getError() {
 
 void Driver::setError(String error) {
   _error = "ERROR! Driver '" + _name + "': " + error;
-  Serial.println(_error);
 }
 
 //String Driver::toPrettyJson() {

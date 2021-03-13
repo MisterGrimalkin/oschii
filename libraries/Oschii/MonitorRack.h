@@ -16,7 +16,7 @@ class MonitorRack {
     MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack);
     ~MonitorRack();
 
-    String buildMonitors(JsonArray array);
+    bool buildMonitors(JsonArray array);
     String buildMonitor(JsonObject json);
 
     void loop();

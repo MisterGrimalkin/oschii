@@ -12,7 +12,7 @@ RemoteRack::~RemoteRack() {
   }
 }
 
-String RemoteRack::buildRemotes(JsonArray array) {
+bool RemoteRack::buildRemotes(JsonArray array) {
   _remoteIndex = 0;
 
   Serial.println("== REMOTES ==");
@@ -31,9 +31,10 @@ String RemoteRack::buildRemotes(JsonArray array) {
   if ( errorBuffer != "" ) {
     Serial.println("Errors:");
     Serial.println(errorBuffer);
+    return false;
   }
 
-  return "";
+  return true;
 }
 
 void RemoteRack::loop() {

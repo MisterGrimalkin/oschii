@@ -5,7 +5,7 @@ SensorRack::SensorRack(I2CRack * i2cRack) {
   _sensorIndex = 0;
 }
 
-String SensorRack::buildSensors(JsonArray array) {
+bool SensorRack::buildSensors(JsonArray array) {
   _sensorIndex = 0;
 
   Serial.println("== SENSORS ==");
@@ -22,9 +22,10 @@ String SensorRack::buildSensors(JsonArray array) {
   if ( errorBuffer != "" ) {
     Serial.println("Errors:");
     Serial.println(errorBuffer);
+    return false;
   }
 
-  return errorBuffer;
+  return true;
 }
 
 String SensorRack::buildSensor(JsonObject json) {

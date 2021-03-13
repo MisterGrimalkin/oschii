@@ -14,7 +14,7 @@ class RemoteRack {
     RemoteRack(DriverRack * driverRack);
     ~RemoteRack();
 
-    String buildRemotes(JsonArray array);
+    bool buildRemotes(JsonArray array);
     String buildRemote(JsonObject json);
 
     void loop();

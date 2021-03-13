@@ -13,7 +13,7 @@ MonitorRack::~MonitorRack() {
   }
 }
 
-String MonitorRack::buildMonitors(JsonArray array) {
+bool MonitorRack::buildMonitors(JsonArray array) {
   _monitorIndex = 0;
 
   Serial.println("== MONITORS ==");
@@ -32,9 +32,10 @@ String MonitorRack::buildMonitors(JsonArray array) {
   if ( errorBuffer != "" ) {
     Serial.println("Errors:");
     Serial.println(errorBuffer);
+    return false;
   }
 
-  return "";
+  return true;
 }
 
 String MonitorRack::buildMonitor(JsonObject json) {

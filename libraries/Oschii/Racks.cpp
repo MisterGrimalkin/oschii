@@ -61,9 +61,11 @@ bool Racks::buildConfig(JsonObject json) {
 
   Serial.println("> Building CONFIGURATION....\n");
 
+  bool success = true;
+
   if ( json.containsKey("i2c") ) {
     JsonObject i2cJson = json["i2c"];
-    _i2cRack->build(i2cJson);
+    success = _i2cRack->build(i2cJson) && success;
   }
 
   JsonArray sensorArray = json["sensors"];
@@ -71,20 +73,24 @@ bool Racks::buildConfig(JsonObject json) {
   JsonArray remoteArray = json["driverRemotes"];
   JsonArray monitorArray = json["sensorMonitors"];
 
-  _sensorRack->buildSensors(sensorArray);
-  _driverRack->buildDrivers(driverArray);
-  _remoteRack->buildRemotes(remoteArray);
-  _monitorRack->buildMonitors(monitorArray);
+  success = _sensorRack->buildSensors(sensorArray) && success;
+  success = _driverRack->buildDrivers(driverArray) && success;
+  success = _remoteRack->buildRemotes(remoteArray) && success;
+  success = _monitorRack->buildMonitors(monitorArray) && success;
 
-  Serial.print("Configuration uses ");
-  Serial.print(freeHeapSize - esp_get_free_heap_size());
-  Serial.print(" bytes (free space: ");
-  Serial.print(esp_get_free_heap_size());
-  Serial.println(" bytes)\n");
+  if ( success ) {
+    Serial.print("Configuration uses ");
+    Serial.print(freeHeapSize - esp_get_free_heap_size());
+    Serial.print(" bytes (free space: ");
+    Serial.print(esp_get_free_heap_size());
+    Serial.println(" bytes)\n");
 
-  Serial.println("> OK\n");
+    Serial.println("> OK\n");
+  } else {
+    Serial.println("\n> Many error. Such sadness. Wow.\n");
+  }
 
-  return true;
+  return success;
 }
 
 void Racks::restartESP() {

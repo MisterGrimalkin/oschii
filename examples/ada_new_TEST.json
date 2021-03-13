@@ -85,85 +85,6 @@
       "pin": 23
     }
   ],
-  "sensorMonitors": [
-    {
-      "sensor": "Knob",
-      "sendTo": [
-        {
-          "~": "/meter"
-        }
-      ]
-    },
-    {
-      "sensor": "Ultrasonic",
-      "sendTo": [
-        {
-          "~": "/tracker"
-        },
-        {
-          "~": "/pattern1",
-          "valueTransform": {
-            "outputRange": [
-              50,
-              2500
-            ],
-            "flipRange": true
-          }
-        }
-      ]
-    },
-    {
-      "sensor": "Button 1",
-      "sendTo": [
-        {
-          "~": "/pattern1",
-          "valueTransform": {
-            "outputRange": [
-              0,
-              1
-            ]
-          }
-        },
-        {
-          "~": "/pattern2",
-          "valueTransform": {
-            "flipRange": true
-          }
-        }
-      ]
-    },
-    {
-      "sensor": "Button 2",
-      "sendTo": [
-        {
-          "~": "/pattern1",
-          "valueTransform": {
-            "flipRange": true
-          }
-        },
-        {
-          "~": "/pattern2"
-        }
-      ]
-    },
-    {
-      "sensor": "Button 3",
-      "sendTo": [
-        {
-          "~": "/pattern1",
-          "valueTransform": {
-            "flipRange": true
-          }
-        },
-        {
-          "~": "/pattern2",
-          "valueTransform": {
-            "flipRange": true
-          }
-        }
-      ]
-    }
-  ],
   "driverRemotes": [
     {
       "address": "/meter",
@@ -602,6 +523,85 @@
               "loop": true
             }
           ]
+        }
+      ]
+    }
+  ],
+  "sensorMonitors": [
+    {
+      "sensor": "Knob",
+      "sendTo": [
+        {
+          "~": "/meter"
+        }
+      ]
+    },
+    {
+      "sensor": "Ultrasonic",
+      "sendTo": [
+        {
+          "~": "/tracker"
+        },
+        {
+          "~": "/pattern1",
+          "valueTransform": {
+            "outputRange": [
+              50,
+              2500
+            ],
+            "flipRange": true
+          }
+        }
+      ]
+    },
+    {
+      "sensor": "Button 1",
+      "sendTo": [
+        {
+          "~": "/pattern1",
+          "valueTransform": {
+            "outputRange": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "~": "/pattern2",
+          "valueTransform": {
+            "flipRange": true
+          }
+        }
+      ]
+    },
+    {
+      "sensor": "Button 2",
+      "sendTo": [
+        {
+          "~": "/pattern1",
+          "valueTransform": {
+            "flipRange": true
+          }
+        },
+        {
+          "~": "/pattern2"
+        }
+      ]
+    },
+    {
+      "sensor": "Button 3",
+      "sendTo": [
+        {
+          "~": "/pattern1",
+          "valueTransform": {
+            "flipRange": true
+          }
+        },
+        {
+          "~": "/pattern2",
+          "valueTransform": {
+            "flipRange": true
+          }
         }
       ]
     }

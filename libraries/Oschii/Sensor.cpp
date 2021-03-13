@@ -101,7 +101,6 @@ String Sensor::getError() {
 
 void Sensor::setError(String error) {
   _error = "ERROR! Sensor '" + _name + "': " + error;
-  Serial.println(_error);
 }
 
 //JsonObject Sensor::toJson() {

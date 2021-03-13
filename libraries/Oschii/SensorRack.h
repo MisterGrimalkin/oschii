@@ -20,7 +20,7 @@ class SensorRack {
     SensorRack(I2CRack * i2cRack);
     ~SensorRack();
 
-    String buildSensors(JsonArray array);
+    bool buildSensors(JsonArray array);
     String buildSensor(JsonObject json);
 
     void readSensors();
