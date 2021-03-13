@@ -22,6 +22,8 @@ class Racks {
     void init();
     void destroy();
 
+    String getSavedConfig();
+
     bool buildConfig(String jsonString, bool save);
     bool buildConfig(JsonObject json);
 

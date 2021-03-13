@@ -56,8 +56,8 @@ void SerialAPI::processInput(String input) {
     Serial.print("Name is now ");
     Serial.println(_settings->getName());
 
-//  } else if ( input == "config" ) {
-//    Serial.println(_racks->toPrettyJson());
+  } else if ( input == "config" ) {
+    Serial.println(_racks->getSavedConfig());
 
   } else if ( input == "config=" ) {
     String configStr = prompt(">> Enter new configuration <<\n");

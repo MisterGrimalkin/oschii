@@ -21,8 +21,12 @@ void Racks::destroy() {
   if ( _monitorRack != NULL ) delete _monitorRack;
 }
 
+String Racks::getSavedConfig() {
+  return _files->readFile(CONFIG_FILE);
+}
+
 void Racks::start() {
-  String configStr = _files->readFile(CONFIG_FILE);
+  String configStr = getSavedConfig();
   if ( configStr == "" ) {
     Serial.println("> No saved configuration\n");
   } else {
