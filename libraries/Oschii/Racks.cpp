@@ -1,11 +1,23 @@
 #include "Racks.h"
 
 Racks::Racks() {
+  init();
+}
+
+void Racks::init() {
   _i2cRack = new I2CRack();
   _sensorRack = new SensorRack(_i2cRack);
   _driverRack = new DriverRack(_i2cRack);
   _remoteRack = new RemoteRack(_driverRack);
   _monitorRack = new MonitorRack(_sensorRack, _remoteRack);
+}
+
+void Racks::destroy() {
+  if ( _i2cRack != NULL ) delete _i2cRack;
+  if ( _sensorRack != NULL ) delete _sensorRack;
+  if ( _driverRack != NULL ) delete _driverRack;
+  if ( _remoteRack != NULL ) delete _remoteRack;
+  if ( _monitorRack != NULL ) delete _monitorRack;
 }
 
 void Racks::start() {
@@ -25,7 +37,11 @@ bool Racks::buildConfig(String jsonString) {
 }
 
 bool Racks::buildConfig(JsonObject json) {
+  destroy();
+
   int freeHeapSize = esp_get_free_heap_size();
+
+  init();
 
   Serial.println("> Building CONFIGURATION....\n");
 

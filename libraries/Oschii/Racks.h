@@ -16,6 +16,9 @@ class Racks {
   public:
     Racks();
 
+    void init();
+    void destroy();
+
     bool buildConfig(String jsonString);
     bool buildConfig(JsonObject json);
 

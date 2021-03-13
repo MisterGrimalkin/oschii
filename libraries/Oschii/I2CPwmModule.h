@@ -11,6 +11,7 @@
 class I2CPwmModule : public I2CModule {
   public:
     I2CPwmModule(I2C * i2c) : I2CModule(i2c) {};
+    virtual ~I2CPwmModule();
 
     virtual bool open(int address);
     virtual bool build(JsonObject json);

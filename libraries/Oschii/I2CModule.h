@@ -12,6 +12,7 @@
 class I2CModule {
   public:
     I2CModule(I2C * i2c);
+    virtual ~I2CModule() {};
 
     virtual bool open(int address);
     virtual bool open(String address);
@@ -24,12 +25,13 @@ class I2CModule {
 
     String getError();
     void setError(String error);
+    String toString();
 
   protected:
     I2C * _i2c;
     String _name, _type, _chip;
     int _address;
-    String _error;
+    String _error, _addressString;
 };
 
 #endif

@@ -3,6 +3,7 @@
 Sensor::Sensor(I2CRack * i2cRack) {
   _i2cRack = i2cRack;
   _i2cModule = NULL;
+  _transform = NULL;
 
   _built = false;
   _changed = false;
@@ -13,11 +14,16 @@ Sensor::Sensor(I2CRack * i2cRack) {
   _error = "";
 }
 
+Sensor::~Sensor() {
+  if ( _transform != NULL ) delete _transform;
+}
+
 bool Sensor::build(JsonObject json) {
   if ( _built ) {
     _error = "RuleTwoError: Sensor '" + _name + "' has already been built";
     return false;
   }
+
 
   if ( json.containsKey("name") ) {
     _name = json["name"].as<String>();
@@ -31,6 +37,15 @@ bool Sensor::build(JsonObject json) {
   } else {
     setError("No value given for 'type'");
     return false;
+  }
+
+  if ( json.containsKey("valueTransform") ) {
+    JsonObject transformJson = json["valueTransform"];
+    _transform = new ValueTransform();
+    if ( !_transform->build(transformJson) ) {
+      setError(_transform->getError());
+      return false;
+    }
   }
 
   if ( json.containsKey("i2cModule") ) {
@@ -52,9 +67,16 @@ bool Sensor::build(JsonObject json) {
   return true;
 }
 
+int Sensor::applyTransform(int value) {
+  if ( _transform == NULL ) {
+    return value;
+  } else {
+    return _transform->apply(value);
+  }
+}
+
 String Sensor::toString() {
-  return "(" + _name + ") " + _type + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName());
-;
+  return "(" + _name + ") " + _type + (_i2cModule==NULL ? "" : " {"+_i2cModule->getName() + "}");
 }
 
 int Sensor::getValue() {

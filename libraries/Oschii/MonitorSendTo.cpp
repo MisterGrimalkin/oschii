@@ -6,6 +6,10 @@ MonitorSendTo::MonitorSendTo(RemoteRack * remoteRack) {
   _transform = NULL;
 }
 
+MonitorSendTo::~MonitorSendTo() {
+  if ( _transform != NULL ) delete _transform;
+}
+
 void MonitorSendTo::send(int value) {
   int sendValue = value;
   if ( _transform != NULL ) {

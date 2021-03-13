@@ -14,6 +14,7 @@
 class MonitorRack {
   public:
     MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack);
+    ~MonitorRack();
 
     String buildMonitors(JsonArray array);
     String buildMonitor(JsonObject json);

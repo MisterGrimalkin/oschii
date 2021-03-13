@@ -7,10 +7,12 @@
 #include "I2C.h"
 #include "I2CRack.h"
 #include "I2CModule.h"
+#include "ValueTransform.h"
 
 class Sensor {
   public:
     Sensor(I2CRack * i2cRack);
+    ~Sensor();
 
     virtual void readSensor() {};
 
@@ -36,6 +38,9 @@ class Sensor {
     String _name, _type, _error;
 
     void setError(String error);
+
+    ValueTransform * _transform;
+    int applyTransform(int value);
 
 //    StaticJsonDocument<128> _jsonRoot;
 };

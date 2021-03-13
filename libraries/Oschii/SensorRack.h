@@ -18,6 +18,7 @@
 class SensorRack {
   public:
     SensorRack(I2CRack * i2cRack);
+    ~SensorRack();
 
     String buildSensors(JsonArray array);
     String buildSensor(JsonObject json);

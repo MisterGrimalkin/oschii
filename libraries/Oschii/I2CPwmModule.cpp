@@ -1,5 +1,9 @@
 #include "I2CPwmModule.h"
 
+I2CPwmModule::~I2CPwmModule() {
+  if ( _pwm != NULL ) delete _pwm;
+}
+
 void I2CPwmModule::write(int pin, int value, bool invert) {
   if ( invert ) {
     _pwm->setPWM(pin, value, (value == 0 ? 4095 : 0));

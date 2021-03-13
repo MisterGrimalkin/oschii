@@ -83,6 +83,13 @@ int Envelope::getTotalTime() {
   return time;
 }
 
+Envelope::~Envelope() {
+  for ( int i=0; i<_nodeIndex; i++ ) {
+    EnvelopeNode * node = _nodes[i];
+    delete node;
+  }
+}
+
 bool Envelope::build(JsonArray array) {
   _startedAt = -1;
   _nodeIndex = 0;

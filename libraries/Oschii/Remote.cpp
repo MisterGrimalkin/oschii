@@ -5,6 +5,13 @@ Remote::Remote(DriverRack * driverRack) {
   _writeToIndex = 0;
 }
 
+Remote::~Remote() {
+  for ( int i=0; i<_writeToIndex; i++ ) {
+    RemoteWriteTo * writeTo = _writeTos[i];
+    delete writeTo;
+  }
+}
+
 void Remote::receive(int value) {
   for ( int i=0; i<_writeToIndex; i++ ) {
     RemoteWriteTo * writeTo = _writeTos[i];

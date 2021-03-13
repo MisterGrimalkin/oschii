@@ -7,6 +7,13 @@ Monitor::Monitor(SensorRack * sensorRack, RemoteRack * remoteRack) {
   _sendToIndex = 0;
 }
 
+Monitor::~Monitor() {
+  for ( int i=0; i<_sendToIndex; i++ ) {
+    MonitorSendTo * sendTo = _sendTos[i];
+    delete sendTo;
+  }
+}
+
 void Monitor::update() {
   _sensor->readSensor();
   if ( _onChange && _sensor->hasChanged() ) {

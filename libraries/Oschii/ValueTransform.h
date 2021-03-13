@@ -11,6 +11,7 @@
 class ValueTransform {
   public:
     ValueTransform() {};
+    ~ValueTransform();
 
     int apply(int value);
 

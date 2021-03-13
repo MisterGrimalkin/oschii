@@ -11,6 +11,7 @@
 class Envelope {
   public:
     Envelope() {};
+    ~Envelope();
 
     bool build(JsonArray array);
 

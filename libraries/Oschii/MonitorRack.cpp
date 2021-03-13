@@ -6,6 +6,13 @@ MonitorRack::MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack) {
   _monitorIndex = 0;
 }
 
+MonitorRack::~MonitorRack() {
+  for ( int i=0; i<_monitorIndex; i++ ) {
+    Monitor * monitor = _monitors[i];
+    delete monitor;
+  }
+}
+
 String MonitorRack::buildMonitors(JsonArray array) {
   _monitorIndex = 0;
 

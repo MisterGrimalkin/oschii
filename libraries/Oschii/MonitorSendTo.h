@@ -10,6 +10,7 @@
 class MonitorSendTo {
   public:
     MonitorSendTo(RemoteRack * remoteRack);
+    ~MonitorSendTo();
 
     void send(int value);
 

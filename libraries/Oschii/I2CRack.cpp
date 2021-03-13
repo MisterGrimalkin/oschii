@@ -1,9 +1,6 @@
 #include "I2CRack.h"
 
 bool I2CRack::build(JsonObject json) {
-  Serial.println("== Building I2C Modules");
-
-  _i2c = new I2C();
 
   int sdaPin = -1;
   int sclPin = -1;
@@ -18,13 +15,9 @@ bool I2CRack::build(JsonObject json) {
     return false;
   }
 
-  Serial.print("   (SDA=");
-  Serial.print(sdaPin);
-  Serial.print(" SCL=");
-  Serial.print(sclPin);
-  Serial.println(")");
-
   _i2c->start(sdaPin, sclPin);
+
+  Serial.println("== Building I2C Modules");
 
   if ( json.containsKey("modules") ) {
     JsonArray modulesArray = json["modules"];
@@ -47,6 +40,7 @@ bool I2CRack::build(JsonObject json) {
 
         if ( module->build(moduleJson) ) {
           _modules[_moduleIndex++] = module;
+          Serial.println(" - " + module->toString());
         } else {
           setError(module->getError());
           return false;
@@ -83,4 +77,17 @@ String I2CRack::getError() {
 
 void I2CRack::setError(String error) {
   _error = "I2C Rack: " + error;
+}
+
+I2CRack::I2CRack() {
+  _i2c = new I2C();
+  _moduleIndex = 0;
+}
+
+I2CRack::~I2CRack() {
+  delete _i2c;
+  for ( int i=0; i<_moduleIndex; i++ ) {
+    I2CModule * module = _modules[i];
+    delete module;
+  }
 }

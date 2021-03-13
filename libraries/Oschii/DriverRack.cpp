@@ -5,6 +5,7 @@ DriverRack::DriverRack(I2CRack * i2cRack) {
   _driverIndex = 0;
 }
 
+
 String DriverRack::buildDrivers(JsonArray array) {
   _driverIndex = 0;
 
@@ -68,6 +69,13 @@ Driver * DriverRack::getDriver(String name) {
     }
   }
   return NULL;
+}
+
+DriverRack::~DriverRack() {
+  for ( int i=0; i<_driverIndex; i++ ) {
+    Driver * driver = _drivers[i];
+    delete driver;
+  }
 }
 
 //JsonArray DriverRack::toJson() {

@@ -82,6 +82,13 @@ Sensor * SensorRack::getSensor(String name) {
   return NULL;
 }
 
+SensorRack::~SensorRack() {
+  for ( int i=0; i<_sensorIndex; i++ ) {
+    Sensor * sensor = _sensors[i];
+    delete sensor;
+  }
+}
+
 //JsonArray SensorRack::toJson() {
 //  _jsonRoot.clear();
 //  JsonArray array = _jsonRoot.createNestedArray("sensors");

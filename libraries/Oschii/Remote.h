@@ -13,6 +13,7 @@
 class Remote {
   public:
     Remote(DriverRack * driverRack);
+    ~Remote();
 
     void receive(int value);
 

@@ -1,5 +1,8 @@
 #include "ValueTransform.h"
 
+ValueTransform::~ValueTransform() {
+}
+
 int ValueTransform::apply(int value) {
   return mapToOutput(capInput(value));
 }

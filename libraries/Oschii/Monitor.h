@@ -15,6 +15,7 @@
 class Monitor {
   public:
     Monitor(SensorRack * sensorRack, RemoteRack * remoteRack);
+    ~Monitor();
 
     void update();
 

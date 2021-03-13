@@ -26,14 +26,10 @@ bool I2C::ping(int address) {
   Wire.begin();
   Wire.beginTransmission(address);
   if ( Wire.endTransmission() == 0 ) {
-    Serial.print(" - Connected to I2C Module [");
-    Serial.print(address);
-    Serial.println("]");
     return true;
   } else {
-    Serial.print("ERROR! I2C Module not found [");
-    Serial.print(address);
-    Serial.println("]");
+    Serial.print("ERROR! I2C Module not found @ 0x");
+    Serial.println(address, HEX);
     return false;
   }
 }
@@ -51,7 +47,7 @@ void I2C::scan() {
   for (int i=8; i<120; i++) {
       Wire.beginTransmission(i);
       if (Wire.endTransmission() == 0) {
-      Serial.print("Found module @ 0x");
+      Serial.print(" - Found module @ 0x");
       Serial.println(i, HEX);
       count++;
     }

@@ -12,6 +12,10 @@ Driver::Driver(I2CRack * i2cRack) {
   _error = "";
 }
 
+Driver::~Driver() {
+  if ( _transform != NULL ) delete _transform;
+}
+
 bool Driver::build(JsonObject json) {
   if ( _built ) {
     _error = "RuleTwoError: Driver '" + _name + "' has already been built";
@@ -76,7 +80,7 @@ int Driver::applyTransform(int value) {
 
 String Driver::toString() {
   return "[" + _name + "] " + _type
-          + (_i2cModule==NULL ? "" : " i2c:"+_i2cModule->getName())
+          + (_i2cModule==NULL ? "" : " {"+_i2cModule->getName() + "}")
           + " initial:" + String(_initialValue)
           + " invert:" + String(_invert);
 }

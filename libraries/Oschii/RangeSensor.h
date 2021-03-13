@@ -5,7 +5,6 @@
 #include <ArduinoJson.h>
 
 #include "Sensor.h"
-#include "ValueTransform.h"
 #include "I2CRack.h"
 
 #define MAX_SAMPLES 100
@@ -28,9 +27,7 @@ class RangeSensor : public Sensor {
     int _sampleBuffer[MAX_SAMPLES];
     int _samples, _sampleCount;
     bool _interleave;
-    ValueTransform * _transform;
 
-    int applyTransform(int value);
     int getMedianValue(int samples);
 };
 

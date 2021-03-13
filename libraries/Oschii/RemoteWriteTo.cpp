@@ -7,6 +7,11 @@ RemoteWriteTo::RemoteWriteTo(DriverRack * driverRack) {
   _envelope = NULL;
 }
 
+RemoteWriteTo::~RemoteWriteTo() {
+  if ( _transform != NULL ) delete _transform;
+  if ( _envelope != NULL ) delete _envelope;
+}
+
 bool RemoteWriteTo::build(JsonObject json) {
   if ( json.containsKey("driver") ) {
     String driverName = json["driver"];

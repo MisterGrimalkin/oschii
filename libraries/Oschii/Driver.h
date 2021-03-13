@@ -10,6 +10,7 @@
 class Driver {
   public:
     Driver(I2CRack * i2cRack);
+    virtual ~Driver();
 
     virtual void fire(int value) {};
 

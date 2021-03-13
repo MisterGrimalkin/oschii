@@ -13,7 +13,8 @@
 
 class I2CRack {
   public:
-    I2CRack() {};
+    I2CRack();
+    ~I2CRack();
 
     bool build(JsonObject json);
 

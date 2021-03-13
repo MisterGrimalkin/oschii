@@ -16,6 +16,7 @@
 class DriverRack {
   public:
     DriverRack(I2CRack * i2cRack);
+    ~DriverRack();
 
     String buildDrivers(JsonArray array);
     String buildDriver(JsonObject json);

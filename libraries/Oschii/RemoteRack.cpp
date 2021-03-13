@@ -5,6 +5,13 @@ RemoteRack::RemoteRack(DriverRack * driverRack) {
   _remoteIndex = 0;
 }
 
+RemoteRack::~RemoteRack() {
+  for ( int i=0;  i<_remoteIndex; i++ ) {
+    Remote * remote = _remotes[i];
+    delete remote;
+  }
+}
+
 String RemoteRack::buildRemotes(JsonArray array) {
   _remoteIndex = 0;
 

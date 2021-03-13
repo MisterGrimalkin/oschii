@@ -61,6 +61,8 @@ String EnvelopeNode::getError() {
   return _error;
 }
 
+EnvelopeNode::~EnvelopeNode() {
+}
 //JsonObject EnvelopeNode::toJson() {
 //  _jsonRoot.clear();
 //  JsonObject json = _jsonRoot.to<JsonObject>();

@@ -11,6 +11,7 @@
 class RemoteWriteTo {
   public:
     RemoteWriteTo(DriverRack * driverRack);
+    ~RemoteWriteTo();
 
     bool build(JsonObject json);
     void write(int value);

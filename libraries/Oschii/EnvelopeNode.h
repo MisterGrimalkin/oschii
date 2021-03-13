@@ -7,6 +7,7 @@
 class EnvelopeNode {
   public:
     EnvelopeNode() {};
+    ~EnvelopeNode();
 
     bool build(JsonObject json);
 

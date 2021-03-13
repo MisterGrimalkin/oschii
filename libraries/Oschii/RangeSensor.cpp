@@ -30,14 +30,6 @@ void RangeSensor::readSensor() {
   _value = tempValue;
 }
 
-int RangeSensor::applyTransform(int value) {
-  if ( _transform == NULL ) {
-    return value;
-  } else {
-    return _transform->apply(value);
-  }
-}
-
 int compareIntegers (const void * a, const void * b) {
   return ( *(int*)a - *(int*)b );
 }
@@ -58,7 +50,6 @@ bool RangeSensor::build(JsonObject json) {
   _samples = 1;
   _sampleCount = 0;
   _interleave = false;
-  _transform = NULL;
 
   if ( json.containsKey("samples") )     _samples    = json["samples"];
   if ( json.containsKey("interleave") )  _interleave = json["interleave"];
@@ -66,15 +57,6 @@ bool RangeSensor::build(JsonObject json) {
   if ( _samples > MAX_SAMPLES ) {
     setError("Maximum samples is " + String(MAX_SAMPLES));
     return false;
-  }
-
-  if ( json.containsKey("valueTransform") ) {
-    JsonObject transformJson = json["valueTransform"];
-    _transform = new ValueTransform();
-    if ( !_transform->build(transformJson) ) {
-      setError(_transform->getError());
-      return false;
-    }
   }
 
   return true;

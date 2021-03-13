@@ -42,14 +42,21 @@ bool I2CModule::build(JsonObject json) {
   }
 
   if ( json.containsKey("address") ) {
-    String hexStr = json["address"].as<String>();
-    open(hexStr);
+    _addressString = json["address"].as<String>();
+    if ( !open(_addressString) ) {
+      setError("Could not open I2C Module");
+      return false;
+    }
   } else {
     setError("Needs an I2C Address");
     return false;
   }
 
   return true;
+}
+
+String I2CModule::toString() {
+  return "{" + _name + "} " + _type + " @ " + _addressString;
 }
 
 String I2CModule::getName() {
@@ -65,6 +72,6 @@ String I2CModule::getError() {
 }
 
 void I2CModule::setError(String error) {
-  _error = "I2CModule: " + error;
+  _error = "ERROR! I2CModule '" + _name + "' " + error;
 }
 
