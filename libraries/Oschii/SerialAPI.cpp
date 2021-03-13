@@ -61,7 +61,7 @@ void SerialAPI::processInput(String input) {
 
   } else if ( input == "config=" ) {
     String configStr = prompt(">> Enter new configuration <<\n");
-    _racks->buildConfig(configStr);
+    _racks->buildConfig(configStr, true);
 
   }
 }

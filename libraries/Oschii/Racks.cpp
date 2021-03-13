@@ -1,7 +1,8 @@
 #include "Racks.h"
 
-Racks::Racks() {
+Racks::Racks(FileService * files) {
   init();
+  _files = files;
 }
 
 void Racks::init() {
@@ -21,6 +22,12 @@ void Racks::destroy() {
 }
 
 void Racks::start() {
+  String configStr = _files->readFile(CONFIG_FILE);
+  if ( configStr == "" ) {
+    Serial.println("> No saved configuration\n");
+  } else {
+    buildConfig(configStr, false);
+  }
 }
 
 void Racks::loop() {
@@ -28,12 +35,17 @@ void Racks::loop() {
   _remoteRack->loop();
 }
 
-bool Racks::buildConfig(String jsonString) {
+bool Racks::buildConfig(String jsonString, bool save) {
   const char * json = jsonString.c_str();
   DeserializationError error = deserializeJson(_jsonDoc, json);
   if ( error ) return false;
   JsonObject obj = _jsonDoc.as<JsonObject>();
-  return buildConfig(obj);
+  bool success = buildConfig(obj);
+  if ( success && save ) {
+    _files->writeFile(CONFIG_FILE, jsonString);
+    restartESP();
+  }
+  return success;
 }
 
 bool Racks::buildConfig(JsonObject json) {
@@ -69,6 +81,17 @@ bool Racks::buildConfig(JsonObject json) {
   Serial.println("> OK\n");
 
   return true;
+}
+
+void Racks::restartESP() {
+  Serial.print("\nRestarting Oschii in ");
+  for ( int i=RESTART_TIMEOUT; i>0; i-- ) {
+    Serial.print(i);
+    Serial.print(" ");
+    delay(1000);
+  }
+  Serial.println("\n!RESTARTING!\n\n");
+  ESP.restart();
 }
 
 //JsonObject Racks::toJson() {

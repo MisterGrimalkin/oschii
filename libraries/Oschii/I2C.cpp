@@ -35,7 +35,7 @@ bool I2C::ping(int address) {
 }
 
 void I2C::scan() {
-  Serial.print("\n== Scanning I2C bus (SDA=");
+  Serial.print("== Scanning I2C bus (SDA=");
   Serial.print(_sdaPin);
   Serial.print(" SCL=");
   Serial.print(_sclPin);
