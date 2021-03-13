@@ -14,7 +14,7 @@ bool I2CRack::build(JsonObject json) {
   if ( json.containsKey("sclPin") ) sclPin = json["sclPin"];
 
   if ( sdaPin < 0 || sclPin < 0 ) {
-    Serial.println("Must specify SDA and SCL pins");
+    setError("Must specify SDA and SCL pins");
     return false;
   }
 
@@ -41,18 +41,18 @@ bool I2CRack::build(JsonObject json) {
           module = new I2CPwmModule(_i2c);
 
         } else {
-          Serial.println("Unknown I2C Module type");
+          setError("Unknown I2C Module type '" + type + "'");
           return false;
         }
 
         if ( module->build(moduleJson) ) {
           _modules[_moduleIndex++] = module;
         } else {
-          Serial.println("failed to build i2c fucking module");
+          setError(module->getError());
           return false;
         }
       } else {
-        Serial.println("No type specified");
+        setError("No type specified");
         return false;
       }
     }
@@ -75,4 +75,12 @@ I2CModule * I2CRack::getModule(String name) {
 
 I2C * I2CRack::getI2C() {
   return _i2c;
+}
+
+String I2CRack::getError() {
+  return _error;
+}
+
+void I2CRack::setError(String error) {
+  _error = "I2C Rack: " + error;
 }

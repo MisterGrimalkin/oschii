@@ -22,6 +22,9 @@ class RemoteWriteTo {
 
     String getDriverName();
 
+    String getError();
+    void setError(String error);
+
 //    JsonObject toJson();
 
   private:
@@ -29,7 +32,7 @@ class RemoteWriteTo {
     Driver * _driver;
     Envelope * _envelope;
     ValueTransform * _transform;
-
+    String _error;
 //    StaticJsonDocument<128> _jsonRoot;
 };
 

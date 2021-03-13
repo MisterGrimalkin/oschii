@@ -21,11 +21,14 @@ class I2CRack {
 
     I2C * getI2C();
 
+    String getError();
+    void setError(String error);
+
   private:
     I2C * _i2c;
     I2CModule * _modules[MAX_MODULES];
     int _moduleIndex;
-
+    String _error;
 };
 
 #endif

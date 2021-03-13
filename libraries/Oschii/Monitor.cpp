@@ -33,8 +33,12 @@ bool Monitor::build(JsonObject json) {
   if ( json.containsKey("sensor") ) {
     String sensorName = json["sensor"];
     _sensor = _sensorRack->getSensor(sensorName);
-    if ( _sensor == NULL ) return false;
+    if ( _sensor == NULL ) {
+      setError("Sensor '" + sensorName + "' not found");
+      return false;
+    }
   } else {
+    setError("Must specify Sensor");
     return false;
   }
 
@@ -46,8 +50,12 @@ bool Monitor::build(JsonObject json) {
   for ( int i=0; i<sendToArray.size(); i++ ) {
     JsonObject sendToJson = sendToArray[i];
     MonitorSendTo * sendTo = new MonitorSendTo(_remoteRack);
-    sendTo->build(sendToJson);
-    _sendTos[_sendToIndex++] = sendTo;
+    if (sendTo->build(sendToJson)) {
+      _sendTos[_sendToIndex++] = sendTo;
+    } else {
+      setError(sendTo->getError());
+      return false;
+    }
   }
 
   return true;
@@ -62,6 +70,13 @@ String Monitor::toString() {
   return str;
 }
 
+String Monitor::getError() {
+  return _error;
+}
+
+void Monitor::setError(String error) {
+  _error = "Monitor: " + error;
+}
 //JsonObject Monitor::toJson() {
 //  _jsonRoot.clear();
 //  JsonObject json = _jsonRoot.to<JsonObject>();

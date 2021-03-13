@@ -22,17 +22,32 @@ bool MonitorSendTo::build(JsonObject json) {
   if ( json.containsKey("~") ) {
     _address = json["~"].as<String>();
     _remote = _remoteRack->getRemote(_address);
+    if ( _remote == NULL ) {
+      setError("Remote '" + _address + "' not found");
+      return false;
+    }
   }
 
   if ( json.containsKey("valueTransform") ) {
     JsonObject transformJson = json["valueTransform"];
     _transform = new ValueTransform();
-    _transform->build(transformJson);
+    if ( !_transform->build(transformJson) ) {
+      setError(_transform->getError());
+      return false;
+    }
   }
 }
 
 String MonitorSendTo::getAddress() {
   return _address;
+}
+
+String MonitorSendTo::getError() {
+  return _error;
+}
+
+void MonitorSendTo::setError(String error) {
+  _error = "Monitor Send To: " + error;
 }
 
 //JsonObject MonitorSendTo::toJson() {

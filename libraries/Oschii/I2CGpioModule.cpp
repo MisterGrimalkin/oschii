@@ -68,7 +68,7 @@ bool I2CGpioModule::build(JsonObject json) {
   if ( _type == "gpio" ) {
     _chip = "MCP23017";
   } else {
-    Serial.println("wtf?");
+    setError("wtf?");
     return false;
   }
 

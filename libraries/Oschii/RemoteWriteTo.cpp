@@ -12,6 +12,7 @@ bool RemoteWriteTo::build(JsonObject json) {
     String driverName = json["driver"];
     _driver = _driverRack->getDriver(driverName);
   } else {
+    setError("Must specify 'Driver'");
     return false;
   }
 
@@ -19,6 +20,7 @@ bool RemoteWriteTo::build(JsonObject json) {
     JsonObject transformJson = json["valueTransform"];
     _transform = new ValueTransform();
     if ( !_transform->build(transformJson) ) {
+      setError(_transform->getError());
       return false;
     }
   }
@@ -27,6 +29,7 @@ bool RemoteWriteTo::build(JsonObject json) {
     JsonArray envelopeJson = json["envelope"];
     _envelope = new Envelope();
     if ( !_envelope->build(envelopeJson) ) {
+      setError(_envelope->getError());
       return false;
     }
   }
@@ -65,6 +68,14 @@ void RemoteWriteTo::update() {
 
 String RemoteWriteTo::getDriverName() {
   return _driver->getName();
+}
+
+String RemoteWriteTo::getError() {
+  return _error;
+}
+
+void RemoteWriteTo::setError(String error) {
+  _error = "Remote Write To: " + error;
 }
 
 //JsonObject RemoteWriteTo::toJson() {

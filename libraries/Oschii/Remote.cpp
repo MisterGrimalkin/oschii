@@ -23,6 +23,7 @@ bool Remote::build(JsonObject json) {
   if ( json.containsKey("address") ) {
     _address = json["address"].as<String>();
   } else {
+    setError("Must specify 'address'");
     return false;
   }
 
@@ -32,8 +33,12 @@ bool Remote::build(JsonObject json) {
     JsonObject writeToJson = writeToArray[i];
 
     RemoteWriteTo * writeTo = new RemoteWriteTo(_driverRack);
-    writeTo->build(writeToJson);
-    _writeTos[_writeToIndex++] = writeTo;
+    if ( writeTo->build(writeToJson) ) {
+      _writeTos[_writeToIndex++] = writeTo;
+    } else {
+      setError(writeTo->getError());
+      return false;
+    }
   }
 
   return true;
@@ -50,6 +55,14 @@ String Remote::toString() {
     str += " [" + writeTo->getDriverName() + "]";
   }
   return str;
+}
+
+String Remote::getError() {
+  return _error;
+}
+
+void Remote::setError(String error) {
+  _error = "Remote: " + error;
 }
 
 //JsonObject Remote::toJson() {

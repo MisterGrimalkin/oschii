@@ -17,6 +17,9 @@ class MonitorSendTo {
 
     String getAddress();
 
+    String getError();
+    void setError(String error);
+
 //    JsonObject toJson();
 
   private:
@@ -25,6 +28,7 @@ class MonitorSendTo {
     String _address;
     ValueTransform * _transform;
 //    StaticJsonDocument<128> _jsonRoot;
+    String _error;
 };
 
 #endif

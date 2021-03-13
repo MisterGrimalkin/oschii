@@ -32,7 +32,6 @@ int EnvelopeNode::getAmount(int value) {
   }
 }
 
-
 int EnvelopeNode::getFadeToAmount(int value) {
   if ( _fadeToAmountFrom == 0 ) {
     return value;
@@ -51,6 +50,15 @@ int EnvelopeNode::getTime(int value) {
 
 String EnvelopeNode::getInterpolation() {
   return _interpolation;
+}
+
+void EnvelopeNode::setError(String error) {
+  _error = "Bad Envelope Node: " + error;
+  Serial.println(_error);
+}
+
+String EnvelopeNode::getError() {
+  return _error;
 }
 
 //JsonObject EnvelopeNode::toJson() {

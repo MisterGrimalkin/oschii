@@ -20,7 +20,13 @@ String DriverRack::buildDrivers(JsonArray array) {
   Serial.print(_driverIndex);
   Serial.println(" ==\n");
 
-  return errorBuffer;}
+  if ( errorBuffer != "" ) {
+    Serial.println("Errors:");
+    Serial.println(errorBuffer);
+  }
+
+  return errorBuffer;
+}
 
 String DriverRack::buildDriver(JsonObject json) {
   Driver * driver;

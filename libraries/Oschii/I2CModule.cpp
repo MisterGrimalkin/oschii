@@ -30,14 +30,14 @@ bool I2CModule::build(JsonObject json) {
   if ( json.containsKey("name") ) {
     _name = json["name"].as<String>();
   } else {
-    Serial.println("Needs a name");
+    setError("Needs a name");
     return false;
   }
 
   if ( json.containsKey("type") ) {
     _type = json["type"].as<String>();
   } else {
-    Serial.println("Needs a type");
+    setError("Needs a type");
     return false;
   }
 
@@ -45,7 +45,7 @@ bool I2CModule::build(JsonObject json) {
     String hexStr = json["address"].as<String>();
     open(hexStr);
   } else {
-    Serial.println("Needs an I2C Address");
+    setError("Needs an I2C Address");
     return false;
   }
 
@@ -59,3 +59,12 @@ String I2CModule::getName() {
 String I2CModule::getType() {
   return _type;
 }
+
+String I2CModule::getError() {
+  return _error;
+}
+
+void I2CModule::setError(String error) {
+  _error = "I2CModule: " + error;
+}
+

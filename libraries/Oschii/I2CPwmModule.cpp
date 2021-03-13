@@ -26,7 +26,7 @@ bool I2CPwmModule::build(JsonObject json) {
   if ( _type == "pwm" ) {
     _chip = "PCA9685";
   } else {
-    Serial.println("wtf?");
+    setError("wtf?");
     return false;
   }
 

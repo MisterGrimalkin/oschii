@@ -106,6 +106,7 @@ bool Envelope::build(JsonArray array) {
     if ( !isConfigNode ) {
       EnvelopeNode * node = new EnvelopeNode();
       if ( !node->build(nodeJson) ) {
+        setError(node->getError());
         return false;
       }
       _nodes[_nodeIndex++] = node;
@@ -113,6 +114,14 @@ bool Envelope::build(JsonArray array) {
   }
 
   return true;
+}
+
+void Envelope::setError(String error) {
+  _error = "Bad Envelope: " + error;
+}
+
+String Envelope::getError() {
+  return _error;
 }
 
 //JsonArray Envelope::toJson() {

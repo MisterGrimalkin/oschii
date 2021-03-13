@@ -22,6 +22,9 @@ class Envelope {
 
     int getTotalTime();
 
+    void setError(String error);
+    String getError();
+
 //    JsonArray toJson();
 
   private:
@@ -29,6 +32,8 @@ class Envelope {
     int _nodeIndex, _triggerValue, _startedAt;
     bool _loop;
     int _value;
+    String _error;
+
 //    StaticJsonDocument<64> _jsonRoot;
 //    StaticJsonDocument<64> _jsonRoot2;
 };

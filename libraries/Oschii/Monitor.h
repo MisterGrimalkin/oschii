@@ -22,6 +22,9 @@ class Monitor {
 
     String toString();
 
+    String getError();
+    void setError(String error);
+
 //    JsonObject toJson();
 
   private:
@@ -31,6 +34,7 @@ class Monitor {
     MonitorSendTo * _sendTos[MAX_MONITOR_REMOTES];
     int _sendToIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
+    String _error;
 //    StaticJsonDocument<128> _jsonRoot;
 };
 

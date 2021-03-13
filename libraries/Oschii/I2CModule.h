@@ -22,10 +22,14 @@ class I2CModule {
     String getName();
     String getType();
 
+    String getError();
+    void setError(String error);
+
   protected:
     I2C * _i2c;
     String _name, _type, _chip;
     int _address;
+    String _error;
 };
 
 #endif

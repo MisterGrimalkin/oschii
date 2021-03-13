@@ -24,6 +24,9 @@ class Remote {
 
     String getAddress();
 
+    String getError();
+    void setError(String error);
+
 //    JsonObject toJson();
 
   private:
@@ -31,6 +34,7 @@ class Remote {
     String _address;
     RemoteWriteTo * _writeTos[MAX_REMOTE_DRIVERS];
     int _writeToIndex;
+    String _error;
 //    StaticJsonDocument<128> _jsonRoot;
 };
 

@@ -10,14 +10,21 @@ String RemoteRack::buildRemotes(JsonArray array) {
 
   Serial.println("== REMOTES ==");
 
+  String errorBuffer = "";
+
   for ( int i = 0; i < array.size(); i++ ) {
     JsonObject json = array[i];
-    buildRemote(json);
+    errorBuffer += buildRemote(json);
   }
 
   Serial.print("== Found: ");
   Serial.print(_remoteIndex);
   Serial.println(" ==\n");
+
+  if ( errorBuffer != "" ) {
+    Serial.println("Errors:");
+    Serial.println(errorBuffer);
+  }
 
   return "";
 }
@@ -34,6 +41,8 @@ String RemoteRack::buildRemote(JsonObject json) {
   if ( remote->build(json) ) {
     Serial.println(" - " + remote->toString());
     _remotes[_remoteIndex++] = remote;
+  } else {
+    return remote->getError() + "\n";
   }
   return "";
 }

@@ -19,6 +19,11 @@ String SensorRack::buildSensors(JsonArray array) {
   Serial.print(_sensorIndex);
   Serial.println(" ==\n");
 
+  if ( errorBuffer != "" ) {
+    Serial.println("Errors:");
+    Serial.println(errorBuffer);
+  }
+
   return errorBuffer;
 }
 

@@ -11,23 +11,32 @@ String MonitorRack::buildMonitors(JsonArray array) {
 
   Serial.println("== MONITORS ==");
 
+  String errorBuffer = "";
+
   for ( int i = 0; i < array.size(); i++ ) {
     JsonObject json = array[i];
-    buildMonitor(json);
+    errorBuffer += buildMonitor(json);
   }
 
   Serial.print("== Found: ");
   Serial.print(_monitorIndex);
   Serial.println(" ==\n");
+
+  if ( errorBuffer != "" ) {
+    Serial.println("Errors:");
+    Serial.println(errorBuffer);
+  }
+
   return "";
 }
-
 
 String MonitorRack::buildMonitor(JsonObject json) {
   Monitor * monitor = new Monitor(_sensorRack, _remoteRack);
   if ( monitor->build(json) ) {
     Serial.println(" - " + monitor->toString());
     _monitors[_monitorIndex++] = monitor;
+  } else {
+    return monitor->getError();
   }
   return "";
 }
