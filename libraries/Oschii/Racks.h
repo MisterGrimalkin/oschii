@@ -15,7 +15,7 @@
 
 #define JSON_SIZE_LIMIT 20000
 #define CONFIG_FILE "/oschii/config.json"
-#define RESTART_TIMEOUT 3
+#define RESTART_TIMEOUT 2
 
 class Racks {
   public:

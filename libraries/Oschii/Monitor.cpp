@@ -1,8 +1,9 @@
 #include "Monitor.h"
 
-Monitor::Monitor(SensorRack * sensorRack, RemoteRack * remoteRack) {
+Monitor::Monitor(SensorRack * sensorRack, RemoteRack * remoteRack, ReceiverRack * receiverRack) {
   _sensorRack = sensorRack;
   _remoteRack = remoteRack;
+  _receiverRack = receiverRack;
   _transform = NULL;
   _sendToIndex = 0;
 }
@@ -67,7 +68,7 @@ bool Monitor::build(JsonObject json) {
 
   for ( int i=0; i<sendToArray.size(); i++ ) {
     JsonObject sendToJson = sendToArray[i];
-    MonitorSendTo * sendTo = new MonitorSendTo(_remoteRack);
+    MonitorSendTo * sendTo = new MonitorSendTo(_remoteRack, _receiverRack);
     if (sendTo->build(sendToJson)) {
       _sendTos[_sendToIndex++] = sendTo;
     } else {

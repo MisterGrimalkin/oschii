@@ -527,10 +527,20 @@
       ]
     }
   ],
+  "receivers": [
+    {
+      "name": "SnootBox",
+      "ip": "192.168.1.101"
+    }
+  ],
   "sensorMonitors": [
     {
       "sensor": "Knob",
       "sendTo": [
+        {
+          "receiver": "SnootBox",
+          "address": "/knob"
+        },
         {
           "~": "/meter"
         }

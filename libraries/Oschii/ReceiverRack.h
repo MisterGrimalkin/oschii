@@ -16,6 +16,8 @@ class ReceiverRack {
 
     Receiver * getReceiver(String name);
 
+    void sendOscToAll(String address, int value);
+
   private:
     NetworkService * _network;
     Receiver * _receivers[MAX_RECEIVERS];

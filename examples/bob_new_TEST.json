@@ -134,8 +134,13 @@
       "sensor": "Button 1",
       "sendTo": [
         {
-          "receiver": "SnootBox",
-          "address": "/test"
+          "*": "/test",
+          "valueTransform": {
+            "outputRange": [
+              80,
+              50
+            ]
+          }
         },
         {
           "~": "/green"

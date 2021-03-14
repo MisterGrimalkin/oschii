@@ -1,8 +1,9 @@
 #include "MonitorRack.h"
 
-MonitorRack::MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack) {
+MonitorRack::MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack, ReceiverRack * receiverRack) {
   _sensorRack = sensorRack;
   _remoteRack = remoteRack;
+  _receiverRack = receiverRack;
   _monitorIndex = 0;
 }
 
@@ -39,7 +40,7 @@ bool MonitorRack::buildMonitors(JsonArray array) {
 }
 
 String MonitorRack::buildMonitor(JsonObject json) {
-  Monitor * monitor = new Monitor(_sensorRack, _remoteRack);
+  Monitor * monitor = new Monitor(_sensorRack, _remoteRack, _receiverRack);
   if ( monitor->build(json) ) {
     Serial.println(" - " + monitor->toString());
     _monitors[_monitorIndex++] = monitor;

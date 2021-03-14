@@ -19,7 +19,7 @@ void Racks::init() {
   _sensorRack = new SensorRack(_i2cRack);
   _driverRack = new DriverRack(_i2cRack);
   _remoteRack = new RemoteRack(_driverRack);
-  _monitorRack = new MonitorRack(_sensorRack, _remoteRack);
+  _monitorRack = new MonitorRack(_sensorRack, _remoteRack, _receiverRack);
 }
 
 void Racks::destroy() {
@@ -100,7 +100,8 @@ bool Racks::buildConfig(JsonObject json) {
 
     Serial.println("> OK\n");
   } else {
-    Serial.println("\n> Many error. Such sadness. Wow.\n");
+    Serial.println("\n> Such error. Many fail. Wow.\n");
+    restartESP();
   }
 
   return success;
@@ -113,7 +114,7 @@ void Racks::restartESP() {
     Serial.print(" ");
     delay(1000);
   }
-  Serial.println("\n!RESTARTING!\n\n");
+  Serial.println(" NOW!\n\n");
   ESP.restart();
 }
 

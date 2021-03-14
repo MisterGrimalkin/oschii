@@ -1,8 +1,11 @@
 #include "MonitorSendTo.h"
 
-MonitorSendTo::MonitorSendTo(RemoteRack * remoteRack) {
+MonitorSendTo::MonitorSendTo(RemoteRack * remoteRack, ReceiverRack * receiverRack) {
   _remoteRack = remoteRack;
+  _receiverRack = receiverRack;
   _remote = NULL;
+  _receiver = NULL;
+  _sendToAll = false;
   _transform = NULL;
 }
 
@@ -15,6 +18,20 @@ void MonitorSendTo::send(int value) {
   if ( _transform != NULL ) {
     sendValue = _transform->apply(value);
   }
+  if ( _sendToAll ) {
+    if ( _protocol == "osc" ) {
+      _receiverRack->sendOscToAll(_address, sendValue);
+    } else if ( _protocol == "http" ) {
+      // send HTTP
+    }
+  }
+  if ( _receiver != NULL ) {
+    if ( _protocol == "osc" ) {
+      _receiver->sendOsc(_address, sendValue);
+    } else if ( _protocol == "http" ) {
+      // send HTTP
+    }
+  }
   if ( _remote != NULL ) {
     _remote->receive(sendValue);
   }
@@ -22,6 +39,7 @@ void MonitorSendTo::send(int value) {
 
 bool MonitorSendTo::build(JsonObject json) {
   _address = "";
+  _protocol = "osc";
 
   if ( json.containsKey("~") ) {
     _address = json["~"].as<String>();
@@ -30,6 +48,28 @@ bool MonitorSendTo::build(JsonObject json) {
       setError("Remote '" + _address + "' not found");
       return false;
     }
+
+  } else if ( json.containsKey("*") ) {
+    _address = json["*"].as<String>();
+    _sendToAll = true;
+
+  } else if ( json.containsKey("receiver") ) {
+    String receiverName = json["receiver"].as<String>();
+    _receiver = _receiverRack->getReceiver(receiverName);
+    if ( _receiver == NULL ) {
+      setError("Receiver '" + receiverName + "' not found");
+      return false;
+    }
+    if ( json.containsKey("address") ) {
+      _address = json["address"].as<String>();
+    } else {
+      setError("Must specify value for 'address' or '*' or '~'");
+      return false;
+    }
+
+  } else {
+    setError("Nowhere for messages to go!");
+    return false;
   }
 
   if ( json.containsKey("valueTransform") ) {
@@ -40,10 +80,20 @@ bool MonitorSendTo::build(JsonObject json) {
       return false;
     }
   }
+
+  return true;
 }
 
 String MonitorSendTo::getAddress() {
-  return _address;
+  String result = _address;
+  if ( _sendToAll ) {
+    result = "*" + result;
+  } else if ( _remote != NULL ) {
+    result = "~" + result;
+  } else if ( _receiver != NULL) {
+    result = _receiver->getName() + result;
+  }
+  return result;
 }
 
 String MonitorSendTo::getError() {

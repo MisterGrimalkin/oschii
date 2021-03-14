@@ -14,7 +14,7 @@
 
 class Monitor {
   public:
-    Monitor(SensorRack * sensorRack, RemoteRack * remoteRack);
+    Monitor(SensorRack * sensorRack, RemoteRack * remoteRack, ReceiverRack * receiverRack);
     ~Monitor();
 
     void update();
@@ -31,6 +31,7 @@ class Monitor {
   private:
     SensorRack * _sensorRack;
     RemoteRack * _remoteRack;
+    ReceiverRack * _receiverRack;
     Sensor * _sensor;
     MonitorSendTo * _sendTos[MAX_MONITOR_REMOTES];
     int _sendToIndex, _pollInterval, _lastPolledAt;

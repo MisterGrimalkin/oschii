@@ -5,11 +5,12 @@
 #include <ArduinoJson.h>
 
 #include "RemoteRack.h"
+#include "ReceiverRack.h"
 #include "ValueTransform.h"
 
 class MonitorSendTo {
   public:
-    MonitorSendTo(RemoteRack * remoteRack);
+    MonitorSendTo(RemoteRack * remoteRack, ReceiverRack * receiverRack);
     ~MonitorSendTo();
 
     void send(int value);
@@ -26,7 +27,12 @@ class MonitorSendTo {
   private:
     RemoteRack * _remoteRack;
     Remote * _remote;
-    String _address;
+
+    ReceiverRack * _receiverRack;
+    Receiver * _receiver;
+    bool _sendToAll;
+
+    String _address, _protocol;
     ValueTransform * _transform;
 //    StaticJsonDocument<128> _jsonRoot;
     String _error;

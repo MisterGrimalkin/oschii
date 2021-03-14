@@ -13,7 +13,7 @@
 
 class MonitorRack {
   public:
-    MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack);
+    MonitorRack(SensorRack * sensorRack, RemoteRack * remoteRack, ReceiverRack * receiverRack);
     ~MonitorRack();
 
     bool buildMonitors(JsonArray array);
@@ -26,6 +26,7 @@ class MonitorRack {
   private:
     SensorRack * _sensorRack;
     RemoteRack * _remoteRack;
+    ReceiverRack * _receiverRack;
     Monitor * _monitors[MAX_MONITORS];
     int _monitorIndex;
 //    StaticJsonDocument<128> _jsonRoot;

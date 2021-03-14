@@ -56,3 +56,10 @@ Receiver * ReceiverRack::getReceiver(String name) {
   return NULL;
 }
 
+void ReceiverRack::sendOscToAll(String address, int value) {
+  for ( int i=0; i<_receiverIndex; i++ ) {
+    Receiver * receiver = _receivers[i];
+    receiver->sendOsc(address, value);
+  }
+}
+
