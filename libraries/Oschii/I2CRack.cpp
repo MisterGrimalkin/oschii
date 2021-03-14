@@ -17,7 +17,7 @@ bool I2CRack::build(JsonObject json) {
 
   _i2c->start(sdaPin, sclPin);
 
-  Serial.println("== Building I2C Modules");
+  Serial.println("== I2C MODULES ==");
 
   if ( json.containsKey("modules") ) {
     JsonArray modulesArray = json["modules"];
@@ -52,9 +52,9 @@ bool I2CRack::build(JsonObject json) {
     }
   }
 
-  Serial.print("== Found:");
+  Serial.print("== Found: ");
   Serial.print(_moduleIndex);
-  Serial.println("\n");
+  Serial.println(" ==\n");
 
   return true;
 }

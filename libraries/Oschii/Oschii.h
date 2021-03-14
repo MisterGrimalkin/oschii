@@ -7,23 +7,25 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-#include "SettingsService.h"
 #include "FileService.h"
-#include "Racks.h"
+#include "NetworkService.h"
+#include "SettingsService.h"
 #include "SerialAPI.h"
-#include "I2CRack.h"
+#include "Racks.h"
 
 class Oschii {
   public:
     Oschii();
+
     void start();
     void loop();
 
   private:
-    SettingsService * _settings;
     FileService * _files;
-    Racks * _racks;
+    NetworkService * _network;
+    SettingsService * _settings;
     SerialAPI * _serialAPI;
+    Racks * _racks;
 };
 
 #endif

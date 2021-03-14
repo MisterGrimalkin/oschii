@@ -3,12 +3,13 @@
 
 #include <Arduino.h>
 
-#include "Racks.h"
 #include "SettingsService.h"
+#include "NetworkService.h"
+#include "Racks.h"
 
 class SerialAPI {
   public:
-    SerialAPI(SettingsService * settings, Racks * racks); //, NetworkService * network);
+    SerialAPI(SettingsService * settings, NetworkService * network, Racks * racks);
 
     void start();
     void loop();
@@ -19,9 +20,9 @@ class SerialAPI {
     String read();
 
   private:
-    Racks * _racks;
     SettingsService * _settings;
-//    NetworkService * _network;
+    NetworkService * _network;
+    Racks * _racks;
 };
 
 #endif

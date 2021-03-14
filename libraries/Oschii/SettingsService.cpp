@@ -21,7 +21,7 @@ SettingsService::SettingsService(FileService * files, String version, String bui
 }
 
 void SettingsService::load() {
-  String json = _files->readFile(SETTINGS_FILENAME);
+  String json = _files->readFile(SETTINGS_FILE);
   if (json == NULL ) {
     save();
     load();
@@ -31,8 +31,8 @@ void SettingsService::load() {
 }
 
 void SettingsService::save() {
-  String json = toPrettyJson();
-  _files->writeFile(SETTINGS_FILENAME, json);
+  String json = toPrettyJson(true);
+  _files->writeFile(SETTINGS_FILE, json);
 }
 
 void SettingsService::set(String json) {
@@ -63,6 +63,10 @@ void SettingsService::build(String json) {
 }
 
 String SettingsService::toPrettyJson() {
+  return toPrettyJson(false);
+}
+
+String SettingsService::toPrettyJson(bool includeWifiPassword) {
   DynamicJsonDocument output(1024);
   output["name"] = _name;
 
@@ -71,6 +75,7 @@ String SettingsService::toPrettyJson() {
   networkJson["wifiEnabled"] = _wifiEnabled;
   networkJson["wifiTimeout"] = _wifiTimeout;
   networkJson["wifiName"] = _wifiName;
+  if ( includeWifiPassword ) networkJson["wifiPassword"] = _wifiPassword;
   networkJson["ethernetEnabled"] = _ethernetEnabled;
   networkJson["ethernetTimeout"] = _ethernetTimeout;
   networkJson["oscPort"] = _oscPort;

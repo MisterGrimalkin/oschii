@@ -6,7 +6,7 @@
 
 #include "FileService.h"
 
-#define SETTINGS_FILENAME "/settings.json"
+#define SETTINGS_FILE "/oschii/settings.json"
 
 class SettingsService {
   public:
@@ -19,6 +19,7 @@ class SettingsService {
 
     void build(String json);
     String toPrettyJson();
+    String toPrettyJson(bool includeWifiPassword);
 
     String getVersion();
     String getBuildDatetime();

@@ -1,9 +1,9 @@
 #include "SerialAPI.h"
 
-SerialAPI::SerialAPI(SettingsService * settings, Racks * racks) { //}, NetworkService * network) {
+SerialAPI::SerialAPI(SettingsService * settings, NetworkService * network, Racks * racks) {
   _settings = settings;
+  _network = network;
   _racks = racks;
-//  _network = network;
 }
 
 void SerialAPI::start() {
@@ -46,6 +46,28 @@ void SerialAPI::processInput(String input) {
     String settings = prompt(">> Enter new settings <<\n");
     _settings->set(settings);
     Serial.println(_settings->toPrettyJson());
+
+  } else if ( input == "connect" ) {
+    _network->connect();
+
+  } else if ( input == "disconnect" ) {
+    _network->disconnect();
+    Serial.println("Network disconnected");
+
+  } else if ( input == "stop wifi") {
+    _settings->setWifiEnabled(false);
+    _network->disconnect();
+    Serial.println("Wifi Disabled");
+
+  } else if ( input == "start wifi") {
+    String ssid = prompt(">> Enter new Wifi SSID <<");
+    String password = prompt(">> Enter new Wifi Password <<");
+    _settings->setWifiCredentials(ssid, password);
+    _settings->setWifiEnabled(true);
+    _network->connect();
+
+  } else if ( input == "ip" ) {
+    Serial.println(_network->getIpAddress());
 
   } else if ( input == "name" ) {
     Serial.println(_settings->getName());
