@@ -15,6 +15,12 @@
       }
     ]
   },
+  "receivers": [
+    {
+      "name": "SnootBox",
+      "ip": "192.168.1.101"
+    }
+  ],
   "sensors": [
     {
       "name": "Button 1",
@@ -127,6 +133,10 @@
     {
       "sensor": "Button 1",
       "sendTo": [
+        {
+          "receiver": "SnootBox",
+          "address": "/test"
+        },
         {
           "~": "/green"
         },

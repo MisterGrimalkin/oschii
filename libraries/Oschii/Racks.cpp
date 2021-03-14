@@ -1,12 +1,21 @@
 #include "Racks.h"
 
-Racks::Racks(FileService * files) {
+Racks::Racks(FileService * files, NetworkService * network) {
   init();
   _files = files;
+  _network = network;
+
+  _i2cRack = NULL;
+  _receiverRack = NULL;
+  _sensorRack = NULL;
+  _driverRack = NULL;
+  _remoteRack = NULL;
+  _monitorRack = NULL;
 }
 
 void Racks::init() {
   _i2cRack = new I2CRack();
+  _receiverRack = new ReceiverRack(_network);
   _sensorRack = new SensorRack(_i2cRack);
   _driverRack = new DriverRack(_i2cRack);
   _remoteRack = new RemoteRack(_driverRack);
@@ -15,6 +24,7 @@ void Racks::init() {
 
 void Racks::destroy() {
   if ( _i2cRack != NULL ) delete _i2cRack;
+  if ( _receiverRack != NULL ) delete _receiverRack;
   if ( _sensorRack != NULL ) delete _sensorRack;
   if ( _driverRack != NULL ) delete _driverRack;
   if ( _remoteRack != NULL ) delete _remoteRack;
@@ -40,10 +50,11 @@ void Racks::loop() {
 }
 
 bool Racks::buildConfig(String jsonString, bool save) {
+  DynamicJsonDocument jsonDoc(10000);
   const char * json = jsonString.c_str();
-  DeserializationError error = deserializeJson(_jsonDoc, json);
+  DeserializationError error = deserializeJson(jsonDoc, json);
   if ( error ) return false;
-  JsonObject obj = _jsonDoc.as<JsonObject>();
+  JsonObject obj = jsonDoc.as<JsonObject>();
   bool success = buildConfig(obj);
   if ( success && save ) {
     _files->writeFile(CONFIG_FILE, jsonString);
@@ -68,11 +79,13 @@ bool Racks::buildConfig(JsonObject json) {
     success = _i2cRack->build(i2cJson) && success;
   }
 
+  JsonArray receiverArray = json["receivers"];
   JsonArray sensorArray = json["sensors"];
   JsonArray driverArray = json["drivers"];
   JsonArray remoteArray = json["driverRemotes"];
   JsonArray monitorArray = json["sensorMonitors"];
 
+  success = _receiverRack->buildReceivers(receiverArray) && success;
   success = _sensorRack->buildSensors(sensorArray) && success;
   success = _driverRack->buildDrivers(driverArray) && success;
   success = _remoteRack->buildRemotes(remoteArray) && success;

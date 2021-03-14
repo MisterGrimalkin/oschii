@@ -1,0 +1,13 @@
+{
+  "name": "Ada",
+  "network": {
+    "wifiEnabled": true,
+    "wifiTimeout": 5000,
+    "wifiName": "TotallyNotSkynet",
+    "wifiPassword": "CabinetPolicySkipFir3$",
+    "ethernetEnabled": false,
+    "ethernetTimeout": 120000,
+    "oscPort": 3333,
+    "httpPort": 80
+  }
+}

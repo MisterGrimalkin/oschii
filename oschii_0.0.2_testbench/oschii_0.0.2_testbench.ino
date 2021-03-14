@@ -1,12 +1,12 @@
 #include <Oschii.h>
 
-Oschii oschii;
+Oschii * oschii;
 
 void setup() {
   Serial.begin(115200);
-  oschii.start();
+  (oschii = new Oschii())->start();
 }
 
 void loop() {
-  oschii.loop();
+  oschii->loop();
 }

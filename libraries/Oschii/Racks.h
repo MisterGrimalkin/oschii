@@ -5,19 +5,21 @@
 #include <ArduinoJson.h>
 
 #include "I2CRack.h"
+#include "ReceiverRack.h"
 #include "SensorRack.h"
 #include "DriverRack.h"
 #include "RemoteRack.h"
 #include "MonitorRack.h"
 #include "FileService.h"
+#include "NetworkService.h"
 
-#define JSON_SIZE_LIMIT 15000
+#define JSON_SIZE_LIMIT 20000
 #define CONFIG_FILE "/oschii/config.json"
 #define RESTART_TIMEOUT 3
 
 class Racks {
   public:
-    Racks(FileService * files);
+    Racks(FileService * files, NetworkService * network);
 
     void init();
     void destroy();
@@ -37,13 +39,15 @@ class Racks {
 
   private:
     I2CRack * _i2cRack;
+    ReceiverRack * _receiverRack;
     SensorRack * _sensorRack;
     DriverRack * _driverRack;
     RemoteRack * _remoteRack;
     MonitorRack * _monitorRack;
+    NetworkService * _network;
     FileService * _files;
 
-    StaticJsonDocument<JSON_SIZE_LIMIT> _jsonDoc;
+//    StaticJsonDocument<JSON_SIZE_LIMIT> _jsonDoc;
 };
 
 #endif

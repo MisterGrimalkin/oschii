@@ -14,10 +14,10 @@ void NetworkService::connect() {
   Serial.print("> Network: ");
 
   if ( _settings->isEthernetEnabled() ) {
-    Serial.println("ETHERNET");
+    Serial.println("Ethernet");
 //    connectToEthernet();
   } else if ( _settings->isWifiEnabled() ) {
-    Serial.println("WIFI");
+    Serial.println("WiFi");
     connectToWifi();
   } else {
     Serial.println("(none)");
@@ -34,6 +34,7 @@ void NetworkService::disconnect() {
 }
 
 void NetworkService::loop() {
+
 }
 
 bool NetworkService::isConnected() {
@@ -106,7 +107,7 @@ void NetworkService::connectToWifi() {
   String ssid = _settings->getWifiName();
   String password = _settings->getWifiPassword();
   if ( ssid != "" && password != "" ) {
-    Serial.print("  Accessing WiFi [" + ssid + "]");
+    Serial.print("  Accessing '" + ssid + "'");
     WiFi.begin(ssid.c_str(), password.c_str());
     int started = millis();
     int timeout = _settings->getWifiTimeout();
@@ -121,10 +122,74 @@ void NetworkService::connectToWifi() {
     }
     _connected = true;
     _usingEthernet = false;
-    Serial.print("\n  Connected to WiFi on ");
+    Serial.print("\n  Connected @ ");
     Serial.println(WiFi.localIP());
   } else {
     Serial.println("  No WiFi credentials");
     _connected = false;
+  }
+}
+
+void NetworkService::sendOsc(String host, int port, String address, int value) {
+  if ( _connected ) {
+
+    OSCMessage msg(address.c_str());
+    msg.add(value);
+    _udp.beginPacket(host.c_str(), port);
+    msg.send(_udp);
+    _udp.endPacket();
+    msg.empty();
+
+//    OscWiFi.send(host, port, address, value);
+
+    if ( ECHO_SENDS ) {
+      Serial.print("OSC ===> ");
+      Serial.print(host);
+      Serial.print(":");
+      Serial.print(port);
+      Serial.print(" ");
+      Serial.print(address);
+      Serial.print(" { ");
+      Serial.print(value);
+      Serial.print(" }");
+      Serial.println();
+    }
+  } else {
+    if ( ECHO_SENDS ) Serial.println("Cannot send OSC because not connected");
+  }
+}
+
+void NetworkService::sendHttp(String method, String url, int value) {
+  if ( _connected ) {
+
+    HTTPClient http;
+    http.begin(url);
+
+    int httpResponseCode;
+    if ( method == "post" ) {
+      httpResponseCode = http.POST(String(value));
+    } else if ( method == "put" ) {
+      httpResponseCode = http.PUT(String(value));
+    } else {
+      httpResponseCode = http.GET();
+    }
+
+    http.end();
+
+    if ( ECHO_SENDS ) {
+      Serial.print("HTTP ===> ");
+      Serial.print(method);
+      Serial.print(" ");
+      Serial.print(url);
+      Serial.print(" { ");
+      Serial.print(value);
+      Serial.print(" } ");
+      Serial.print(" : (");
+      Serial.print(httpResponseCode);
+      Serial.print(")");
+      Serial.println();
+    }
+  } else {
+    if ( ECHO_SENDS ) Serial.println("Cannot send HTTP because not connected");
   }
 }

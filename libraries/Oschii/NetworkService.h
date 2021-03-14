@@ -7,7 +7,14 @@
 #include <WiFi.h>
 #include <ETH.h>
 
+#include <WiFiUdp.h>
+#include <OSCMessage.h>
+
+#include <HTTPClient.h>
+
 #include "SettingsService.h"
+
+#define ECHO_SENDS true
 
 class NetworkService {
   public:
@@ -22,9 +29,14 @@ class NetworkService {
 
     String getIpAddress();
 
+    void sendOsc(String host, int port, String address, int value);
+    void sendHttp(String method, String url, int value);
+
   private:
     SettingsService * _settings;
     bool _connected, _usingEthernet;
+
+    WiFiUDP _udp;
 
 //    void WiFiEvent(WiFiEvent_t event);
 

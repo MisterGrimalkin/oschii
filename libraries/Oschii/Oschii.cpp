@@ -4,8 +4,8 @@ Oschii::Oschii() {
   _files = new FileService();
   _settings = new SettingsService(_files, VERSION, BUILD_DATETIME);
   _network = new NetworkService(_settings);
+  _racks = new Racks(_files, _network);
   _serialAPI = new SerialAPI(_settings, _network, _racks);
-  _racks = new Racks(_files);
 }
 
 void Oschii::start() {
