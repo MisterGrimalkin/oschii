@@ -36,6 +36,10 @@ class Monitor {
     int _sendToIndex, _pollInterval, _lastPolledAt;
     bool _onChange;
     String _error;
+
+    ValueTransform * _transform;
+    int applyTransform(int value);
+    
 //    StaticJsonDocument<128> _jsonRoot;
 };
 

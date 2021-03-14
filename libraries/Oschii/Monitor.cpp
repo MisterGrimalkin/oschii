@@ -3,11 +3,12 @@
 Monitor::Monitor(SensorRack * sensorRack, RemoteRack * remoteRack) {
   _sensorRack = sensorRack;
   _remoteRack = remoteRack;
-
+  _transform = NULL;
   _sendToIndex = 0;
 }
 
 Monitor::~Monitor() {
+  if ( _transform != NULL ) delete _transform;
   for ( int i=0; i<_sendToIndex; i++ ) {
     MonitorSendTo * sendTo = _sendTos[i];
     delete sendTo;
@@ -18,8 +19,9 @@ void Monitor::update() {
   _sensor->readSensor();
   if ( _onChange && _sensor->hasChanged() ) {
     for ( int i=0; i<_sendToIndex; i++ ) {
+      int value = applyTransform(_sensor->getValue());
+
       MonitorSendTo * sendTo = _sendTos[i];
-      int value = _sensor->getValue();
       if ( ECHO_MONITOR_SENDS ) {
         Serial.print("(");
         Serial.print(_sensor->getName());
@@ -49,6 +51,15 @@ bool Monitor::build(JsonObject json) {
     return false;
   }
 
+  if ( json.containsKey("valueTransform") ) {
+    JsonObject transformJson = json["valueTransform"];
+    _transform = new ValueTransform();
+    if ( !_transform->build(transformJson) ) {
+      setError(_transform->getError());
+      return false;
+    }
+  }
+
   if ( json.containsKey("onChange") )     _onChange     = json["onChange"];
   if ( json.containsKey("pollInterval") ) _pollInterval = json["pollInterval"];
 
@@ -66,6 +77,14 @@ bool Monitor::build(JsonObject json) {
   }
 
   return true;
+}
+
+int Monitor::applyTransform(int value) {
+  if ( _transform == NULL ) {
+    return value;
+  } else {
+    return _transform->apply(value);
+  }
 }
 
 String Monitor::toString() {

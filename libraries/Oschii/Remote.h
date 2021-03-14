@@ -36,6 +36,9 @@ class Remote {
     RemoteWriteTo * _writeTos[MAX_REMOTE_DRIVERS];
     int _writeToIndex;
     String _error;
+
+    ValueTransform * _transform;
+    int applyTransform(int value);
 //    StaticJsonDocument<128> _jsonRoot;
 };
 

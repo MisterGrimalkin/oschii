@@ -3,9 +3,11 @@
 Remote::Remote(DriverRack * driverRack) {
   _driverRack = driverRack;
   _writeToIndex = 0;
+  _transform = NULL;
 }
 
 Remote::~Remote() {
+  if ( _transform != NULL ) delete _transform;
   for ( int i=0; i<_writeToIndex; i++ ) {
     RemoteWriteTo * writeTo = _writeTos[i];
     delete writeTo;
@@ -13,9 +15,10 @@ Remote::~Remote() {
 }
 
 void Remote::receive(int value) {
+  int newValue = applyTransform(value);
   for ( int i=0; i<_writeToIndex; i++ ) {
     RemoteWriteTo * writeTo = _writeTos[i];
-    writeTo->write(value);
+    writeTo->write(newValue);
   }
 }
 
@@ -32,6 +35,15 @@ bool Remote::build(JsonObject json) {
   } else {
     setError("Must specify 'address'");
     return false;
+  }
+
+  if ( json.containsKey("valueTransform") ) {
+    JsonObject transformJson = json["valueTransform"];
+    _transform = new ValueTransform();
+    if ( !_transform->build(transformJson) ) {
+      setError(_transform->getError());
+      return false;
+    }
   }
 
   JsonArray writeToArray = json["writeTo"];
@@ -53,6 +65,14 @@ bool Remote::build(JsonObject json) {
 
 String Remote::getAddress() {
   return _address;
+}
+
+int Remote::applyTransform(int value) {
+  if ( _transform == NULL ) {
+    return value;
+  } else {
+    return _transform->apply(value);
+  }
 }
 
 String Remote::toString() {

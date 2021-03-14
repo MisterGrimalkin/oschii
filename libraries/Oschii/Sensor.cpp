@@ -24,7 +24,6 @@ bool Sensor::build(JsonObject json) {
     return false;
   }
 
-
   if ( json.containsKey("name") ) {
     _name = json["name"].as<String>();
   } else {
