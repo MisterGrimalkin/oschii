@@ -32,7 +32,7 @@ class MonitorSendTo {
     Receiver * _receiver;
     bool _sendToAll;
 
-    String _address, _protocol;
+    String _address, _type;
     ValueTransform * _transform;
 //    StaticJsonDocument<128> _jsonRoot;
     String _error;

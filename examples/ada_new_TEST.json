@@ -538,10 +538,6 @@
       "sensor": "Knob",
       "sendTo": [
         {
-          "receiver": "SnootBox",
-          "address": "/knob"
-        },
-        {
           "~": "/meter"
         }
       ]

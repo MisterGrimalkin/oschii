@@ -19,17 +19,17 @@ void MonitorSendTo::send(int value) {
     sendValue = _transform->apply(value);
   }
   if ( _sendToAll ) {
-    if ( _protocol == "osc" ) {
+    if ( _type == "osc" ) {
       _receiverRack->sendOscToAll(_address, sendValue);
-    } else if ( _protocol == "http" ) {
-      // send HTTP
+    } else if ( _type == "http" ) {
+      // TODO: send HTTP
     }
   }
   if ( _receiver != NULL ) {
-    if ( _protocol == "osc" ) {
+    if ( _type == "osc" ) {
       _receiver->sendOsc(_address, sendValue);
-    } else if ( _protocol == "http" ) {
-      // send HTTP
+    } else if ( _type == "http" ) {
+      // TODO: send HTTP
     }
   }
   if ( _remote != NULL ) {
@@ -39,7 +39,7 @@ void MonitorSendTo::send(int value) {
 
 bool MonitorSendTo::build(JsonObject json) {
   _address = "";
-  _protocol = "osc";
+  _type = "osc";
 
   if ( json.containsKey("~") ) {
     _address = json["~"].as<String>();
@@ -71,6 +71,8 @@ bool MonitorSendTo::build(JsonObject json) {
     setError("Nowhere for messages to go!");
     return false;
   }
+
+  if ( json.containsKey("type") ) _type = json["type"].as<String>();
 
   if ( json.containsKey("valueTransform") ) {
     JsonObject transformJson = json["valueTransform"];

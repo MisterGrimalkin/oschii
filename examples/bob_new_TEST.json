@@ -15,12 +15,6 @@
       }
     ]
   },
-  "receivers": [
-    {
-      "name": "SnootBox",
-      "ip": "192.168.1.101"
-    }
-  ],
   "sensors": [
     {
       "name": "Button 1",
@@ -129,18 +123,24 @@
       ]
     }
   ],
+  "receivers": [
+    {
+      "name": "SnootBox",
+      "ip": "192.168.1.101"
+    }
+  ],
   "sensorMonitors": [
     {
       "sensor": "Button 1",
+      "valueTransform": {
+        "outputRange": [
+          0,
+          50
+        ]
+      },
       "sendTo": [
         {
-          "*": "/test",
-          "valueTransform": {
-            "outputRange": [
-              80,
-              50
-            ]
-          }
+          "*": "/button1"
         },
         {
           "~": "/green"
@@ -153,6 +153,9 @@
     {
       "sensor": "Button 2",
       "sendTo": [
+        {
+          "*": "/button2"
+        },
         {
           "~": "/red"
         }
