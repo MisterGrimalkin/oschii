@@ -75,7 +75,11 @@ module Oschii
     end
 
     def capture_osc(address, simple: true, &block)
-      actual_address = "/#{address}" unless address[0] == '/'
+      if address[0] == '/'
+        actual_address = address
+      else
+        actual_address = "/#{address}"
+      end
       server.add_method actual_address do |message|
         value = simple ? message.to_a.first&.to_i : JSON.parse(message.to_a.first)
         if block_given?
